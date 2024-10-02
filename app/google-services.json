@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "155031386956",
+    "project_id": "glamora-d8155",
+    "storage_bucket": "glamora-d8155.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155031386956:android:4fb0a693eac217c4152de9",
+        "android_client_info": {
+          "package_name": "com.example.glamora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "155031386956-rashd01bda50a3nvjjuv5mtqgq04hbtj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAq5HHqaXbFgof50lTEYyD26yPZTFJnHqw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155031386956-rashd01bda50a3nvjjuv5mtqgq04hbtj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

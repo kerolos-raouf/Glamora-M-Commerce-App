@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Glamora</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome">Welcome to Glamora</string>
+    <string name="sign_in_hint">Sign in to continue</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="login">Log In</string>
+    <string name="or">OR</string>
+    <string name="err_email_msg">Oops! Your Email Is Not Correct</string>
+    <string name="err_pass_msg">Oops! Your Password Is Not Correct</string>
+    <string name="sign_up_google">Login with Google</string>
+    <string name="log_in_guest">Login As Guest</string>
+    <string name="dont_have_account">"Don’t have a account? "</string>
+    <string name="register">Register</string>
 </resources>
