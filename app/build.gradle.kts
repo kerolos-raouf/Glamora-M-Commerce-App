@@ -8,12 +8,11 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
     id ("androidx.navigation.safeargs.kotlin")
-    //apollo for graphql
+
     alias(libs.plugins.apollo)
+    alias(libs.plugins.google.gms.google.services)
     //id("com.apollographql.apollo3") version "4.0.1"
 }
-
-
 
 android {
     namespace = "com.example.glamora"
@@ -68,9 +67,8 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
-
 }
+
 val localProperty = Properties()
 val file = rootProject.file("local.properties")
 if(file.exists())
@@ -100,6 +98,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -145,14 +144,14 @@ dependencies {
     //lottie animation
     implementation(libs.lottie)
 
+    //indicator
+    implementation(libs.dotsindicator)
+    implementation(libs.androidx.viewpager2)
+
     // OkHttp (Required for networking with Apollo)
     implementation(libs.okhttp)
 
     // Apollo Client for GraphQL
     implementation(libs.apollo.runtime)
     //implementation("com.apollographql.apollo3:apollo-api::4.0.1")
-
-    //indicator
-    implementation(libs.dotsindicator)
-    implementation(libs.androidx.viewpager2)
 }
