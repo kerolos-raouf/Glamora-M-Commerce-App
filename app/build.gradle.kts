@@ -71,13 +71,23 @@ android {
 
 
 }
+val localProperty = Properties()
+val file = rootProject.file("local.properties")
+if(file.exists())
+{
+    file.inputStream().use {
+        localProperty.load(it)
+    }
+}
+
+val adminApiAccessToken : String = localProperty.getProperty("ADMIN_API_ACCESS_TOKEN") ?: "null"
 
 apollo{
     service("service"){
         packageName.set("com.example")
         introspection {
             endpointUrl.set("https://android-alex-team1.myshopify.com/admin/api/2023-01/graphql.json")
-            headers.put("X-Shopify-Access-Token", "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")
+            headers.put("X-Shopify-Access-Token", adminApiAccessToken)
             schemaFile.set(file("src/main/graphql/schema.graphqls"))
         }
     }
