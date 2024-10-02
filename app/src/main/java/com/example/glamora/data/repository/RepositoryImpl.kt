@@ -24,6 +24,7 @@ class RepositoryImpl @Inject constructor(
     override fun getProducts(): Flow<State<List<ProductDTO>>> = flow {
         emit(State.Loading)
         try {
+
             val productsResponse = apolloClient.query(ProductQuery()).execute()
             if (productsResponse.data != null) {
                 Log.d("Kerolos", "getProducts: ${productsResponse.data?.products}")
