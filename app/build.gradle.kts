@@ -8,7 +8,12 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
     id ("androidx.navigation.safeargs.kotlin")
+    //apollo for graphql
+    alias(libs.plugins.apollo)
+    //id("com.apollographql.apollo3") version "4.0.1"
 }
+
+
 
 android {
     namespace = "com.example.glamora"
@@ -63,6 +68,19 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+
+}
+
+apollo{
+    service("service"){
+        packageName.set("com.example")
+        introspection {
+            endpointUrl.set("https://android-alex-team1.myshopify.com/admin/api/2023-01/graphql.json")
+            headers.put("X-Shopify-Access-Token", "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")
+            schemaFile.set(file("src/main/graphql/schema.graphqls"))
+        }
+    }
 }
 
 dependencies {
@@ -116,4 +134,11 @@ dependencies {
 
     //lottie animation
     implementation(libs.lottie)
+
+    // OkHttp (Required for networking with Apollo)
+    implementation(libs.okhttp)
+
+    // Apollo Client for GraphQL
+    implementation(libs.apollo.runtime)
+    //implementation("com.apollographql.apollo3:apollo-api::4.0.1")
 }
