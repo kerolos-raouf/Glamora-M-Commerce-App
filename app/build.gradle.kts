@@ -151,4 +151,8 @@ dependencies {
     // Apollo Client for GraphQL
     implementation(libs.apollo.runtime)
     //implementation("com.apollographql.apollo3:apollo-api::4.0.1")
+
+    //indicator
+    implementation(libs.dotsindicator)
+    implementation(libs.androidx.viewpager2)
 }
