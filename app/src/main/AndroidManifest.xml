@@ -20,7 +20,7 @@
 
 
         <activity
-            android:name=".MainActivity"
+            android:name=".mainActivity.view.MainActivity"
             android:exported="true">
 
             <intent-filter>
