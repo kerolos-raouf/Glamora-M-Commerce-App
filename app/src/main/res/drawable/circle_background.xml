@@ -1,0 +1,7 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <size
+        android:width="18dp"
+    android:height="18dp" /> <!-- Make sure height is equal to width for a circle -->
+    <solid android:color="@color/dark_blue" /> <!-- Replace with your desired color -->
+    <corners android:radius="50dp" /> <!-- This should be half of the width/height to ensure a perfect circle -->
+</shape>
