@@ -18,7 +18,7 @@
             android:id="@+id/cartToolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Your Cart"
+            android:text="@string/your_cart"
             android:textColor="@color/dark_blue"
             android:textSize="20sp"
             android:textStyle="bold"
