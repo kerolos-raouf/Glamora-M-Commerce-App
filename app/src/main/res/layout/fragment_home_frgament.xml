@@ -117,7 +117,6 @@
                 android:layout_marginEnd="10dp"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="4dp"
-                app:cardUseCompatPadding="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/home_rv_offers">
@@ -136,12 +135,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:foreground="@drawable/background"
-                        android:scaleType="centerCrop"
+                        android:scaleType="fitXY"
                         android:src="@drawable/recommended"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0" />
+                    />
 
                     <TextView
                         android:id="@+id/home_textview_recomm1"
