@@ -7,19 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.example.glamora.R
-import com.example.glamora.databinding.FragmentHomeFrgamentBinding
+import com.example.glamora.databinding.FragmentHomeBinding
+
 
 class HomeFragment : Fragment() {
 
 
 
-    private lateinit var binding: FragmentHomeFrgamentBinding
+    private lateinit var binding: FragmentHomeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home_frgament, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         return binding.root
     }
 
