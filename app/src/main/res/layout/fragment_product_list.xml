@@ -74,7 +74,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/listOfProduct_cardview_image"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="10dp"
@@ -95,10 +95,10 @@
                         <ImageView
                             android:id="@+id/image_item"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="250dp"
                             android:foreground="@drawable/background"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/recommended"
+                            android:src="@drawable/brand"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -145,12 +145,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="18dp"
-            android:backgroundTint="@color/dark_blue"
+            android:backgroundTint="@color/light_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:rippleColor="@color/gray"
             app:srcCompat="@drawable/icon_filter"
-            app:tint="@color/light_gray" />
+            app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
