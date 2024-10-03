@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@drawable/card_view_border"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/cartItemImage"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/product_shoes"
+            android:background="@color/light_gray"
+            android:layout_margin="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/cartItemName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/nike_air_zoom_pegasus_36_miami"
+
+            android:textColor="@color/dark_blue"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/cartItemFavoriteButton"
+            app:layout_constraintStart_toEndOf="@+id/cartItemImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/cartItemDeleteButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/icon_delete"
+
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/cartItemFavoriteButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="5dp"
+
+            android:src="@drawable/icon_favorite"
+
+            app:layout_constraintEnd_toStartOf="@+id/cartItemDeleteButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/cartItemPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_766_56"
+            android:textColor="@color/light_blue"
+            android:textSize="15sp"
+            android:textStyle="bold"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cartItemImage" />
+
+
+        <LinearLayout
+            android:id="@+id/cartItemQuantityLinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:background="@drawable/card_view_border"
+
+
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            >
+
+            <ImageView
+                android:id="@+id/cartItemMinusButton"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+
+                android:src="@drawable/icon_minus"
+                android:layout_margin="5dp"
+
+                app:layout_constraintEnd_toStartOf="@+id/cartItemDeleteButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cartItemQuantity"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:text="1"
+                android:gravity="center"
+                android:background="@color/light_gray"
+                />
+
+            <ImageView
+                android:id="@+id/cartItemPlusButton"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+
+                android:src="@drawable/icon_plus"
+                android:layout_margin="5dp"
+
+                app:layout_constraintEnd_toStartOf="@+id/cartItemDeleteButton"
+                app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
