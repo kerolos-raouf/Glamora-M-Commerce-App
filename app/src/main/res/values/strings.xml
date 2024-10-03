@@ -14,4 +14,12 @@
     <string name="log_in_guest">Login As Guest</string>
     <string name="dont_have_account">"Don’t have a account? "</string>
     <string name="register">Register</string>
+    <string name="lets_started">Let’s Get Started</string>
+    <string name="create_account">Create an new account</string>
+    <string name="err_name_msg">Oops! Your Name Is Too Small</string>
+    <string name="err_repass_msg">Oops! Password Is Not Matching</string>
+    <string name="err_pass_msg2">Oops! Your Password Is Too Small</string>
+    <string name="enter_name">Full Name</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="have_account">have a account?</string>
 </resources>
