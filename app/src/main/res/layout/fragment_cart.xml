@@ -21,7 +21,9 @@
             android:text="Your Cart"
             android:textColor="@color/dark_blue"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -42,7 +44,7 @@
     <LinearLayout
         android:id="@+id/cartCuponCodeLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_margin="20dp"
         android:orientation="horizontal"
 
@@ -53,7 +55,7 @@
         <EditText
             android:id="@+id/cartCuponCodeEditText"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/cupon_edit_text"
             android:hint="@string/enter_coupon_code"
@@ -191,7 +193,7 @@
     <Button
         android:id="@+id/cartCheckOutButton"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
 
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
