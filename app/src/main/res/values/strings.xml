@@ -32,4 +32,11 @@
     <string name="log_in_guest">Login As Guest</string>
     <string name="dont_have_account">"Don’t have a account? "</string>
     <string name="register">Register</string>
+    <string name="check_out">Check Out</string>
+    <string name="total_price">Total Price</string>
+    <string name="_766_56">$766.56</string>
+    <string name="items">Items</string>
+    <string name="discount">Discount</string>
+    <string name="enter_coupon_code">Enter Coupon Code</string>
+    <string name="nike_air_zoom_pegasus_36_miami">Nike Air Zoom Pegasus 36 Miami</string>
 </resources>
