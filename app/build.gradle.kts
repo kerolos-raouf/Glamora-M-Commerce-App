@@ -154,4 +154,7 @@ dependencies {
     // Apollo Client for GraphQL
     implementation(libs.apollo.runtime)
     //implementation("com.apollographql.apollo3:apollo-api::4.0.1")
+
+    //circular image view
+    implementation(libs.circleimageview)
 }
