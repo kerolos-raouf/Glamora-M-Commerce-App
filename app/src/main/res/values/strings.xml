@@ -39,4 +39,7 @@
     <string name="discount">Discount</string>
     <string name="enter_coupon_code">Enter Coupon Code</string>
     <string name="nike_air_zoom_pegasus_36_miami">Nike Air Zoom Pegasus 36 Miami</string>
+    <string name="cateory">Category</string>
+    <string name="filter">Filter</string>
+    <string name="back_button">Back</string>
 </resources>
