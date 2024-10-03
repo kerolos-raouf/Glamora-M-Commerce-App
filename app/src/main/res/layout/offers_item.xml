@@ -27,15 +27,16 @@
                 android:id="@+id/imgoffer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:srcCompat="@drawable/promotion"
-                tools:ignore="ContentDescription" />
+                android:foreground="@drawable/background"
+                android:src="@drawable/promotion"
+                tools:ignore="ContentDescription"
+                android:scaleType="centerCrop"
+                />
 
             <TextView
                 android:id="@+id/tvSale"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/background"
-                android:gravity="left"
                 android:padding="10dp"
                 android:text="@string/flashsale"
                 android:textColor="@color/white"

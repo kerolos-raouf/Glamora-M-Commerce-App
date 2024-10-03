@@ -27,8 +27,9 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/menphoto"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                app:srcCompat="@drawable/men"
                 android:background="@android:color/transparent" />
         </androidx.cardview.widget.CardView>
 

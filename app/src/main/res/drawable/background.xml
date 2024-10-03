@@ -1,4 +1,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#80000000" /> <!-- Semi-transparent black -->
-    <corners android:radius="5dp" /> <!-- Match CardView corner radius -->
+    <gradient android:startColor="#80000000"
+        android:endColor="#00FFFFFF"
+        android:angle="270"/>
 </shape>
