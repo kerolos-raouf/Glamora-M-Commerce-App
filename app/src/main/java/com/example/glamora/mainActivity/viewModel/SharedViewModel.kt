@@ -60,4 +60,27 @@ class SharedViewModel @Inject constructor(
         }
     }
 
+    fun fetchDiscountCodes()
+    {
+        viewModelScope.launch {
+            repository.getDiscountCodes().collect{state->
+                when (state)
+                {
+                    is State.Error -> {
+                        Log.d("Kerolos", "fetchPriceRules: ${state.message}")
+                    }
+                    State.Loading -> {
+
+                    }
+                    is State.Success -> {
+                        for(item in state.data)
+                        {
+                            Log.d("Kerolos", "fetchPriceRules: ${item.id} ${item.code} ${item.percentage}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

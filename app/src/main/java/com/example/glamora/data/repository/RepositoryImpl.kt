@@ -1,13 +1,15 @@
 package com.example.glamora.data.repository
 
-import android.util.Log
 import com.apollographql.apollo.ApolloClient
+import com.example.DiscountCodesQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.util.State
+import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import kotlinx.coroutines.FlowPreview
@@ -30,7 +32,6 @@ class RepositoryImpl @Inject constructor(
 
             val productsResponse = apolloClient.query(ProductQuery()).execute()
             if (productsResponse.data != null) {
-                Log.d("Kerolos", "getProducts: ${productsResponse.data?.products}")
                 val productList = productsResponse.data?.products?.toProductDTO()
                 if (productList != null) {
                     emit(State.Success(productList))
@@ -58,7 +59,6 @@ class RepositoryImpl @Inject constructor(
             val priceRulesResponse = apolloClient.query(PriceRulesQuery()).execute()
             if (priceRulesResponse.data != null) {
 
-                Log.d("Kerolos", "getPriceRules: ${priceRulesResponse.data?.priceRules}")
                 val priceRulesList = priceRulesResponse.data?.priceRules?.toPriceRulesDTO()
                 if (priceRulesList != null) {
                     emit(State.Success(priceRulesList))
@@ -77,4 +77,33 @@ class RepositoryImpl @Inject constructor(
     }.timeout(15.seconds).catch {
         emit(State.Error(it.message.toString()))
     }
+
+    @OptIn(FlowPreview::class)
+    override fun getDiscountCodes(): Flow<State<List<DiscountCodeDTO>>> = flow {
+        emit(State.Loading)
+        try {
+
+            val discountCodesRulesResponse = apolloClient.query(DiscountCodesQuery()).execute()
+            if (discountCodesRulesResponse.data != null) {
+
+                val discountCodesList = discountCodesRulesResponse.data?.codeDiscountNodes?.toDiscountCodesDTO()
+                if (discountCodesList != null) {
+                    emit(State.Success(discountCodesList))
+                }else
+                {
+                    emit(State.Error("No products found"))
+                }
+            }else
+            {
+                emit(State.Error(discountCodesRulesResponse.errors.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }.timeout(15.seconds).catch {
+        emit(State.Error(it.message.toString()))
+    }
+
+
 }
