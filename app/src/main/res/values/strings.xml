@@ -29,4 +29,23 @@
     <string name="discount">Discount</string>
     <string name="enter_coupon_code">Enter Coupon Code</string>
     <string name="nike_air_zoom_pegasus_36_miami">Nike Air Zoom Pegasus 36 Miami</string>
+    <string name="favorite_button">Favourites</string>
+    <string name="men">Men</string>
+    <string name="women">Women</string>
+    <string name="kids">kids</string>
+    <string name="sale">Sale</string>
+    <string name="brands">Brands</string>
+    <string name="price">2000 EGP</string>
+    <string name="itemName">Nike Air Max 270 React ENG</string>
+    <string name="offer">24% Off</string>
+    <string name="pircesale">2600 EGP</string>
+    <string name="categories">Category</string>
+    <string name="brandname">Brand Name</string>
+    <string name="flashsale">Super Flash Sale\n50% Off</string>
+    <string name="recommend">Recommended Product</string>
+    <string name="counter">10</string>
+    <string name="recomtext">We recommend the best for you below</string>
+    <string name="recomtext2">Recomended\nProduct</string>
+    <string name="enter_phone">Enter Phone Number</string>
+    <string name="err_phone_msg">Oops! Phone Number is already exist</string>
 </resources>
