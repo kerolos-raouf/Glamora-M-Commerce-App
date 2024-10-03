@@ -11,7 +11,7 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".auth.LoginFragment">
+        tools:context=".fragmentLogin.view.LoginFragment">
 
 
         <ImageView
@@ -64,8 +64,8 @@
             android:layout_marginStart="34dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="34dp"
-            android:background="@drawable/button_background_err"
-            android:drawableStart="@drawable/ic_email_err"
+            android:background="@drawable/button_background"
+            android:drawableStart="@drawable/ic_email"
             android:drawablePadding="16dp"
             android:ems="10"
             android:hint="@string/enter_email"
@@ -89,7 +89,7 @@
             android:textColor="#FB7181"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_Email" />
