@@ -1,7 +1,9 @@
 package com.example.glamora.util
 
+import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.glamora.data.model.AvailableProductsModel
+import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 
 fun ProductQuery.Products.toProductDTO() : List<ProductDTO>
@@ -30,4 +32,19 @@ fun ProductQuery.Products.toProductDTO() : List<ProductDTO>
         ))
     }
     return products
+}
+
+fun PriceRulesQuery.PriceRules.toPriceRulesDTO() : List<PriceRulesDTO>
+{
+    val priceRules = mutableListOf<PriceRulesDTO>()
+
+    this.edges.forEach {
+        val idList = it.node.id.split("/")
+        priceRules.add(PriceRulesDTO(
+            id = idList[idList.size - 1],
+            percentage = it.node.value.onPriceRulePercentValue?.percentage ?: 0.0,
+        ))
+    }
+
+    return priceRules
 }
