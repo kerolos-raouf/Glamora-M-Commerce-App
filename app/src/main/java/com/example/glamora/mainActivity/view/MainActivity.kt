@@ -32,9 +32,6 @@ class MainActivity : AppCompatActivity(), Communicator {
         sharedViewModel.fetchPriceRules()
         sharedViewModel.fetchDiscountCodes()
         sharedViewModel.fetchCurrentCustomer()
-        Log.d("Kerolos", "onCreate: ${sharedViewModel.getCurrentCurrency()}")
-        sharedViewModel.setCurrentCurrency(Constants.USD)
-        Log.d("Kerolos", "onCreate: ${sharedViewModel.getCurrentCurrency()}")
 
 
         initView()

@@ -54,7 +54,7 @@
             android:gravity="center"
             android:text="@string/hello_anonymous"
             android:textColor="@color/dark_blue"
-            android:textSize="20sp"
+            android:textSize="18sp"
 
             app:layout_constraintBottom_toTopOf="@+id/profileSettingsLayout"
             app:layout_constraintStart_toEndOf="@+id/profileImage"
@@ -72,8 +72,8 @@
 
             <ImageView
                 android:id="@+id/profileSettingsIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginStart="20dp"
                 android:src="@drawable/icon_settings_blue"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -88,15 +88,15 @@
                 android:fontFamily="@font/poppines_extra_bold"
                 android:text="@string/settings"
                 android:textColor="@color/dark_blue"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/profileSettingsIcon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/profileSettingsEnterIcon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginEnd="10dp"
                 android:src="@drawable/icon_right_arrowsvg"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -117,8 +117,8 @@
 
             <ImageView
                 android:id="@+id/profileLogOutIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginStart="20dp"
                 android:src="@drawable/icon_log_out_red"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -133,7 +133,7 @@
                 android:fontFamily="@font/poppines_extra_bold"
                 android:text="@string/log_out"
                 android:textColor="@color/red"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/profileLogOutIcon"
                 app:layout_constraintTop_toTopOf="parent" />

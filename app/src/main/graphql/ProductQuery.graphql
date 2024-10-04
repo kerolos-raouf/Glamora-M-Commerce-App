@@ -61,19 +61,6 @@ query PriceRulesQuery {
     }
 }
 
-#query getDiscountCodes($priceRuleId: ID!) {
-#    priceRule(id: $priceRuleId) {
-#        discountCodes(first: 10) {
-#            edges {
-#                node {
-#                    id
-#                    code
-#                    usageCount
-#                }
-#            }
-#        }
-#    }
-#}
 
 query DiscountCodesQuery {
     codeDiscountNodes(first: 100) {
@@ -85,18 +72,6 @@ query DiscountCodesQuery {
                     summary
                 }
             }
-        }
-    }
-}
-
-query Collections {
-    collections(first: 13) {
-        nodes {
-            id
-            image {
-                url
-            }
-            title
         }
     }
 }
