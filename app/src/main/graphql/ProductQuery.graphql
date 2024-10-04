@@ -43,7 +43,7 @@ query ProductQuery {
     }
 }
 
-query PriceRules {
+query PriceRulesQuery {
     priceRules(first: 100) {
         edges {
             node {
@@ -60,5 +60,48 @@ query PriceRules {
         }
     }
 }
+
+#query getDiscountCodes($priceRuleId: ID!) {
+#    priceRule(id: $priceRuleId) {
+#        discountCodes(first: 10) {
+#            edges {
+#                node {
+#                    id
+#                    code
+#                    usageCount
+#                }
+#            }
+#        }
+#    }
+#}
+
+query DiscountCodesQuery {
+    codeDiscountNodes(first: 100) {
+        nodes {
+            id
+            codeDiscount {
+                ... on DiscountCodeBasic {
+                    title
+                    summary
+                }
+            }
+        }
+    }
+}
+
+query Brands {
+    collections(first: 13) {
+        nodes {
+            id
+            image {
+                url
+            }
+            title
+        }
+    }
+}
+
+
+
 
 
