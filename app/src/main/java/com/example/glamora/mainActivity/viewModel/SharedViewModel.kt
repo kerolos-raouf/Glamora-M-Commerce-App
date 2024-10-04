@@ -106,14 +106,14 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun setCurrentCurrency(currency: String)
+    fun setSharedPrefString(key: String,value: String)
     {
-        repository.setSharedPrefString(Constants.CURRENCY_KEY, currency)
+        repository.setSharedPrefString(key, value)
     }
 
-    fun getCurrentCurrency() : String
+    fun getSharedPrefString(key: String, defaultValue: String) : String
     {
-        return repository.getSharedPrefString(Constants.CURRENCY_KEY, Constants.EGP)
+        return repository.getSharedPrefString(key, defaultValue)
     }
 
 }
