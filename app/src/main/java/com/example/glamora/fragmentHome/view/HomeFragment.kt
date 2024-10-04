@@ -18,6 +18,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.network.ApolloClientInterceptor
 import com.example.glamora.data.repository.RepositoryImpl
 import com.example.glamora.databinding.FragmentHomeBinding
+import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -27,7 +28,9 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: SharedViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var productsAdapter: ProductsAdapter
+    private lateinit var brandsAdapter: BrandsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,13 +43,16 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupRecyclerView()
+        setupRandomItemsRecyclerView()
+        setupBrandsRecyclerView()
 
-        observeProducts()
+        observeRandomProducts()
+        observeBrands()
+
 
     }
 
-    private fun setupRecyclerView() {
+    private fun setupRandomItemsRecyclerView() {
         productsAdapter = ProductsAdapter(emptyList())
         binding.homeRvItem.apply {
             layoutManager = GridLayoutManager(context,2)
@@ -54,7 +60,15 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun observeProducts() {
+    private fun setupBrandsRecyclerView() {
+        brandsAdapter = BrandsAdapter(emptyList())
+        binding.homeRvBrand.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = brandsAdapter
+        }
+    }
+
+    private fun observeRandomProducts() {
         lifecycleScope.launch {
             viewModel.productList.collect { productList ->
                 val randomProducts = productList.shuffled().take(10)
@@ -63,6 +77,14 @@ class HomeFragment : Fragment() {
                 binding.homeRvItem.adapter = productsAdapter
             }
 
+        }
+    }
+
+    private fun observeBrands() {
+        lifecycleScope.launch {
+            homeViewModel.brandsList.collect { brandsList ->
+                brandsAdapter.updateData(brandsList)
+            }
         }
     }
 

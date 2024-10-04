@@ -1,6 +1,8 @@
 package com.example.glamora.data.repository
 
+import android.util.Log
 import com.apollographql.apollo.ApolloClient
+import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
@@ -8,7 +10,9 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
+import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.util.State
+import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
@@ -102,6 +106,33 @@ class RepositoryImpl @Inject constructor(
             emit(State.Error(e.message.toString()))
         }
     }.timeout(15.seconds).catch {
+        emit(State.Error(it.message.toString()))
+    }
+
+    @OptIn(FlowPreview::class)
+    override fun getAllBrands(): Flow<State<List<Brands>>> = flow {
+        emit(State.Loading)
+        try {
+
+            val brandResponse = apolloClient.query(BrandsQuery()).execute()
+            if (brandResponse.data != null) {
+                val brandsList = brandResponse.data!!.collections.toBrandDTO()
+                if (brandsList != null) {
+                    emit(State.Success(brandsList))
+                }else
+                {
+                    emit(State.Error("No Brands found"))
+                }
+            }else
+            {
+                emit(State.Error(brandResponse.errors.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+        .timeout(15.seconds).catch {
         emit(State.Error(it.message.toString()))
     }
 

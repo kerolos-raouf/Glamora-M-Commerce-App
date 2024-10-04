@@ -89,6 +89,18 @@ query DiscountCodesQuery {
     }
 }
 
+query Brands {
+    collections(first: 13) {
+        nodes {
+            id
+            image {
+                url
+            }
+            title
+        }
+    }
+}
+
 
 
 
