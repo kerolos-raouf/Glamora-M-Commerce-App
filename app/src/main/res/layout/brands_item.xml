@@ -44,9 +44,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@{brands.title}"
-            android:textSize="15sp"
-            android:textColor="@color/gray"
-            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/dark_blue"
             app:layout_constraintEnd_toEndOf="@+id/brand_cardview"
             app:layout_constraintStart_toStartOf="@+id/brand_cardview"
             app:layout_constraintTop_toBottomOf="@+id/brand_cardview" />
