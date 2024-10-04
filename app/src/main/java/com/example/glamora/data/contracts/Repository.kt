@@ -35,5 +35,7 @@ interface Repository {
 
     fun getSharedPrefBoolean(key: String, defaultValue: Boolean) : Boolean
 
+    suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String)
+
 
 }
