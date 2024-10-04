@@ -4,15 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="product"
+            type="com.example.glamora.data.model.ProductDTO" />
     </data>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardview_itemlist"
-        android:layout_width="190dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
         app:cardCornerRadius="5dp"
         app:cardElevation="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginStart="3dp"
         app:cardUseCompatPadding="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,11 +31,11 @@
                 android:id="@+id/image_cardview_itemlist"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:background="@color/light_gray"
+                android:src="@drawable/product"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/product"
+                app:srcCompat="@{product.mainImage}"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -38,7 +43,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="@string/itemName"
+                android:text="@{product.title}"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -58,6 +65,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:stepSize="0.5"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -69,13 +77,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
-                android:text="@string/price"
+                android:text="@{product.availableProducts[0].price}"
                 android:textColor="@color/blue"
                 android:textSize="12sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rating_cardview_itemlist" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/originalPrice_cardview_itemlist"
@@ -85,8 +93,8 @@
                 android:text="@string/pircesale"
                 android:textColor="@color/gray"
                 android:textSize="13sp"
-                app:layout_constraintStart_toStartOf="parent"
                 android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/itemPrice_cardview_itemlist" />
 
             <TextView

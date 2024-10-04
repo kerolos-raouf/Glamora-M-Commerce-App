@@ -43,6 +43,54 @@ query ProductQuery {
     }
 }
 
+query PriceRulesQuery {
+    priceRules(first: 100) {
+        edges {
+            node {
+                id
+                value {
+                    ... on PriceRuleFixedAmountValue {
+                        amount
+                    }
+                    ... on PriceRulePercentValue {
+                        percentage
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+query DiscountCodesQuery {
+    codeDiscountNodes(first: 100) {
+        nodes {
+            id
+            codeDiscount {
+                ... on DiscountCodeBasic {
+                    title
+                    summary
+                }
+            }
+        }
+    }
+}
+
+query Brands {
+    collections(first: 13) {
+        nodes {
+            id
+            image {
+                url
+            }
+            title
+        }
+    }
+}
+
+
+
 
 
 

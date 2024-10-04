@@ -48,4 +48,19 @@
     <string name="recomtext2">Recomended\nProduct</string>
     <string name="enter_phone">Enter Phone Number</string>
     <string name="err_phone_msg">Oops! Phone Number is already exist</string>
+    <string name="your_cart">Your Cart</string>
+    <string name="settings">Settings</string>
+    <string name="app_settings">App Settings</string>
+    <string name="currency">Currency</string>
+    <string name="profile">Profile</string>
+    <string name="hello_anonymous">Hello, Anonymous</string>
+    <string name="log_out">Log Out</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="cart">Cart</string>
+    <string name="delivery_location">Delivery Location</string>
+    <string name="cateory">Category</string>
+    <string name="filter">Filter</string>
+    <string name="back_button">Back</string>
+    <string name="shipping">Shipping</string>
 </resources>

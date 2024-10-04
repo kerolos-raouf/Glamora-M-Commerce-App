@@ -1,15 +1,17 @@
-package com.example.glamora
+package com.example.glamora.fragmentProductList
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.glamora.R
 
-class HomeFragment : Fragment() {
+class ProductListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -17,7 +19,9 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_frgament, container, false)
+        return inflater.inflate(R.layout.fragment_product_list, container, false)
     }
+
+
 
 }
