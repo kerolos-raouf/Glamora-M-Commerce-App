@@ -31,4 +31,13 @@
         android:name="com.example.glamora.fragmentSignup.view.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.glamora.fragmentProfile.view.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.glamora.fragmentSettings.view.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

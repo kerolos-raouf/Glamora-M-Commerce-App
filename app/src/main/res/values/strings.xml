@@ -53,4 +53,9 @@
     <string name="app_settings">App Settings</string>
     <string name="currency">Currency</string>
     <string name="profile">Profile</string>
+    <string name="hello_anonymous">Hello, Anonymous</string>
+    <string name="log_out">Log Out</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="cart">Cart</string>
 </resources>
