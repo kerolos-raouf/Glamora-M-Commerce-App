@@ -19,10 +19,6 @@ class SharedViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
-
-    private val _productList = MutableStateFlow<List<ProductDTO>>(emptyList())
-    val productList: StateFlow<List<ProductDTO>> get() = _productList
-
     fun fetchProducts()
     {
         viewModelScope.launch {
@@ -36,7 +32,6 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
-                        _productList.value = state.data
                         Log.d("Kerolos", "fetchProducts: ${state.data.size}")
                     }
                 }
