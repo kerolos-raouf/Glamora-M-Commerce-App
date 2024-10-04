@@ -70,8 +70,7 @@ class HomeFragment : Fragment() {
 
     private fun observeRandomProducts() {
         lifecycleScope.launch {
-            viewModel.productList.collect { productList ->
-                val randomProducts = productList.shuffled().take(10)
+            homeViewModel.randomProductList.collect { randomProducts ->
                 productsAdapter.updateData(randomProducts)
                 productsAdapter = ProductsAdapter(randomProducts)
                 binding.homeRvItem.adapter = productsAdapter
