@@ -28,6 +28,8 @@ import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -38,10 +40,13 @@ class HomeFragment : Fragment() {
     private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var productsAdapter: ProductsAdapter
     private lateinit var brandsAdapter: BrandsAdapter
+    private lateinit var mAdapter: DiscountCodesAdapter
 
     private val clipboardManager : ClipboardManager by lazy {
         requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     }
+
+    private var currentIndex = 0;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -89,7 +94,7 @@ class HomeFragment : Fragment() {
             R.drawable.promotion4,
             R.drawable.promotion5
         )
-        val mAdapter = DiscountCodesAdapter(
+        mAdapter = DiscountCodesAdapter(
             imagesList,
             object : DiscountCodeListener {
                 override fun onDiscountCodeClicked(discountCode: DiscountCodeDTO) {
@@ -108,7 +113,22 @@ class HomeFragment : Fragment() {
             {
                 sharedViewModel.discountCodes.collect{
                     mAdapter.submitList(it)
+                    if(it.isNotEmpty()){
+                        autoScrollForRecyclerView()
+                    }
                 }
+            }
+
+        }
+    }
+
+    private fun autoScrollForRecyclerView()
+    {
+        lifecycleScope.launch(Dispatchers.Default) {
+            while (true)
+            {
+                delay(3000)
+                binding.homeRvOffers.smoothScrollToPosition((++currentIndex) % mAdapter.itemCount)
             }
         }
     }
