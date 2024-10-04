@@ -20,7 +20,7 @@
             android:id="@+id/cartItemImage"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:src="@drawable/product_shoes"
+            android:src="@drawable/product"
             android:background="@color/light_gray"
             android:layout_margin="20dp"
             app:layout_constraintBottom_toBottomOf="parent"

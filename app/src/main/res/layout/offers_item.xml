@@ -12,19 +12,18 @@
         android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cvOffer"
+            android:id="@+id/offer_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="5dp"
             app:cardElevation="4dp"
-            app:cardUseCompatPadding="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imgoffer"
+                android:id="@+id/offer_image_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:foreground="@drawable/background"
@@ -34,7 +33,7 @@
                 />
 
             <TextView
-                android:id="@+id/tvSale"
+                android:id="@+id/textview_sale_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="10dp"
