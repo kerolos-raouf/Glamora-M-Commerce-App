@@ -85,7 +85,7 @@ apollo{
         packageName.set("com.example")
         introspection {
             endpointUrl.set("https://android-alex-team1.myshopify.com/admin/api/2023-01/graphql.json")
-            headers.put("X-Shopify-Access-Token", adminApiAccessToken)
+            headers.put("X-Shopify-Access-Token", "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")
             schemaFile.set(file("src/main/graphql/schema.graphqls"))
         }
     }
@@ -154,4 +154,8 @@ dependencies {
     // Apollo Client for GraphQL
     implementation(libs.apollo.runtime)
     //implementation("com.apollographql.apollo3:apollo-api::4.0.1")
+
+    // google Auth
+    implementation (libs.play.services.auth)
+
 }
