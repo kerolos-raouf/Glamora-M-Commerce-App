@@ -1,5 +1,6 @@
 package com.example.glamora.util
 
+import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
@@ -7,6 +8,9 @@ import com.example.glamora.data.model.AvailableProductsModel
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
+import com.example.glamora.data.model.brandModel.Brands
+import com.example.glamora.data.model.brandModel.Image
+
 
 fun ProductQuery.Products.toProductDTO() : List<ProductDTO>
 {
@@ -66,3 +70,28 @@ fun DiscountCodesQuery.CodeDiscountNodes.toDiscountCodesDTO() : List<DiscountCod
 
     return discountCodes
 }
+
+fun BrandsQuery.Collections.toBrandDTO(): List<Brands> {
+    val brandsItem = mutableListOf<Brands>()
+
+    this.nodes.forEachIndexed { index, node ->
+        if (index > 0 && node.image != null) {
+            val splitId = node.id.split("/")
+            val brandId = splitId.last()
+
+            val brand = Brands(
+                id = brandId,
+                image = Image(node.image.url.toString()),
+                title = node.title
+            )
+            brandsItem.add(brand)
+        }
+    }
+
+    return brandsItem
+}
+
+
+
+
+
