@@ -3,8 +3,6 @@ package com.example.glamora.fragmentSignup.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Optional
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.firebase.FirebaseHandler
 import com.example.glamora.data.firebase.SignUpState
@@ -12,13 +10,10 @@ import com.example.glamora.util.getFirstAndLastName
 import com.example.glamora.util.isNotShort
 import com.example.glamora.util.isPasswordEqualRePassword
 import com.example.glamora.util.isValidEmail
-import com.example.type.CustomerInput
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,24 +48,19 @@ class SignUpViewModel  @Inject constructor(
                     firebaseHandler.signUp(email, password) { success, errorMessage ->
                         if (success) {
                             val (firstName, lastName) = getFirstAndLastName(name)
-                            launch {
-                                val customerInput = CustomerInput(
-                                    email = Optional.present(email),
-                                    firstName = Optional.present(firstName),
-                                    lastName = Optional.present(lastName),
-                                    //phone = Optional.present(phone)
-                                )
-                                val response = repository.createCustomer(customerInput)
 
-                                if (response.hasErrors()) {
-                                    SignUpState.Error(errorMessage?:"Sign-up failed in shopify")
-                                } else {
-                                    SignUpState.Success
+                            // No need for nested launch, just call repository
+                            viewModelScope.launch {
+                                try {
+                                    repository.createShopifyUser(email, firstName, lastName, phone)
+                                    Log.d("Abanob", "After validateAndSignUp: User created in Shopify")
+                                    _signUpState.value = SignUpState.Success
+                                } catch (e: Exception) {
+                                    _signUpState.value = SignUpState.Error("Failed to create Shopify user: ${e.message}")
                                 }
                             }
                         } else {
-                            _signUpState.value =
-                                SignUpState.Error(errorMessage ?: "Sign-up failed.")
+                            _signUpState.value = SignUpState.Error(errorMessage ?: "Sign-up failed.")
                         }
                     }
                 } else {

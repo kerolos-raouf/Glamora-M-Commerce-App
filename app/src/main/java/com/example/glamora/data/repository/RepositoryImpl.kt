@@ -3,6 +3,7 @@ package com.example.glamora.data.repository
 import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.ApolloResponse
+import com.apollographql.apollo.api.Optional
 import com.example.CreateCustomerMutation
 import com.example.ProductQuery
 import com.example.glamora.data.contracts.Repository
@@ -50,9 +51,45 @@ class RepositoryImpl @Inject constructor(
         emit(State.Error(it.message.toString()))
     }
 
-    override suspend fun createCustomer(customerInput: CustomerInput): ApolloResponse<CreateCustomerMutation.Data> {
-        return withContext(Dispatchers.IO) {
-            apolloClient.mutation(CreateCustomerMutation(customerInput)).execute()
+    override suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String) {
+
+        val client = apolloClient
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "unknown"
+
+        Log.d("Abanob", "createShopifyUser: $userId")
+
+        // Create mutation to add the customer to Shopify
+        val customerInput = CustomerInput(
+            email = Optional.Present(email),
+            firstName = Optional.Present(firstName),
+            lastName = Optional.Present(lastName),
+            tags = Optional.Present(listOf(userId))
+        )
+
+        // Create mutation with the CustomerInput
+        val mutation = CreateCustomerMutation(customerInput)
+
+        try {
+            val response = client.mutation(mutation).execute()
+
+            Log.d("Abanob", "createShopifyUser: ${response.data}")
+
+            if (response.hasErrors()) {
+                Log.e("Abanob", "Error creating user: ${response.errors}")
+            } else {
+                val shopifyUserId = response.data?.customerCreate?.customer?.id
+
+                Log.d("Abanob", "User created successfully in Shopify: $shopifyUserId")
+                Log.d("Abanob", "Firebase User ID: $userId, Shopify User ID: $shopifyUserId")
+
+                // Ensure both User IDs are logged properly
+                Log.d("Abanob", "Firebase ID: $userId")
+                Log.d("Abanob", "Shopify ID: $shopifyUserId")
+
+                // Optionally, you can return the Shopify user ID or handle it as needed
+            }
+        } catch (e: Exception) {
+            Log.e("Abanob", "Mutation failed: ${e.message}")
         }
     }
 }

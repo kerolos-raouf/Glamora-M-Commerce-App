@@ -11,6 +11,6 @@ interface Repository {
 
     fun getProducts() : Flow<State<List<ProductDTO>>>
 
-    suspend fun createCustomer(customerInput: CustomerInput): ApolloResponse<CreateCustomerMutation.Data>
+    suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String)
 
 }
