@@ -42,4 +42,21 @@
     <string name="cateory">Category</string>
     <string name="filter">Filter</string>
     <string name="back_button">Back</string>
+    <string name="lets_started">Let’s Get Started</string>
+    <string name="create_account">Create an new account</string>
+    <string name="err_name_msg">Oops! Your Name Is Too Small</string>
+    <string name="err_repass_msg">Oops! Password Is Not Matching</string>
+    <string name="err_pass_msg2">Oops! Your Password Is Too Small</string>
+    <string name="enter_name">Full Name</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="have_account">have a account?</string>
+    <string name="enter_phone">Enter Phone Number</string>
+    <string name="err_phone_msg">Oops! Phone Number is already exist</string>
+    <string name="your_cart">Your Cart</string>
+    <string name="settings">Settings</string>
+    <string name="app_settings">App Settings</string>
+    <string name="currency">Currency</string>
+    <string name="profile">Profile</string>
+
+
 </resources>

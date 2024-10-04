@@ -42,3 +42,54 @@ query ProductQuery {
         }
     }
 }
+
+query PriceRulesQuery {
+    priceRules(first: 100) {
+        edges {
+            node {
+                id
+                value {
+                    ... on PriceRuleFixedAmountValue {
+                        amount
+                    }
+                    ... on PriceRulePercentValue {
+                        percentage
+                    }
+                }
+            }
+        }
+    }
+}
+
+#query getDiscountCodes($priceRuleId: ID!) {
+#    priceRule(id: $priceRuleId) {
+#        discountCodes(first: 10) {
+#            edges {
+#                node {
+#                    id
+#                    code
+#                    usageCount
+#                }
+#            }
+#        }
+#    }
+#}
+
+query DiscountCodesQuery {
+    codeDiscountNodes(first: 100) {
+        nodes {
+            id
+            codeDiscount {
+                ... on DiscountCodeBasic {
+                    title
+                    summary
+                }
+            }
+        }
+    }
+}
+
+
+
+
+

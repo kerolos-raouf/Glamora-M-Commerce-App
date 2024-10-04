@@ -1,7 +1,11 @@
 package com.example.glamora.util
 
+import com.example.DiscountCodesQuery
+import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.glamora.data.model.AvailableProductsModel
+import com.example.glamora.data.model.DiscountCodeDTO
+import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 
 fun ProductQuery.Products.toProductDTO() : List<ProductDTO>
@@ -30,4 +34,35 @@ fun ProductQuery.Products.toProductDTO() : List<ProductDTO>
         ))
     }
     return products
+}
+
+fun PriceRulesQuery.PriceRules.toPriceRulesDTO() : List<PriceRulesDTO>
+{
+    val priceRules = mutableListOf<PriceRulesDTO>()
+
+    this.edges.forEach {
+        val idList = it.node.id.split("/")
+        priceRules.add(PriceRulesDTO(
+            id = idList[idList.size - 1],
+            percentage = it.node.value.onPriceRulePercentValue?.percentage ?: 0.0,
+        ))
+    }
+
+    return priceRules
+}
+
+fun DiscountCodesQuery.CodeDiscountNodes.toDiscountCodesDTO() : List<DiscountCodeDTO> {
+    val discountCodes = mutableListOf<DiscountCodeDTO>()
+
+    this.nodes.forEach {
+        val percentage = it.codeDiscount.onDiscountCodeBasic?.summary?.split("%")?.get(0)?.toDoubleOrNull()
+        val idList = it.id.split("/")
+        discountCodes.add(DiscountCodeDTO(
+            id = idList[idList.size - 1],
+            code = it.codeDiscount.onDiscountCodeBasic?.title ?: "",
+            percentage = percentage ?: 0.0,
+        ))
+    }
+
+    return discountCodes
 }

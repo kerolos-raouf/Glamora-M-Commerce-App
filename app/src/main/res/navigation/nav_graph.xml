@@ -16,12 +16,19 @@
         tools:layout="@layout/fragment_cart" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.glamora.auth.LoginFragment"
+        android:name="com.example.glamora.fragmentLogin.view.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.example.glamora.auth.SignUpFragment"
+        android:name="com.example.glamora.fragmentSignup.view.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" />
 </navigation>
