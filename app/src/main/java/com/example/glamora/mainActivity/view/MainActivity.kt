@@ -2,6 +2,7 @@ package com.example.glamora.mainActivity.view
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 
@@ -16,7 +17,7 @@ import com.example.glamora.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Communicator {
 
     private lateinit var binding : ActivityMainBinding
     private lateinit var navController : NavController
@@ -31,9 +32,6 @@ class MainActivity : AppCompatActivity() {
         sharedViewModel.fetchPriceRules()
         sharedViewModel.fetchDiscountCodes()
         sharedViewModel.fetchCurrentCustomer()
-        Log.d("Kerolos", "onCreate: ${sharedViewModel.getCurrentCurrency()}")
-        sharedViewModel.setCurrentCurrency(Constants.USD)
-        Log.d("Kerolos", "onCreate: ${sharedViewModel.getCurrentCurrency()}")
 
 
         initView()
@@ -45,5 +43,13 @@ class MainActivity : AppCompatActivity() {
         navController = findNavController(R.id.fragmentContainer)
 
         binding.bottomNavigationView.setupWithNavController(navController)
+    }
+
+    override fun hideBottomNav() {
+        binding.bottomNavigationView.visibility = View.GONE
+    }
+
+    override fun showBottomNav() {
+        binding.bottomNavigationView.visibility = View.VISIBLE
     }
 }
