@@ -15,5 +15,20 @@ interface Repository {
 
     fun getDiscountCodes() : Flow<State<List<DiscountCodeDTO>>>
 
-     fun getAllBrands(): Flow<State<List<Brands>>>
+    fun getAllBrands(): Flow<State<List<Brands>>>
+
+    //retrofit
+    fun getCustomerUsingEmail(email: String) : Flow<State<Customer>>
+
+
+    //shared pref
+    fun setSharedPrefString(key: String, value: String)
+
+    fun getSharedPrefString(key: String, defaultValue: String) : String
+
+    fun setSharedPrefBoolean(key: String, value: Boolean)
+
+    fun getSharedPrefBoolean(key: String, defaultValue: Boolean) : Boolean
+
+
 }

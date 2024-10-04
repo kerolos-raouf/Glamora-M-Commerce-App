@@ -1,6 +1,5 @@
 package com.example.glamora.data.repository
 
-import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
@@ -11,6 +10,7 @@ import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
+import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
@@ -25,7 +25,9 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 class RepositoryImpl @Inject constructor(
-    private val apolloClient: ApolloClient
+    private val apolloClient: ApolloClient,
+    private val remoteDataSource: RemoteDataSource,
+    private val sharedPrefHandler: SharedPrefHandler
 ) : Repository {
 
 
@@ -133,7 +135,48 @@ class RepositoryImpl @Inject constructor(
         }
     }
         .timeout(15.seconds).catch {
-        emit(State.Error(it.message.toString()))
+            emit(State.Error(it.message.toString()))
+        }
+
+    override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {
+        emit(State.Loading)
+        try {
+            val customerResponse = remoteDataSource.getCustomersUsingEmail(email)
+            if (customerResponse.isSuccessful)
+            {
+                if (customerResponse.body()?.customers != null
+                    && customerResponse.body()?.customers?.size!! > 0
+                    && customerResponse.body()?.customers?.get(0) != null)
+                {
+                    emit(State.Success(customerResponse.body()?.customers?.get(0)!!))
+                }else
+                {
+                    emit(State.Error(Constants.CUSTOMER_NOT_FOUND))
+                }
+            }else
+            {
+                emit(State.Error(customerResponse.message()))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun setSharedPrefString(key: String, value: String) {
+        sharedPrefHandler.setSharedPrefString(key, value)
+    }
+
+    override fun getSharedPrefString(key: String, defaultValue: String): String {
+        return sharedPrefHandler.getSharedPrefString(key, defaultValue)
+    }
+
+    override fun setSharedPrefBoolean(key: String, value: Boolean) {
+        sharedPrefHandler.setSharedPrefBoolean(key, value)
+    }
+
+    override fun getSharedPrefBoolean(key: String, defaultValue: Boolean): Boolean {
+        return sharedPrefHandler.getSharedPrefBoolean(key, defaultValue)
     }
 
 

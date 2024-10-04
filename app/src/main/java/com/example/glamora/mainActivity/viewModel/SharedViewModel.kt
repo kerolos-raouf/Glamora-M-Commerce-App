@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.ProductDTO
+import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
+
 
     private val _productList = MutableStateFlow<List<ProductDTO>>(emptyList())
     val productList: StateFlow<List<ProductDTO>> get() = _productList
@@ -86,6 +88,37 @@ class SharedViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+
+    fun fetchCurrentCustomer() {
+        viewModelScope.launch {
+            repository.getCustomerUsingEmail("kerolos.raouf5600@gmail.com").collect { state ->
+                when (state) {
+                    is State.Error -> {
+                        Log.d("Kerolos", "fetchCurrentCustomer: ${state.message}")
+                    }
+
+                    State.Loading -> {
+
+                    }
+
+                    is State.Success -> {
+                        Log.d("Kerolos", "fetchCurrentCustomer: ${state.data}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun setCurrentCurrency(currency: String)
+    {
+        repository.setSharedPrefString(Constants.CURRENCY_KEY, currency)
+    }
+
+    fun getCurrentCurrency() : String
+    {
+        return repository.getSharedPrefString(Constants.CURRENCY_KEY, Constants.EGP)
     }
 
 }
