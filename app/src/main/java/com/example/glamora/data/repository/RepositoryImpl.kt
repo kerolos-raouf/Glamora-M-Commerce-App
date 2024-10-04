@@ -1,7 +1,10 @@
 package com.example.glamora.data.repository
 
+import android.util.Log
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Optional
 import com.example.BrandsQuery
+import com.example.CreateCustomerMutation
 import com.example.DiscountCodesQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
@@ -19,6 +22,8 @@ import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
+import com.example.type.CustomerInput
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -41,6 +46,7 @@ class RepositoryImpl @Inject constructor(
 
             val productsResponse = apolloClient.query(ProductQuery()).execute()
             if (productsResponse.data != null) {
+                Log.d("Kerolos", "getProducts: ${productsResponse.data?.products}")
                 val productList = productsResponse.data?.products?.toProductDTO()
                 if (productList != null) {
                     emit(State.Success(productList))
@@ -182,5 +188,47 @@ class RepositoryImpl @Inject constructor(
         return sharedPrefHandler.getSharedPrefBoolean(key, defaultValue)
     }
 
+
+    override suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String) {
+
+        val client = apolloClient
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "unknown"
+
+        Log.d("Abanob", "createShopifyUser: $userId")
+
+        // Create mutation to add the customer to Shopify
+        val customerInput = CustomerInput(
+            email = Optional.Present(email),
+            firstName = Optional.Present(firstName),
+            lastName = Optional.Present(lastName),
+            tags = Optional.Present(listOf(userId))
+        )
+
+        // Create mutation with the CustomerInput
+        val mutation = CreateCustomerMutation(customerInput)
+
+        try {
+            val response = client.mutation(mutation).execute()
+
+            Log.d("Abanob", "createShopifyUser: ${response.data}")
+
+            if (response.hasErrors()) {
+                Log.e("Abanob", "Error creating user: ${response.errors}")
+            } else {
+                val shopifyUserId = response.data?.customerCreate?.customer?.id
+
+                Log.d("Abanob", "User created successfully in Shopify: $shopifyUserId")
+                Log.d("Abanob", "Firebase User ID: $userId, Shopify User ID: $shopifyUserId")
+
+                // Ensure both User IDs are logged properly
+                Log.d("Abanob", "Firebase ID: $userId")
+                Log.d("Abanob", "Shopify ID: $shopifyUserId")
+
+                // Optionally, you can return the Shopify user ID or handle it as needed
+            }
+        } catch (e: Exception) {
+            Log.e("Abanob", "Mutation failed: ${e.message}")
+        }
+    }
 
 }
