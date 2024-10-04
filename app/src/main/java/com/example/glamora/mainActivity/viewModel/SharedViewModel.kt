@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
@@ -19,9 +20,8 @@ class SharedViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
-
-    private val _productList = MutableStateFlow<List<ProductDTO>>(emptyList())
-    val productList: StateFlow<List<ProductDTO>> get() = _productList
+    private val _discountCodes = MutableStateFlow<List<DiscountCodeDTO>>(emptyList())
+    val discountCodes: StateFlow<List<DiscountCodeDTO>> = _discountCodes
 
     fun fetchProducts()
     {
@@ -36,7 +36,6 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
-                        _productList.value = state.data
                         Log.d("Kerolos", "fetchProducts: ${state.data.size}")
                     }
                 }
@@ -80,10 +79,7 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
-                        for(item in state.data)
-                        {
-                            Log.d("Kerolos", "fetchPriceRules: ${item.id} ${item.code} ${item.percentage}")
-                        }
+                        _discountCodes.value = state.data
                     }
                 }
             }
