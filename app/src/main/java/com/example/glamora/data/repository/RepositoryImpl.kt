@@ -1,12 +1,15 @@
 package com.example.glamora.data.repository
 
+import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
+import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
@@ -136,10 +139,38 @@ class RepositoryImpl @Inject constructor(
         {
             emit(State.Error(e.message.toString()))
         }
-    }
-        .timeout(15.seconds).catch {
+    }.timeout(15.seconds).catch {
             emit(State.Error(it.message.toString()))
+    }
+
+    override fun getCartItemsForCustomer(customerId: String) : Flow<State<List<CartItemDTO>>> = flow {
+        emit(State.Loading)
+        try {
+
+            val cartItemsResponse = apolloClient.query(GetDraftOrdersByCustomerQuery(
+                query = "{\"query\": \"customer_id:$customerId\"}"
+            )).execute()
+            if (cartItemsResponse.data != null) {
+
+                val draftOrdersResponse = cartItemsResponse.data?.draftOrders
+                Log.d("Kerolos", "getCartItemsForCustomer: ${draftOrdersResponse?.nodes?.size}")
+                if (draftOrdersResponse != null) {
+                    //emit(State.Success(discountCodesList))
+                }else
+                {
+                    emit(State.Error("No products found"))
+                }
+            }else
+            {
+                emit(State.Error(cartItemsResponse.errors.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
         }
+    }.timeout(15.seconds).catch {
+        emit(State.Error(it.message.toString()))
+    }
 
     override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {
         emit(State.Loading)
