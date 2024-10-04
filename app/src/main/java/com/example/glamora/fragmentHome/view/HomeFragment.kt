@@ -1,20 +1,27 @@
 package com.example.glamora.fragmentHome.view
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apollographql.apollo.ApolloClient
 import com.example.glamora.R
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.network.ApolloClientInterceptor
 import com.example.glamora.data.repository.RepositoryImpl
 import com.example.glamora.databinding.FragmentHomeBinding
@@ -27,10 +34,14 @@ import kotlinx.coroutines.launch
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
-    private val viewModel: SharedViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var productsAdapter: ProductsAdapter
     private lateinit var brandsAdapter: BrandsAdapter
+
+    private val clipboardManager : ClipboardManager by lazy {
+        requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +56,7 @@ class HomeFragment : Fragment() {
 
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()
+        setupDiscountCodesRecyclerView()
 
         observeRandomProducts()
         observeBrands()
@@ -65,6 +77,39 @@ class HomeFragment : Fragment() {
         binding.homeRvBrand.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = brandsAdapter
+        }
+    }
+
+    private fun setupDiscountCodesRecyclerView() {
+
+        val imagesList = listOf(
+            R.drawable.promotion,
+            R.drawable.promotion2,
+            R.drawable.promotion3,
+            R.drawable.promotion4,
+            R.drawable.promotion5
+        )
+        val mAdapter = DiscountCodesAdapter(
+            imagesList,
+            object : DiscountCodeListener {
+                override fun onDiscountCodeClicked(discountCode: DiscountCodeDTO) {
+                    val clipData = ClipData.newPlainText("Promotion Code", discountCode.code)
+                    clipboardManager.setPrimaryClip(clipData)
+                    Toast.makeText(context, "Promotion Code Copied ${discountCode.code}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+        binding.homeRvOffers.apply {
+            adapter = mAdapter
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED)
+            {
+                sharedViewModel.discountCodes.collect{
+                    mAdapter.submitList(it)
+                }
+            }
         }
     }
 
