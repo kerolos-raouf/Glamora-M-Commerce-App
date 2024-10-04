@@ -25,7 +25,6 @@ class HomeViewModel  @Inject constructor(
     private val _brandsList = MutableStateFlow<List<Brands>>(emptyList())
     val brandsList: StateFlow<List<Brands>> get() = _brandsList
 
-
     private val _randomProductList = MutableStateFlow<List<ProductDTO>>(emptyList())
     val randomProductList: StateFlow<List<ProductDTO>> get() = _randomProductList
 
@@ -68,5 +67,8 @@ class HomeViewModel  @Inject constructor(
             }
         }
     }
+
+
+
 
 }
