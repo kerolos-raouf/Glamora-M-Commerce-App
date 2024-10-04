@@ -5,11 +5,14 @@ import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
+import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
+import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import com.example.glamora.util.toBrandDTO

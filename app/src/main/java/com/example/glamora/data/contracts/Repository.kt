@@ -1,5 +1,6 @@
 package com.example.glamora.data.contracts
 
+import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
