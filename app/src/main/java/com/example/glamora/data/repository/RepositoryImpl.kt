@@ -4,10 +4,14 @@ import com.apollographql.apollo.ApolloClient
 import com.example.DiscountCodesQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
+import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
+import com.example.glamora.data.network.RetrofitInterface
+import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
@@ -21,7 +25,8 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 class RepositoryImpl @Inject constructor(
-    private val apolloClient: ApolloClient
+    private val apolloClient: ApolloClient,
+    private val remoteDataSource: RemoteDataSource
 ) : Repository {
 
 
@@ -103,6 +108,31 @@ class RepositoryImpl @Inject constructor(
         }
     }.timeout(15.seconds).catch {
         emit(State.Error(it.message.toString()))
+    }
+
+    override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {
+        emit(State.Loading)
+        try {
+            val customerResponse = remoteDataSource.getCustomersUsingEmail(email)
+            if (customerResponse.isSuccessful)
+            {
+                if (customerResponse.body()?.customers != null
+                    && customerResponse.body()?.customers?.size!! > 0
+                    && customerResponse.body()?.customers?.get(0) != null)
+                {
+                    emit(State.Success(customerResponse.body()?.customers?.get(0)!!))
+                }else
+                {
+                    emit(State.Error(Constants.CUSTOMER_NOT_FOUND))
+                }
+            }else
+            {
+                emit(State.Error(customerResponse.message()))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
     }
 
 

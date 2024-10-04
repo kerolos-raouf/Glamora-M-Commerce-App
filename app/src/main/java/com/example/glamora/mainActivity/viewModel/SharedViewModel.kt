@@ -83,4 +83,24 @@ class SharedViewModel @Inject constructor(
         }
     }
 
+    fun fetchCurrentCustomer() {
+        viewModelScope.launch {
+            repository.getCustomerUsingEmail("kerolo.raouf5600@gmail.com").collect { state ->
+                when (state) {
+                    is State.Error -> {
+                        Log.d("Kerolos", "fetchCurrentCustomer: ${state.message}")
+                    }
+
+                    State.Loading -> {
+
+                    }
+
+                    is State.Success -> {
+                        Log.d("Kerolos", "fetchCurrentCustomer: ${state.data}")
+                    }
+                }
+            }
+        }
+    }
+
 }

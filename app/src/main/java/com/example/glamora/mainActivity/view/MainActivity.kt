@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         sharedViewModel.fetchProducts()
         sharedViewModel.fetchPriceRules()
         sharedViewModel.fetchDiscountCodes()
+        sharedViewModel.fetchCurrentCustomer()
 
         initView()
     }
