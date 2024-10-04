@@ -29,7 +29,9 @@ import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 
@@ -41,6 +43,11 @@ class HomeFragment : Fragment() {
     private lateinit var productsAdapter: ProductsAdapter
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
+
+    companion object
+    {
+        private var scrollJob : Job ?= null
+    }
 
     private val clipboardManager : ClipboardManager by lazy {
         requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -124,8 +131,10 @@ class HomeFragment : Fragment() {
 
     private fun autoScrollForRecyclerView()
     {
-        lifecycleScope.launch(Dispatchers.Default) {
-            while (true)
+        scrollJob?.cancel()
+        scrollJob = lifecycleScope.launch(Dispatchers.Default) {
+            currentIndex = 0
+            while (isActive)
             {
                 delay(3000)
                 binding.homeRvOffers.smoothScrollToPosition((++currentIndex) % mAdapter.itemCount)
@@ -150,6 +159,15 @@ class HomeFragment : Fragment() {
                 brandsAdapter.updateData(brandsList)
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        scrollJob?.start()
+    }
+    override fun onStop() {
+        super.onStop()
+        scrollJob?.cancel()
     }
 
 }
