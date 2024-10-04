@@ -11,6 +11,7 @@ import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.network.RetrofitInterface
+import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import com.example.glamora.util.toDiscountCodesDTO
@@ -26,7 +27,8 @@ import kotlin.time.Duration.Companion.seconds
 
 class RepositoryImpl @Inject constructor(
     private val apolloClient: ApolloClient,
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val sharedPrefHandler: SharedPrefHandler
 ) : Repository {
 
 
@@ -133,6 +135,22 @@ class RepositoryImpl @Inject constructor(
         {
             emit(State.Error(e.message.toString()))
         }
+    }
+
+    override fun setSharedPrefString(key: String, value: String) {
+        sharedPrefHandler.setSharedPrefString(key, value)
+    }
+
+    override fun getSharedPrefString(key: String, defaultValue: String): String {
+        return sharedPrefHandler.getSharedPrefString(key, defaultValue)
+    }
+
+    override fun setSharedPrefBoolean(key: String, value: Boolean) {
+        sharedPrefHandler.setSharedPrefBoolean(key, value)
+    }
+
+    override fun getSharedPrefBoolean(key: String, defaultValue: Boolean): Boolean {
+        return sharedPrefHandler.getSharedPrefBoolean(key, defaultValue)
     }
 
 

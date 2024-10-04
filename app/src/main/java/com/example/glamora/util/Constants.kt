@@ -7,4 +7,12 @@ object Constants {
 
     const val CUSTOMER_NOT_FOUND = "Customer not found"
 
+    //shared pref
+    const val SHARED_PREF_NAME = "glamora_shared_pref"
+    const val CURRENCY_KEY = "currency"
+    const val EGP = "EGP"
+    const val USD = "USD"
+    const val EUR = "EUR"
+
+
 }

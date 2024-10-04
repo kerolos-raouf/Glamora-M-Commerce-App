@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -85,7 +86,7 @@ class SharedViewModel @Inject constructor(
 
     fun fetchCurrentCustomer() {
         viewModelScope.launch {
-            repository.getCustomerUsingEmail("kerolo.raouf5600@gmail.com").collect { state ->
+            repository.getCustomerUsingEmail("kerolos.raouf5600@gmail.com").collect { state ->
                 when (state) {
                     is State.Error -> {
                         Log.d("Kerolos", "fetchCurrentCustomer: ${state.message}")
@@ -101,6 +102,16 @@ class SharedViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun setCurrentCurrency(currency: String)
+    {
+        repository.setSharedPrefString(Constants.CURRENCY_KEY, currency)
+    }
+
+    fun getCurrentCurrency() : String
+    {
+        return repository.getSharedPrefString(Constants.CURRENCY_KEY, Constants.EGP)
     }
 
 }

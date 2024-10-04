@@ -6,6 +6,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.network.RetrofitHandler
 import com.example.glamora.data.network.RetrofitInterface
 import com.example.glamora.data.repository.RepositoryImpl
+import com.example.glamora.data.sharedPref.SharedPrefHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,9 +28,10 @@ object RepositoryModule {
     @Singleton
     fun provideRepository(
         apolloClient: ApolloClient,
-        remoteDataSource: RemoteDataSource
+        remoteDataSource: RemoteDataSource,
+        sharedPrefHandler: SharedPrefHandler
     ): Repository {
-        return RepositoryImpl(apolloClient,remoteDataSource)
+        return RepositoryImpl(apolloClient,remoteDataSource,sharedPrefHandler)
     }
 
 }
