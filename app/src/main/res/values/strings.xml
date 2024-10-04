@@ -62,4 +62,5 @@
     <string name="cateory">Category</string>
     <string name="filter">Filter</string>
     <string name="back_button">Back</string>
+    <string name="shipping">Shipping</string>
 </resources>
