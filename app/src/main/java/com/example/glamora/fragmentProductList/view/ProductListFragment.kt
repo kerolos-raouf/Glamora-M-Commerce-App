@@ -15,13 +15,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.glamora.R
 import com.example.glamora.databinding.DialogFilterBinding
 import com.example.glamora.databinding.FragmentProductListBinding
 import com.example.glamora.fragmentProductList.viewModel.ProductListViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ProductListFragment : Fragment() {
@@ -89,28 +90,28 @@ class ProductListFragment : Fragment() {
         filterBinding = DialogFilterBinding.inflate(layoutInflater)
         filterDialog.setContentView(filterBinding.root)
 
-        filterBinding.rgType.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                filterBinding.rbtnShoes.id -> {
-                    type = "SHOES"
-                }
-
-                filterBinding.rbtnShirt.id -> {
-                    type = "T-SHIRTS"
-                }
-
-                filterBinding.rbtnAccessories.id -> {
-                    type = "ACCESSORIES"
-                }
-            }
-        }
+//        filterBinding.rgType.setOnCheckedChangeListener { _, checkedId ->
+//            when (checkedId) {
+//                filterBinding.rbtnShoes.id -> {
+//                    type = "SHOES"
+//                }
+//
+//                filterBinding.rbtnShirt.id -> {
+//                    type = "T-SHIRTS"
+//                }
+//
+//                filterBinding.rbtnAccessories.id -> {
+//                    type = "ACCESSORIES"
+//                }
+//            }
+//        }
 
 //        filterBinding.btnRemoveFilter.setOnClickListener {
 //            type = ""
 //            fromPrice = 0.0
 //            toPrice = 1000.0
 //            lifecycleScope.launch {
-//                homeViewModel.productsByIdStateFlow.collectLatest {
+//                productListViewModel.productsByIdStateFlow.collectLatest {
 //                    when (it) {
 //                        is ApiState.Success -> {
 //                            val productsResponse = it.data as ProductsResponse
@@ -121,6 +122,7 @@ class ProductListFragment : Fragment() {
 //                    }
 //                }
 //            }
+
 
         filterBinding.apply {
             rbtnShoes.isChecked = false
@@ -187,7 +189,7 @@ class ProductListFragment : Fragment() {
     private fun setupProduct() {
         productRecycleAdapter = ProductListAdapterr(emptyList())
         binding.rvListOfProduct.apply {
-            layoutManager = LinearLayoutManager(context)
+             layoutManager = GridLayoutManager(context, 2)
             adapter = productRecycleAdapter
         }
 

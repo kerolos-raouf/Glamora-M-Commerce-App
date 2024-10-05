@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 
@@ -22,6 +23,10 @@ class SharedViewModel @Inject constructor(
 
     private val _discountCodes = MutableStateFlow<List<DiscountCodeDTO>>(emptyList())
     val discountCodes: StateFlow<List<DiscountCodeDTO>> = _discountCodes
+
+
+    private val _currencyChangedFlag = MutableStateFlow(false)
+    val currencyChangedFlag: StateFlow<Boolean> get() = _currencyChangedFlag
 
     fun fetchProducts()
     {
@@ -107,14 +112,27 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun setSharedPrefString(key: String,value: String)
-    {
-        repository.setSharedPrefString(key, value)
+    fun setSharedPrefString(key: String,value: String){
+    if (key == Constants.CURRENCY_KEY) {
+        _currencyChangedFlag.value = true
     }
+    repository.setSharedPrefString(key, value)
+}
 
     fun getSharedPrefString(key: String, defaultValue: String) : String
     {
         return repository.getSharedPrefString(key, defaultValue)
     }
+
+
+//    fun convertCurrency() {
+//        viewModelScope.launch {
+//            try {
+//                _usdAmountMutableStateFlow.value = repository.convertCurrency("1", Constants.CURRENCY_KEY)
+//            } catch (_: SocketTimeoutException) {
+//                convertCurrency()
+//            }
+//        }
+//    }
 
 }

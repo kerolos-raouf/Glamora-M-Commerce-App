@@ -20,7 +20,7 @@ interface Repository {
 
     //retrofit
     fun getCustomerUsingEmail(email: String) : Flow<State<Customer>>
-
+    //fun convertCurrency(amount: String, currency: String): Double
 
     //shared pref
     fun setSharedPrefString(key: String, value: String)

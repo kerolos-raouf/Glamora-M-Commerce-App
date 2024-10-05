@@ -26,6 +26,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.network.ApolloClientInterceptor
 import com.example.glamora.data.repository.RepositoryImpl
+import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
@@ -46,6 +47,9 @@ class HomeFragment : Fragment() {
     private lateinit var navController: NavController
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
+
+
+
 
     companion object
     {
@@ -68,6 +72,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+
 
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()
@@ -146,7 +151,7 @@ class HomeFragment : Fragment() {
 //        }
 //
     }
-}
+
 
     private fun setupDiscountCodesRecyclerView() {
 

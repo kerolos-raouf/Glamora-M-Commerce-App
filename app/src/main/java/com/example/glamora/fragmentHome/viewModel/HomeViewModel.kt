@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 
@@ -27,6 +28,7 @@ class HomeViewModel  @Inject constructor(
 
     private val _randomProductList = MutableStateFlow<List<ProductDTO>>(emptyList())
     val randomProductList: StateFlow<List<ProductDTO>> get() = _randomProductList
+
 
     fun getRandomProducts() {
         viewModelScope.launch {
@@ -68,7 +70,23 @@ class HomeViewModel  @Inject constructor(
         }
     }
 
-
-
+    fun getALlcategory() {
+        viewModelScope.launch {
+            repository.getAllBrands().collect { state ->
+                when (state) {
+                    is State.Error -> {
+                        Log.e("HomeViewModel", "Error fetching brands: ${state.message}")
+                    }
+                    State.Loading -> {
+                        Log.d("HomeViewModel", "Loading brands data...")
+                    }
+                    is State.Success -> {
+                        Log.d("HomeViewModel", "Success: fetched ${state.data.size} brands")
+                        _brandsList.value = state.data
+                    }
+                }
+            }
+        }
+    }
 
 }
