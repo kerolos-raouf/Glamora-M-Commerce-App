@@ -1,6 +1,6 @@
 package com.example.glamora.data.contracts
 
-import com.example.glamora.data.model.CutomerModels.CustomerDTO
+import com.example.glamora.data.model.customerModels.CustomerDTO
 import com.example.nimbusweatherapp.data.model.CitiesForSearch
 import retrofit2.Response
 

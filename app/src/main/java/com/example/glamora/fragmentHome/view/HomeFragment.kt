@@ -214,6 +214,7 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         scrollJob?.start()
+        communicator.showBottomNav()
     }
     override fun onStop() {
         super.onStop()

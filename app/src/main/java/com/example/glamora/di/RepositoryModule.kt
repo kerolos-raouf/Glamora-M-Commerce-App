@@ -7,6 +7,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.internetStateObserver.InternetStateObserver
 import com.example.glamora.data.network.CitiesSearchApi
+import com.example.glamora.data.network.CurrencyApi
 import com.example.glamora.data.network.RetrofitHandler
 import com.example.glamora.data.network.RetrofitInterface
 import com.example.glamora.data.repository.RepositoryImpl

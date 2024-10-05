@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity(), Communicator {
         navController = findNavController(R.id.fragmentContainer)
 
         binding.bottomNavigationView.setupWithNavController(navController)
-        hideBottomNav()
     }
 
     override fun hideBottomNav() {

@@ -6,6 +6,7 @@ import com.example.glamora.BuildConfig
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.network.ApolloClientInterceptor
 import com.example.glamora.data.network.CitiesSearchApi
+import com.example.glamora.data.network.CurrencyApi
 import com.example.glamora.data.network.RetrofitHandler
 import com.example.glamora.data.network.RetrofitInterface
 import com.example.glamora.util.Constants
