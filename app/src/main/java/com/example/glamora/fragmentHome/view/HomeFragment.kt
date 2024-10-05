@@ -146,7 +146,7 @@ class HomeFragment : Fragment() {
 //        }
 //
     }
-}
+
 
     private fun setupDiscountCodesRecyclerView() {
 
