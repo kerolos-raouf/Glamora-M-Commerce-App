@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), Communicator {
         sharedViewModel.fetchCurrentCustomer()
         sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)
 
-        //sharedViewModel.convertCurrency()
+
 
 
         initView()

@@ -13,7 +13,6 @@
         android:background="@color/white"
         tools:context=".HomeFragment">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -222,7 +221,7 @@
                             android:id="@+id/home_shoescv"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:layout_marginStart="30dp"
+                            android:layout_marginStart="20dp"
                             android:backgroundTint="@color/white"
                             app:cardCornerRadius="50dp"
                             app:layout_constraintStart_toStartOf="parent"
@@ -240,7 +239,7 @@
                             android:id="@+id/home_tshirtcv"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:layout_marginStart="24dp"
+                            android:layout_marginStart="25dp"
                             android:backgroundTint="@color/white"
                             app:cardCornerRadius="50dp"
                             app:layout_constraintStart_toEndOf="@id/home_shoescv"
@@ -258,8 +257,8 @@
                             android:id="@+id/home_accssCV"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginEnd="30dp"
+                            android:layout_marginStart="25dp"
+                            android:layout_marginEnd="20dp"
                             android:backgroundTint="@color/white"
                             app:cardCornerRadius="50dp"
                             app:layout_constraintStart_toEndOf="@id/home_tshirtcv"
@@ -272,25 +271,6 @@
                                 android:scaleY="0.5"
                                 app:srcCompat="@drawable/accessories"/>
                         </androidx.cardview.widget.CardView>
-
-<!--                        <androidx.cardview.widget.CardView-->
-<!--                            android:id="@+id/cvSale"-->
-<!--                            android:layout_width="100dp"-->
-<!--                            android:layout_height="100dp"-->
-<!--                            android:layout_marginStart="24dp"-->
-<!--                            android:layout_marginEnd="19dp"-->
-<!--                            android:backgroundTint="@color/white"-->
-<!--                            app:cardCornerRadius="50dp"-->
-<!--                            app:layout_constraintStart_toEndOf="@id/home_tshirtttcv"-->
-<!--                            app:layout_constraintTop_toTopOf="@id/home_tshirtttcv">-->
-
-<!--                            <ImageView-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:scaleX="0.5"-->
-<!--                                android:scaleY="0.5"-->
-<!--                                app:srcCompat="@drawable/discount"/>-->
-<!--                        </androidx.cardview.widget.CardView>-->
 
                         <TextView
                             android:id="@+id/textView9"
@@ -331,36 +311,9 @@
                             app:layout_constraintTop_toBottomOf="@id/home_accssCV"
                             app:layout_constraintStart_toStartOf="@id/home_accssCV" />
 
-<!--                        <TextView-->
-<!--                            android:id="@+id/textView12"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginTop="4dp"-->
-<!--                            android:text="@string/sale"-->
-<!--                            android:layout_marginStart="30dp"-->
-<!--                            android:textSize="16sp"-->
-<!--                            android:textColor="@color/dark_blue"-->
-<!--                            android:textStyle="bold"-->
-<!--                            app:layout_constraintTop_toBottomOf="@id/cvSale"-->
-<!--                            app:layout_constraintStart_toStartOf="@id/cvSale" />-->
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </HorizontalScrollView>
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <!--                <androidx.recyclerview.widget.RecyclerView-->
-<!--                    android:id="@+id/home_rv_category"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="16dp"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/categories_textview"-->
-<!--                    tools:listitem="@layout/category_item" />-->
-
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/home_brand_container"
