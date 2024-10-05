@@ -1,12 +1,15 @@
 package com.example.glamora.data.contracts
 
+import com.example.glamora.data.internetStateObserver.ConnectivityObserver
+import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
-import com.example.glamora.data.model.CutomerModels.Customer
+import com.example.glamora.data.model.customerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.util.State
+import com.example.nimbusweatherapp.data.model.CityForSearchItem
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
@@ -22,9 +25,16 @@ interface Repository {
 
     fun getCartItemsForCustomer(customerId: String) : Flow<State<List<CartItemDTO>>>
 
+    fun updateCustomerAddress(customerId: String,address : AddressModel) : Flow<State<AddressModel>>
+
     //retrofit
     fun getCustomerUsingEmail(email: String) : Flow<State<Customer>>
-    //fun convertCurrency(amount: String, currency: String): Double
+    fun getCitiesForSearch(name: String) : Flow<State<List<CityForSearchItem>>>
+
+
+    //connectivity
+    fun observeOnInternetState() : Flow<ConnectivityObserver.InternetState>
+
 
     //shared pref
     fun setSharedPrefString(key: String, value: String)

@@ -33,7 +33,6 @@ import kotlinx.coroutines.launch
 
 class ProductListFragment : Fragment() {
 
-    private var communicator: Communicator? = null
 
     private lateinit var binding: FragmentProductListBinding
     private val productListViewModel: ProductListViewModel by activityViewModels()
@@ -44,24 +43,19 @@ class ProductListFragment : Fragment() {
     private var type: String = ""
 
 
+    private val communicator: Communicator by lazy {
+        (requireContext() as Communicator)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is Communicator) {
-            communicator = context
-        } else {
-            throw RuntimeException("$context must implement Communicator")
-        }
-    }
 
     override fun onStart() {
         super.onStart()
-        communicator?.hideBottomNav()
+        communicator.hideBottomNav()
     }
 
     override fun onCreateView(
@@ -180,11 +174,5 @@ class ProductListFragment : Fragment() {
 
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (::productRecycleAdapter.isInitialized) productRecycleAdapter.updateData(emptyList())
-    }
-
 
 }

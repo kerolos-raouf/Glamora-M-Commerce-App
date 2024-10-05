@@ -1,9 +1,9 @@
-package com.example.glamora.data.model.CutomerModels
+package com.example.glamora.data.model.customerModels
 
 
 import com.google.gson.annotations.SerializedName
 
-data class Addresse(
+data class DefaultAddress(
     @SerializedName("address1")
     val address1: String?,
     @SerializedName("address2")

@@ -1,9 +1,11 @@
-package com.example.glamora.data.model.CutomerModels
+package com.example.glamora.data.model.customerModels
 
 
 import com.google.gson.annotations.SerializedName
 
-data class EmailMarketingConsent(
+data class SmsMarketingConsent(
+    @SerializedName("consent_collected_from")
+    val consentCollectedFrom: String?,
     @SerializedName("consent_updated_at")
     val consentUpdatedAt: Any?,
     @SerializedName("opt_in_level")

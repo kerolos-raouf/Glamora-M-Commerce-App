@@ -17,6 +17,7 @@ import com.example.glamora.R
 import com.example.glamora.data.firebase.LoginState
 import com.example.glamora.databinding.FragmentLoginBinding
 import com.example.glamora.fragmentLogin.viewModel.LoginViewModel
+import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.util.isNotShort
 import com.example.glamora.util.isValidEmail
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -29,6 +30,10 @@ class LoginFragment : Fragment() {
 
     private lateinit var loginBinding: FragmentLoginBinding
     private lateinit var loginViewModel: LoginViewModel
+
+    private val communicator : Communicator by lazy {
+        (requireActivity() as Communicator)
+    }
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
@@ -67,6 +72,16 @@ class LoginFragment : Fragment() {
 
         loginBinding.guestBtn.setOnClickListener{
             findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+        }
+
+        loginBinding.resetBtn.setOnClickListener{
+            val email = loginBinding.editEmail.text.toString()
+            val isEmailValid = isValidEmail(email)
+
+            if(isEmailValid){
+                loginViewModel.resetUserPass(email)
+            }
+
         }
 
         observeLoginState()
@@ -161,5 +176,10 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        communicator.hideBottomNav()
     }
 }

@@ -6,4 +6,12 @@ interface Communicator {
 
     fun showBottomNav()
 
+    fun isInternetAvailable() : Boolean
+
+    fun isLocationPermissionGranted() : Boolean
+
+    fun requestLocationPermission()
+
+    fun isGPSEnabled() : Boolean
+
 }

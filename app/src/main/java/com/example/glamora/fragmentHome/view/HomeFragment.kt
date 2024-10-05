@@ -52,6 +52,9 @@ class HomeFragment : Fragment() {
 
 
 
+    private val communicator: Communicator by lazy {
+        (requireContext() as Communicator)
+    }
 
     companion object
     {
@@ -208,6 +211,7 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         scrollJob?.start()
+        communicator.showBottomNav()
     }
     override fun onStop() {
         super.onStop()

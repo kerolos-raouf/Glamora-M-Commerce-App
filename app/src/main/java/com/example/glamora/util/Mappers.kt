@@ -4,6 +4,8 @@ import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
+import com.example.UpdateCustomerAddressMutation
+import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.AvailableProductsModel
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
@@ -87,6 +89,20 @@ fun BrandsQuery.Collections.toBrandDTO(): List<Brands> {
     }
 
     return brandsItem
+}
+
+fun UpdateCustomerAddressMutation.Address.toAddressModel(): AddressModel {
+    val addressModel = AddressModel()
+
+    addressModel.city = city ?: Constants.UNKNOWN
+    addressModel.country = country ?: Constants.UNKNOWN
+    addressModel.firstName = firstName ?: Constants.UNKNOWN
+    addressModel.lastName = lastName ?: Constants.UNKNOWN
+    addressModel.phone = phone ?: Constants.UNKNOWN
+    addressModel.street = address1 ?: Constants.UNKNOWN
+
+
+    return addressModel
 }
 
 
