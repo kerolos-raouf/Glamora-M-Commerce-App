@@ -4,13 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="viewModel"
+            type="com.example.glamora.fragmentAddressDetails.viewModel.AddressViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".fragmentAddressDetails.view.AddressDetailsFragment">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/addressLoadingAnimation"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            app:lottie_rawRes="@raw/loading"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:visibility="gone"
+            app:showProgressBar="@{viewModel.loading}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/settingsToolbar"
@@ -21,8 +37,9 @@
             app:layout_constraintTop_toTopOf="parent">
 
 
+
             <ImageView
-                android:id="@+id/settingsBackButton"
+                android:id="@+id/addressBackArrow"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="10dp"
