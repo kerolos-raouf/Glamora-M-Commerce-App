@@ -81,7 +81,7 @@
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/addressDetailsFragment"
-        android:name="com.example.glamora.fragmentAddressDetails.AddressDetailsFragment"
+        android:name="com.example.glamora.fragmentAddressDetails.view.AddressDetailsFragment"
         android:label="fragment_address_details"
         tools:layout="@layout/fragment_address_details" >
         <argument

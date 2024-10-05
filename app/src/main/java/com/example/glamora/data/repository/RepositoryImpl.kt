@@ -9,9 +9,11 @@ import com.example.DiscountCodesQuery
 import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
+import com.example.UpdateCustomerAddressMutation
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
+import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.customerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
@@ -21,12 +23,14 @@ import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
+import com.example.glamora.util.toAddressModel
 import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.nimbusweatherapp.data.model.CityForSearchItem
 import com.example.type.CustomerInput
+import com.example.type.MailingAddressInput
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -179,6 +183,46 @@ class RepositoryImpl @Inject constructor(
             }else
             {
                 emit(State.Error(cartItemsResponse.errors.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }.timeout(15.seconds).catch {
+        emit(State.Error(it.message.toString()))
+    }
+
+    @OptIn(FlowPreview::class)
+    override fun updateCustomerAddress(
+        customerId: String,
+        address: AddressModel
+    ): Flow<State<AddressModel>> = flow {
+        emit(State.Loading)
+        try {
+            val address = MailingAddressInput(
+                firstName = Optional.Present(address.firstName),
+                lastName = Optional.Present(address.lastName),
+                phone = Optional.Present(address.phone),
+                address1 = Optional.Present(address.street),
+                city = Optional.Present(address.city),
+                country = Optional.Present(address.country),
+            )
+            val customerInput = CustomerInput(
+                id = Optional.Present(customerId),
+                addresses = Optional.Present(listOf(address))
+            )
+            val customerResponse = apolloClient.mutation(UpdateCustomerAddressMutation(customerInput)).execute()
+            if (!customerResponse.hasErrors() && customerResponse.data?.customerUpdate?.customer != null)
+            {
+                val addressModel = customerResponse.data?.customerUpdate?.customer?.addresses?.get(0)?.toAddressModel()
+                if (addressModel != null) {
+                    emit(State.Success(addressModel))
+                }else {
+                    emit(State.Error(Constants.CUSTOMER_NOT_FOUND))
+                }
+            }else
+            {
+                emit(State.Error(Constants.CUSTOMER_NOT_FOUND))
             }
         }catch (e : Exception)
         {

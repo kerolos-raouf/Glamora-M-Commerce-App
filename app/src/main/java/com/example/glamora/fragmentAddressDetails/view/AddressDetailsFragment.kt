@@ -1,4 +1,4 @@
-package com.example.glamora.fragmentAddressDetails
+package com.example.glamora.fragmentAddressDetails.view
 
 import android.os.Bundle
 import android.util.Log
@@ -8,12 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.glamora.R
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.databinding.FragmentAddressDetailsBinding
+import com.example.glamora.fragmentAddressDetails.viewModel.AddressViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+
+@AndroidEntryPoint
 class AddressDetailsFragment : Fragment() {
 
+
+    private val addressViewModel: AddressViewModel by viewModels()
 
     private lateinit var binding : FragmentAddressDetailsBinding
 
@@ -31,6 +42,7 @@ class AddressDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        initObservers()
     }
 
     private fun initView() {
@@ -44,7 +56,9 @@ class AddressDetailsFragment : Fragment() {
                     && addressPhone.text.isNotEmpty()
                     && addressStreet.text.isNotEmpty())
                 {
+                    fillCurrentAddress()
                     updateCustomerAddress()
+
                 }else
                 {
                     Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
@@ -53,8 +67,27 @@ class AddressDetailsFragment : Fragment() {
         }
     }
 
-    private fun updateCustomerAddress() {
+    private fun initObservers() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addressViewModel.message.collect {
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
+    private fun fillCurrentAddress() {
+        binding.apply {
+            currentAddress.firstName = addressFirstName.text.toString()
+            currentAddress.lastName = addressLastName.text.toString()
+            currentAddress.phone = addressPhone.text.toString()
+            currentAddress.street = addressStreet.text.toString()
+        }
+    }
+
+    private fun updateCustomerAddress() {
+        addressViewModel.updateCustomerAddress(address = currentAddress)
     }
 
 }
