@@ -15,9 +15,9 @@
         <argument
             android:name="title"
             app:argType="string" />
-            <argument
-                android:name="imageUrl"
-                app:argType="string" />
+<!--            <argument-->
+<!--                android:name="imageUrl"-->
+<!--                app:argType="string" />-->
         </action>
     </fragment>
     <fragment

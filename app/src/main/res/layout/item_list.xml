@@ -7,6 +7,9 @@
         <variable
             name="product"
             type="com.example.glamora.data.model.ProductDTO" />
+        <variable
+            name="viewModel"
+            type="com.example.glamora.mainActivity.viewModel.SharedViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -90,7 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="EGP"
+                android:text="@{viewModel.selectedCurrency}"
                 android:textColor="@color/blue"
                 android:textSize="12sp"
                 android:textStyle="bold"

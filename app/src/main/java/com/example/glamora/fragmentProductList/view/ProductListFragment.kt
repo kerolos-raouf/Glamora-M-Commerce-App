@@ -63,7 +63,7 @@ class ProductListFragment : Fragment() {
         val title = arguments?.getString("title")
         val brandImageUrl = arguments?.getString("imageUrl")
         if (title != null) {
-            productListViewModel.filterProductsByBrand(title)
+            productListViewModel.filterProductsByCategory(title)
         }
         setupProduct()
         observeOnFilterdProduct()

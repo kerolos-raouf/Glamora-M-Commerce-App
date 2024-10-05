@@ -108,18 +108,19 @@ class ProductListViewModel @Inject constructor(
 //                                }
 //                            }
 //
+//                            // Filter by price range
 //                            if (fromPrice != null || toPrice != null) {
 //                                filtered = filtered.filter { product ->
 //                                    product.availableProducts.any { availableProduct ->
-//                                        val productPrice = availableProduct.price // Assuming price is here
-//                                        (fromPrice == null || productPrice >= fromPrice.toString()) &&
-//                                                (toPrice == null || productPrice <= toPrice.toString())
+//                                        val productPrice = availableProduct.price.toDouble()
+//                                        (fromPrice == null || productPrice >= fromPrice) &&
+//                                                (toPrice == null || productPrice <= toPrice)
 //                                    }
 //                                }
 //                            }
 //
 //                            _filteredProducts.value = filtered
-//                            Log.d("ProductListViewModel", "Fetched ${filtered.size} products for brand ID: $title")
+//                            Log.d("ProductListViewModel", "Filtered ${filtered.size} products for category: $productType and price range: $fromPrice to $toPrice")
 //                        }
 //                    }
 //                }
@@ -128,5 +129,6 @@ class ProductListViewModel @Inject constructor(
 //            }
 //        }
 //    }
+
 
 }

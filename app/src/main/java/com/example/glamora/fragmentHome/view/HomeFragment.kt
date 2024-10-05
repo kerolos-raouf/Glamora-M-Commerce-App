@@ -30,6 +30,7 @@ import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
+import com.example.glamora.util.Constants
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -73,6 +74,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
 
+        //sharedViewModel.changeCurrency(Constants.CURRENCY_KEY)
 
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()
@@ -96,8 +98,7 @@ class HomeFragment : Fragment() {
     private fun setupBrandsRecyclerView() {
         brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
             val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
-                selectedBrand.title,
-                selectedBrand.image.url
+                selectedBrand.title
             )
             navController.navigate(action)
         }
@@ -109,14 +110,15 @@ class HomeFragment : Fragment() {
 
     private fun observeRandomProducts() {
         lifecycleScope.launch {
-            homeViewModel.randomProductList.collect { randomProducts ->
-                productsAdapter.updateData(randomProducts)
-                productsAdapter = ProductsAdapter(randomProducts)
+            sharedViewModel.productList.collect { randomProducts ->
+                val filteredProducts = randomProducts.shuffled().take(10)
+                productsAdapter.updateData(filteredProducts)
+                productsAdapter = ProductsAdapter(filteredProducts)
                 binding.homeRvItem.adapter = productsAdapter
             }
-
         }
     }
+
 
     private fun observeBrands() {
         lifecycleScope.launch {
@@ -127,29 +129,33 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupCardViews() {
-//        binding.apply {
-//
-//            cvMen.setOnClickListener {
-//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_MEN)
-//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
-//            }
-//            cvWomen.setOnClickListener {
-//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_WOMEN)
-//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
-//            }
-//
-//            cvKids.setOnClickListener {
-//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_KIDS)
-//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
-//
-//            }
-//            cvSale.setOnClickListener {
-//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_SALE)
-//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
-//
-//            }
-//        }
-//
+        binding.apply {
+
+            // Men category
+            cvMen.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_MEN)
+                navController.navigate(action)
+            }
+
+            // Women category
+            cvWomen.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_WOMEN)
+                navController.navigate(action)
+            }
+
+            // Kids category
+            cvKids.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_KIDS)
+                navController.navigate(action)
+            }
+
+            // Sale category
+            cvSale.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_SALE)
+                navController.navigate(action)
+            }
+        }
+
     }
 
 

@@ -91,6 +91,27 @@ fun BrandsQuery.Collections.toBrandDTO(): List<Brands> {
 }
 
 
+//fun CategoriesQuery.CollectionByHandle.toProductDTO(): List<ProductDTO> {
+//    val products = mutableListOf<ProductDTO>()
+//
+//    this.products.edges.forEach { product ->
+//        products.add(ProductDTO(
+//            id = product.node.id,
+//            title = product.node.title,
+//            brand = "",
+//            category = "",
+//            description = "",
+//            mainImage = "",
+//            images = emptyList(),
+//            availableColors = emptyList(),
+//            availableSizes = emptyList(),
+//            availableProducts = emptyList()
+//        ))
+//    }
+//    return products
+//}
+
+
 
 
 

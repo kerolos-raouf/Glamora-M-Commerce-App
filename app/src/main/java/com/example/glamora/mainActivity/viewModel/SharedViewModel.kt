@@ -24,9 +24,15 @@ class SharedViewModel @Inject constructor(
     private val _discountCodes = MutableStateFlow<List<DiscountCodeDTO>>(emptyList())
     val discountCodes: StateFlow<List<DiscountCodeDTO>> = _discountCodes
 
+    private val _ProductList = MutableStateFlow<List<ProductDTO>>(emptyList())
+    val productList: StateFlow<List<ProductDTO>> get() = _ProductList
+
 
     private val _currencyChangedFlag = MutableStateFlow(false)
     val currencyChangedFlag: StateFlow<Boolean> get() = _currencyChangedFlag
+
+    var selectedCurrency: MutableStateFlow<String> = MutableStateFlow("EGP")
+
 
     fun fetchProducts()
     {
@@ -41,6 +47,7 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
+                        _ProductList.value = state.data
                         Log.d("Kerolos", "fetchProducts: ${state.data.size}")
                     }
                 }
@@ -114,6 +121,7 @@ class SharedViewModel @Inject constructor(
 
     fun setSharedPrefString(key: String,value: String){
     if (key == Constants.CURRENCY_KEY) {
+        selectedCurrency.value = Constants.CURRENCY_KEY
         _currencyChangedFlag.value = true
     }
     repository.setSharedPrefString(key, value)
@@ -125,14 +133,10 @@ class SharedViewModel @Inject constructor(
     }
 
 
-//    fun convertCurrency() {
-//        viewModelScope.launch {
-//            try {
-//                _usdAmountMutableStateFlow.value = repository.convertCurrency("1", Constants.CURRENCY_KEY)
-//            } catch (_: SocketTimeoutException) {
-//                convertCurrency()
-//            }
-//        }
+//    fun changeCurrency(newCurrency: String) {
+//        selectedCurrency.value = newCurrency
+//        _currencyChangedFlag.value = true
+//        setSharedPrefString(Constants.CURRENCY_KEY, newCurrency)
 //    }
 
 }

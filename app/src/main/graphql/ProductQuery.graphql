@@ -90,6 +90,36 @@ query Brands {
 }
 
 
+query Categories($handle: String!) {
+    collectionByHandle(handle: $handle) {
+        id
+        title
+        products(first: 100, reverse: true) {
+            edges {
+                node {
+                    id
+                    title
+                    createdAt
+                    priceRangeV2 {
+                        minVariantPrice {
+                            amount
+                            currencyCode
+                        }
+                        maxVariantPrice {
+                            amount
+                            currencyCode
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
 
 
 
