@@ -69,4 +69,5 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="remove_filter">REMOVE</string>
+    <string name="shipping">Shipping</string>
 </resources>

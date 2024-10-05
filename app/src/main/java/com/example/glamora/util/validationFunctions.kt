@@ -16,8 +16,8 @@ fun isNotShort(string: String , len: Int = 7) : Boolean{
 fun getFirstAndLastName(fullName: String): Pair<String, String> {
     val names = fullName.split(" ")
 
-    val firstName = names.getOrNull(0) ?: ""
-    val lastName = names.getOrNull(1) ?: ""
+    val firstName = names.firstOrNull() ?: ""
+    val lastName = if (names.size > 1) names.subList(1, names.size).joinToString(" ") else ""
 
     return Pair(firstName, lastName)
 }
