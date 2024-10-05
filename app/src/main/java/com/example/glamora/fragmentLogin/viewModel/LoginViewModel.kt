@@ -27,6 +27,19 @@ class LoginViewModel : ViewModel() {
         }
     }
 
+    fun resetUserPass(email: String) {
+        viewModelScope.launch {
+            firebaseHandler.resetPassword(email) { success, error ->
+                if (success) {
+                    _loginState.value = LoginState.Success(null)
+                } else {
+                    _loginState.value = LoginState.Error(error ?: "Failed to send reset email")
+                }
+            }
+        }
+    }
+
+
     fun loginWithGoogle(idToken: String) {
         viewModelScope.launch {
             firebaseHandler.signInWithGoogle(idToken) { success, error ->

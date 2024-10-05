@@ -11,16 +11,6 @@ class FirebaseHandler : IFirebaseHandler {
     }
 
 
-//    override fun signUp(email: String, password: String, callback: (Boolean, String?) -> Unit) {
-//        auth.createUserWithEmailAndPassword(email, password)
-//            .addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    callback(true, null) // Sign-up successful
-//                } else {
-//                    callback(false, task.exception?.message) // Sign-up failed
-//                }
-//            }
-//    }
 
     override fun signUp(email: String, password: String, callback: (Boolean, String?) -> Unit) {
         auth.createUserWithEmailAndPassword(email, password)
