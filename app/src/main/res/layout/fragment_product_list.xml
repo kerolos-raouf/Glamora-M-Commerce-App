@@ -123,8 +123,9 @@
                             android:layout_height="match_parent"
                             android:orientation="vertical"
                             android:padding="15dp"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            tools:listitem="@layout/product_list" />
+                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                            app:spanCount="2"
+                            tools:listitem="@layout/item_list" />
 
 
 

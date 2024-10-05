@@ -30,8 +30,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideRemoteDataSource(retrofitInterface: RetrofitInterface,citiesSearchApi: CitiesSearchApi) : RemoteDataSource {
-        return RetrofitHandler(retrofitInterface,citiesSearchApi)
+    fun provideRemoteDataSource(retrofitInterface: RetrofitInterface,citiesSearchApi: CitiesSearchApi,currencyApi: CurrencyApi) : RemoteDataSource {
+        return RetrofitHandler(retrofitInterface,citiesSearchApi,currencyApi)
     }
 
     @Provides

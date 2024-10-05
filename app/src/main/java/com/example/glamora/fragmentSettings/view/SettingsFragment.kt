@@ -37,6 +37,8 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
+        sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)
+
     }
 
 

@@ -13,7 +13,7 @@ import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.CartItemDTO
-import com.example.glamora.data.model.customerModels.Customer
+import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
@@ -25,7 +25,6 @@ import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
-import com.example.nimbusweatherapp.data.model.CitiesForSearch
 import com.example.nimbusweatherapp.data.model.CityForSearchItem
 import com.example.type.CustomerInput
 import com.google.firebase.auth.FirebaseAuth
@@ -55,6 +54,14 @@ class RepositoryImpl @Inject constructor(
                 Log.d("Kerolos", "getProducts: ${productsResponse.data?.products}")
                 val productList = productsResponse.data?.products?.toProductDTO()
                 if (productList != null) {
+                    val newPrice= remoteDataSource.convertCurrency(1.toString(), getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP))
+                    for (product in productList){
+                        val firstAvailableProduct = product.availableProducts[0]
+                        val currentPrice = firstAvailableProduct.price.toDouble()
+                        firstAvailableProduct.price = String.format("%.2f", currentPrice * newPrice)
+
+
+                    }
                     emit(State.Success(productList))
                 }else
                 {
@@ -157,7 +164,7 @@ class RepositoryImpl @Inject constructor(
         try {
 
             val cartItemsResponse = apolloClient.query(GetDraftOrdersByCustomerQuery(
-                query = "customer_id:$customerId"
+                query = "{\"query\": \"customer_id:$customerId\"}"
             )).execute()
             if (cartItemsResponse.data != null) {
 

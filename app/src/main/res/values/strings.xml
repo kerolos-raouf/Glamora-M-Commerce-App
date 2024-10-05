@@ -73,4 +73,6 @@
     <string name="_0">0 EGP</string>
     <string name="cash_on_delivery">Cash On Delivery</string>
     <string name="pay_now">Pay Now</string>
+    <string name="reset">Forgot Password?</string>
+
 </resources>

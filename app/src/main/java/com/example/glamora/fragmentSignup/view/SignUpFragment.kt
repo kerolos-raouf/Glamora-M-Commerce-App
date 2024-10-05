@@ -26,15 +26,15 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
 
-    private lateinit var aBinding: FragmentSignUpBinding
+    private lateinit var signUpBinding: FragmentSignUpBinding
     private val signUpViewModel: SignUpViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        aBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up, container, false)
-        return aBinding.root
+        signUpBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up, container, false)
+        return signUpBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,17 +42,17 @@ class SignUpFragment : Fragment() {
 
         observeViewModel()
 
-        aBinding.signUpBtn.setOnClickListener {
+        signUpBinding.signUpBtn.setOnClickListener {
             signUpViewModel.validateAndSignUp(
-                aBinding.editName.text.toString(),
-                aBinding.editEmail.text.toString(),
-                aBinding.editPassword.text.toString(),
-                aBinding.editRepassword.text.toString(),
-                aBinding.editPhone.text.toString()
+                signUpBinding.editName.text.toString(),
+                signUpBinding.editEmail.text.toString(),
+                signUpBinding.editPassword.text.toString(),
+                signUpBinding.editRepassword.text.toString(),
+                signUpBinding.editPhone.text.toString()
             )
         }
 
-        aBinding.login.setOnClickListener {
+        signUpBinding.login.setOnClickListener {
             findNavController().popBackStack()
         }
     }
@@ -89,48 +89,48 @@ class SignUpFragment : Fragment() {
     }
 
     private fun checkUserName() {
-        if (isNotShort(aBinding.editName.text.toString())) {
-            aBinding.errNameTxt.visibility = View.GONE
+        if (isNotShort(signUpBinding.editName.text.toString())) {
+            signUpBinding.errNameTxt.visibility = View.GONE
         } else {
-            aBinding.errNameTxt.visibility = View.VISIBLE
-            aBinding.editName.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_user_err)
+            signUpBinding.errNameTxt.visibility = View.VISIBLE
+            signUpBinding.editName.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_user_err)
         }
     }
 
     private fun checkUserEmail() {
-        if (isValidEmail(aBinding.editEmail.text.toString())) {
-            aBinding.errEmailTxt.visibility = View.GONE
+        if (isValidEmail(signUpBinding.editEmail.text.toString())) {
+            signUpBinding.errEmailTxt.visibility = View.GONE
         } else {
-            aBinding.errEmailTxt.visibility = View.VISIBLE
-            aBinding.editEmail.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_email_err)
+            signUpBinding.errEmailTxt.visibility = View.VISIBLE
+            signUpBinding.editEmail.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_email_err)
         }
     }
 
     private fun checkUserPassword() {
-        if (isNotShort(aBinding.editPassword.text.toString())) {
-            aBinding.errPassTxt.visibility = View.GONE
+        if (isNotShort(signUpBinding.editPassword.text.toString())) {
+            signUpBinding.errPassTxt.visibility = View.GONE
         } else {
-            aBinding.errPassTxt.visibility = View.VISIBLE
-            aBinding.editPassword.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_pass_err)
+            signUpBinding.errPassTxt.visibility = View.VISIBLE
+            signUpBinding.editPassword.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_pass_err)
         }
     }
 
 
     private fun checkUserRePassword() {
-        if (isPasswordEqualRePassword(aBinding.editPassword.text.toString(), aBinding.editRepassword.text.toString())) {
-            aBinding.errRepassTxt.visibility = View.GONE
+        if (isPasswordEqualRePassword(signUpBinding.editPassword.text.toString(), signUpBinding.editRepassword.text.toString())) {
+            signUpBinding.errRepassTxt.visibility = View.GONE
         } else {
-            aBinding.errRepassTxt.visibility = View.VISIBLE
-            aBinding.editRepassword.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_pass_err)
+            signUpBinding.errRepassTxt.visibility = View.VISIBLE
+            signUpBinding.editRepassword.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_pass_err)
         }
     }
 
     private fun checkUserPhone() {
-        if (isNotShort(aBinding.editPhone.text.toString(), 11)) {
-            aBinding.errPhoneTxt.visibility = View.GONE
+        if (isNotShort(signUpBinding.editPhone.text.toString(), 11)) {
+            signUpBinding.errPhoneTxt.visibility = View.GONE
         } else {
-            aBinding.errPhoneTxt.visibility = View.VISIBLE
-            aBinding.editPhone.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_phone_err)
+            signUpBinding.errPhoneTxt.visibility = View.VISIBLE
+            signUpBinding.editPhone.setBackgroundError(requireContext(), R.drawable.button_background_err, R.drawable.ic_phone_err)
         }
     }
 

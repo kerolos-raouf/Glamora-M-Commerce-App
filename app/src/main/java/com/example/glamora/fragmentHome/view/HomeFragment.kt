@@ -30,6 +30,7 @@ import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
+import com.example.glamora.util.Constants
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,7 +48,6 @@ class HomeFragment : Fragment() {
     private lateinit var navController: NavController
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
-
 
     //communicator
     private val communicator: Communicator by lazy {
@@ -87,8 +87,6 @@ class HomeFragment : Fragment() {
 
     }
 
-
-
     private fun setupRandomItemsRecyclerView() {
         productsAdapter = ProductsAdapter(emptyList())
         binding.homeRvItem.apply {
@@ -101,7 +99,6 @@ class HomeFragment : Fragment() {
         brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
             val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
                 selectedBrand.title,
-                selectedBrand.image.url
             )
             navController.navigate(action)
         }
@@ -113,12 +110,12 @@ class HomeFragment : Fragment() {
 
     private fun observeRandomProducts() {
         lifecycleScope.launch {
-            homeViewModel.randomProductList.collect { randomProducts ->
-                productsAdapter.updateData(randomProducts)
-                productsAdapter = ProductsAdapter(randomProducts)
+            sharedViewModel.productList.collect { randomProducts ->
+                val filteredProducts = randomProducts.shuffled().take(10)
+                productsAdapter.updateData(filteredProducts)
+                productsAdapter = ProductsAdapter(filteredProducts)
                 binding.homeRvItem.adapter = productsAdapter
             }
-
         }
     }
 
@@ -131,29 +128,36 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupCardViews() {
-//        binding.apply {
-//
-//            cvMen.setOnClickListener {
-//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_MEN)
-//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
-//            }
-//            cvWomen.setOnClickListener {
-//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_WOMEN)
-//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
-//            }
-//
-//            cvKids.setOnClickListener {
-//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_KIDS)
-//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
-//
-//            }
-//            cvSale.setOnClickListener {
-//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_SALE)
-//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
-//
-//            }
-//        }
-//
+        binding.apply {
+
+            // Men category
+            cvMen.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    Constants.PRODUCT_BY_MEN)
+                navController.navigate(action)
+            }
+
+            // Women category
+            cvWomen.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    Constants.PRODUCT_BY_WOMEN)
+                navController.navigate(action)
+            }
+
+            // Kids category
+            cvKids.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    Constants.PRODUCT_BY_KIDS)
+                navController.navigate(action)
+            }
+
+            // Sale category
+            cvSale.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    Constants.PRODUCT_BY_SALE)
+                navController.navigate(action)
+            }
+        }
     }
 
 
@@ -210,7 +214,6 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         scrollJob?.start()
-        communicator.showBottomNav()
     }
     override fun onStop() {
         super.onStop()

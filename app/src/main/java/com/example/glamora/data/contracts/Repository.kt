@@ -2,13 +2,12 @@ package com.example.glamora.data.contracts
 
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.CartItemDTO
-import com.example.glamora.data.model.customerModels.Customer
+import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.util.State
-import com.example.nimbusweatherapp.data.model.CitiesForSearch
 import com.example.nimbusweatherapp.data.model.CityForSearchItem
 import kotlinx.coroutines.flow.Flow
 

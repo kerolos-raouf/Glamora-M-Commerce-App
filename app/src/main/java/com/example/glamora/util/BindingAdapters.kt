@@ -1,21 +1,26 @@
 package com.example.glamora.util
 
+import android.content.Context
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.example.glamora.R
 
-object BindingAdapters {
-
-    @BindingAdapter("app:srcCompat")
-    @JvmStatic
-    fun setImageFromUrl(imageView: ImageView, url: String?) {
-        if (!url.isNullOrEmpty()) {
-            Glide.with(imageView.context)
-                .load(url)
-                .into(imageView)
-        } else {
-            imageView.setImageResource(R.drawable.product)
-        }
+@BindingAdapter("app:srcCompat")
+fun setImageFromUrl(imageView: ImageView, url: String?) {
+    if (!url.isNullOrEmpty()) {
+        Glide.with(imageView.context)
+            .load(url)
+            .into(imageView)
+    } else {
+        imageView.setImageResource(R.drawable.product)
     }
+}
+
+@BindingAdapter("app:setPrice")
+fun setPrice(view: TextView,price : String)
+{
+    val code = view.context.getSharedPreferences(Constants.SHARED_PREF_NAME,Context.MODE_PRIVATE).getString(Constants.CURRENCY_KEY,Constants.EGP)
+    view.text = "$price $code"
 }

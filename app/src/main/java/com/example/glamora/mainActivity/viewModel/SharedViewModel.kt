@@ -10,9 +10,12 @@ import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +27,17 @@ class SharedViewModel @Inject constructor(
 
     private val _discountCodes = MutableStateFlow<List<DiscountCodeDTO>>(emptyList())
     val discountCodes: StateFlow<List<DiscountCodeDTO>> = _discountCodes
+
+    private val _productList = MutableStateFlow<List<ProductDTO>>(emptyList())
+    val productList: StateFlow<List<ProductDTO>> get() = _productList
+
+    private val _filteredResults = MutableSharedFlow<List<ProductDTO>>()
+    val filteredResults = _filteredResults.asSharedFlow()
+
+
+    private val _currencyChangedFlag = MutableStateFlow(false)
+    val currencyChangedFlag: StateFlow<Boolean> get() = _currencyChangedFlag
+
 
 
     ///internet state
@@ -57,13 +71,8 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
-                        Log.d("Kerolos", "fetchProducts: ${state.data.size}")
-                        for(item in state.data)
-                        {
-                            Log.d("Kerolos", "fetchPriceRules: ${item.id} ${item.title}")
-                        }
+                        _productList.value = state.data
                     }
-
                 }
             }
         }
@@ -82,10 +91,6 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
-                        for(item in state.data)
-                        {
-                            Log.d("Kerolos", "fetchPriceRules: ${item.id} ${item.percentage}")
-                        }
                     }
                 }
             }
@@ -141,6 +146,18 @@ class SharedViewModel @Inject constructor(
     fun getSharedPrefString(key: String, defaultValue: String) : String
     {
         return repository.getSharedPrefString(key, defaultValue)
+    }
+
+    fun filterList(query: String) {
+        CoroutineScope(Dispatchers.Default).launch {
+            val results = if (query.isEmpty()) {
+                //originalList
+                emptyList()
+            } else {
+                _productList.value.filter { it.title.contains(query, ignoreCase = true) }
+            }
+            _filteredResults.emit(results)
+        }
     }
 
 }

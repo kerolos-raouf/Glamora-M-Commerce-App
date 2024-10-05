@@ -50,4 +50,85 @@ class ProductListViewModel @Inject constructor(
             }
         }
     }
+
+    fun filterProductsByCategory(category: String) {
+        viewModelScope.launch {
+            try {
+                repository.getProducts().collect { state ->
+                    when (state) {
+                        is State.Error -> {
+                            Log.e("ProductListViewModel", "Error fetching products: ${state.message}")
+                        }
+                        State.Loading -> {
+                            Log.d("ProductListViewModel", "Loading products for brand: $category")
+                        }
+                        is State.Success -> {
+                            Log.d("ProductListViewModel", "All fetched products: ${state.data.map { it.category }}")
+
+
+                            val filtered = state.data.filter { product ->
+                                product.category == category
+                            }
+
+                            _filteredProducts.value = filtered
+                            Log.d("ProductListViewModel", "Fetched ${filtered.size} products for brand ID: $category")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ProductListViewModel", "Exception fetching products: ${e.message}")
+            }
+        }
+    }
+
+
+//    fun filterProducts(title: String, productType: String?, fromPrice: Double?, toPrice: Double?) {
+//        viewModelScope.launch {
+//            try {
+//                repository.getProducts().collect { state ->
+//                    when (state) {
+//                        is State.Error -> {
+//                            Log.e("ProductListViewModel", "Error fetching products: ${state.message}")
+//                        }
+//                        State.Loading -> {
+//                            Log.d("ProductListViewModel", "Loading products for brand: $title")
+//                        }
+//                        is State.Success -> {
+//                            Log.d("ProductListViewModel", "All fetched products: ${state.data.map { it.title }}")
+//
+//                            // Filter based on brand first
+//                            var filtered = state.data.filter { product ->
+//                                product.brand == title
+//                            }
+//
+//                            // Further filter by product type (category)
+//                            productType?.let {
+//                                filtered = filtered.filter { product ->
+//                                    product.category == it
+//                                }
+//                            }
+//
+//                            // Filter by price range
+//                            if (fromPrice != null || toPrice != null) {
+//                                filtered = filtered.filter { product ->
+//                                    product.availableProducts.any { availableProduct ->
+//                                        val productPrice = availableProduct.price.toDouble()
+//                                        (fromPrice == null || productPrice >= fromPrice) &&
+//                                                (toPrice == null || productPrice <= toPrice)
+//                                    }
+//                                }
+//                            }
+//
+//                            _filteredProducts.value = filtered
+//                            Log.d("ProductListViewModel", "Filtered ${filtered.size} products for category: $productType and price range: $fromPrice to $toPrice")
+//                        }
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                Log.e("ProductListViewModel", "Exception fetching products: ${e.message}")
+//            }
+//        }
+//    }
+
+
 }

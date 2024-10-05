@@ -51,7 +51,6 @@ object RemoteDataSourceModule {
     }
 
 
-
     @Provides
     @Singleton
     fun provideCitiesSearchClient() : CitiesSearchApi {
@@ -61,6 +60,17 @@ object RemoteDataSourceModule {
             .build()
             .create(CitiesSearchApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideCurrencyApi() : CurrencyApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.CURRENCY_API)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(CurrencyApi::class.java)
+    }
+
 
 
 
