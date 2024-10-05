@@ -13,7 +13,7 @@ import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.CartItemDTO
-import com.example.glamora.data.model.CutomerModels.Customer
+import com.example.glamora.data.model.customerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
@@ -25,6 +25,8 @@ import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
+import com.example.nimbusweatherapp.data.model.CitiesForSearch
+import com.example.nimbusweatherapp.data.model.CityForSearchItem
 import com.example.type.CustomerInput
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
@@ -197,6 +199,23 @@ class RepositoryImpl @Inject constructor(
             }else
             {
                 emit(State.Error(customerResponse.message()))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun getCitiesForSearch(name: String): Flow<State<List<CityForSearchItem>>> = flow{
+        emit(State.Loading)
+        try {
+            val citiesResponse = remoteDataSource.getCitiesForSearch(name)
+            if (citiesResponse.isSuccessful && citiesResponse.body() != null)
+            {
+                emit(State.Success(citiesResponse.body() ?: emptyList()))
+            }else
+            {
+                emit(State.Error(citiesResponse.message()))
             }
         }catch (e : Exception)
         {

@@ -6,6 +6,7 @@ import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.internetStateObserver.InternetStateObserver
+import com.example.glamora.data.network.CitiesSearchApi
 import com.example.glamora.data.network.RetrofitHandler
 import com.example.glamora.data.network.RetrofitInterface
 import com.example.glamora.data.repository.RepositoryImpl
@@ -29,8 +30,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideRemoteDataSource(retrofitInterface: RetrofitInterface) : RemoteDataSource {
-        return RetrofitHandler(retrofitInterface)
+    fun provideRemoteDataSource(retrofitInterface: RetrofitInterface,citiesSearchApi: CitiesSearchApi) : RemoteDataSource {
+        return RetrofitHandler(retrofitInterface,citiesSearchApi)
     }
 
     @Provides

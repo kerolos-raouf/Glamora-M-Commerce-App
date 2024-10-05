@@ -39,11 +39,13 @@ android {
         val adminApiAccessToken : String = localProperty.getProperty("ADMIN_API_ACCESS_TOKEN") ?: "null"
         val apiKey : String = localProperty.getProperty("API_KEY") ?: "null"
         val apiSecretKey : String = localProperty.getProperty("API_SECRET_KEY") ?: "null"
+        val countrySearchApiKey : String = localProperty.getProperty("COUNTRY_SEARCH_API_KEY") ?: "null"
 
 
         buildConfigField("String","ADMIN_API_ACCESS_TOKEN",adminApiAccessToken)
         buildConfigField("String","API_KEY",apiKey)
         buildConfigField("String","API_SECRET_KEY",apiSecretKey)
+        buildConfigField("String","COUNTRY_SEARCH_API_KEY",countrySearchApiKey)
     }
 
     buildFeatures{

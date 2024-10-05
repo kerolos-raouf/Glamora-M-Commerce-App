@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), Communicator {
             {
                 sharedViewModel.internetState.collect {
                     if(it == ConnectivityObserver.InternetState.AVAILABLE){
-                        Snackbar.make(binding.root, "Internet Connected", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(binding.root, "Back online", Snackbar.LENGTH_SHORT).show()
                     }else {
                         Snackbar.make(binding.root, "Connection Lost", Snackbar.LENGTH_SHORT).show()
                     }
