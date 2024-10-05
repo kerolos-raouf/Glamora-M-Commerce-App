@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
-        android:name="com.example.glamora.fragmentCart.CartFragment"
+        android:name="com.example.glamora.fragmentCart.view.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
     <fragment

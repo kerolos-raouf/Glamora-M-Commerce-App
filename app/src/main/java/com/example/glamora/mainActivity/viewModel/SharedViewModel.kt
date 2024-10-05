@@ -37,6 +37,10 @@ class SharedViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         Log.d("Kerolos", "fetchProducts: ${state.data.size}")
+                        for(item in state.data)
+                        {
+                            Log.d("Kerolos", "fetchPriceRules: ${item.id} ${item.title}")
+                        }
                     }
                 }
             }

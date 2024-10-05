@@ -60,9 +60,8 @@ fun DiscountCodesQuery.CodeDiscountNodes.toDiscountCodesDTO() : List<DiscountCod
 
     this.nodes.forEach {
         val percentage = it.codeDiscount.onDiscountCodeBasic?.summary?.split("%")?.get(0)?.toDoubleOrNull()
-        val idList = it.id.split("/")
         discountCodes.add(DiscountCodeDTO(
-            id = idList[idList.size - 1],
+            id = it.id,
             code = it.codeDiscount.onDiscountCodeBasic?.title ?: "",
             percentage = percentage ?: 0.0,
         ))
