@@ -4,6 +4,7 @@ import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.example.BrandsQuery
+import com.example.CreateCustomerMutation
 import com.example.DiscountCodesQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
@@ -21,6 +22,7 @@ import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
+import com.example.type.CustomerInput
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
