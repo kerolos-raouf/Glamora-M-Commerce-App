@@ -21,9 +21,12 @@ class ProductListViewModel @Inject constructor(
     private val _filteredProducts = MutableStateFlow<List<ProductDTO>>(emptyList())
     val filteredProducts: StateFlow<List<ProductDTO>> get() = _filteredProducts
 
+
+
     fun filterProductsByBrand(title: String) {
         viewModelScope.launch {
             try {
+                _filteredProducts.value = emptyList()
                 repository.getProducts().collect { state ->
                     when (state) {
                         is State.Error -> {
@@ -54,13 +57,14 @@ class ProductListViewModel @Inject constructor(
     fun filterProductsByCategory(category: String) {
         viewModelScope.launch {
             try {
+                _filteredProducts.value = emptyList()
                 repository.getProducts().collect { state ->
                     when (state) {
                         is State.Error -> {
                             Log.e("ProductListViewModel", "Error fetching products: ${state.message}")
                         }
                         State.Loading -> {
-                            //Log.d("ProductListViewModel", "Loading products for brand: $category")
+                            Log.d("ProductListViewModel", "Loading products for brand: $category")
                         }
                         is State.Success -> {
                             Log.d("ProductListViewModel", "All fetched products: ${state.data.map { it.category }}")

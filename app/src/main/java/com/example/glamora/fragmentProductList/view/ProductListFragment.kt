@@ -63,7 +63,7 @@ class ProductListFragment : Fragment() {
         }
 
         val titleOrCategory = arguments?.getString("titleOrCategory")
-        val brandImageUrl = arguments?.getString("imageUrl")
+
 
         if (titleOrCategory != null) {
             when (titleOrCategory.uppercase()) {
@@ -71,32 +71,21 @@ class ProductListFragment : Fragment() {
                     productListViewModel.filterProductsByCategory(titleOrCategory)
                     binding.listofProductFilterbutton.visibility = View.GONE
                 }
+
                 else -> {
-                    // Treat it as a brand, filter by brand
-                    productListViewModel.filterProductsByBrand(titleOrCategory)
+                   productListViewModel.filterProductsByBrand(titleOrCategory)
                 }
             }
         }
 
-
+        binding.listOfProductIdentity.text=titleOrCategory
 
         setupProduct()
         observeOnFilterdProduct()
 
 
-        if (brandImageUrl != null) {
-            Glide.with(requireContext())
-                .load(brandImageUrl)
-                .apply(RequestOptions())
-                .error(R.drawable.product)
-                .into(binding.imageItem)
-        } else {
-            Log.e("ProductListFragment", "brandImageUrl is null")
-        }
 
-//        if (title != null) {
-//            productListViewModel.filterProductsByBrand(title)
-//        }
+
         binding.listofProductFilterbutton.setOnClickListener {
             filterDialog.show()
         }
@@ -104,39 +93,6 @@ class ProductListFragment : Fragment() {
         filterDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         filterBinding = DialogFilterBinding.inflate(layoutInflater)
         filterDialog.setContentView(filterBinding.root)
-
-//        filterBinding.rgType.setOnCheckedChangeListener { _, checkedId ->
-//            when (checkedId) {
-//                filterBinding.rbtnShoes.id -> {
-//                    type = "SHOES"
-//                }
-//
-//                filterBinding.rbtnShirt.id -> {
-//                    type = "T-SHIRTS"
-//                }
-//
-//                filterBinding.rbtnAccessories.id -> {
-//                    type = "ACCESSORIES"
-//                }
-//            }
-//        }
-
-//        filterBinding.btnRemoveFilter.setOnClickListener {
-//            type = ""
-//            fromPrice = 0.0
-//            toPrice = 1000.0
-//            lifecycleScope.launch {
-//                productListViewModel.productsByIdStateFlow.collectLatest {
-//                    when (it) {
-//                        is ApiState.Success -> {
-//                            val productsResponse = it.data as ProductsResponse
-//                            productRecycleAdapter.submitList(productsResponse.products)
-//                        }
-//
-//                        else -> {}
-//                    }
-//                }
-//            }
 
 
         filterBinding.apply {
@@ -149,57 +105,8 @@ class ProductListFragment : Fragment() {
 
         filterDialog.dismiss()
 
-//        filterBinding.btnSaveFilter.setOnClickListener {
-//            lifecycleScope.launch {
-//                homeViewModel.productsByIdStateFlow.collectLatest {
-//                    when (it) {
-//                        is ApiState.Success -> {
-//                            val productsResponse = it.data as ProductsResponse
-//                            val products = productsResponse.products.filter { product ->
-//                                if (type != "") {
-//                                    product.product_type == type
-//                                } else {
-//                                    true
-//                                }
-//                            }
-//
-//                            val filteredProducts = products.filter { product ->
-//                                val fromPriceText = filterBinding.etFromPrice.text.toString()
-//                                val toPriceText = filterBinding.etToPrice.text.toString()
-//                                if (fromPriceText.isNotEmpty() && toPriceText.isNotEmpty()) {
-//                                    if (currency == Constants.USD) {
-//                                        fromPrice =
-//                                            (fromPriceText.toDouble() / usdAmount.toDouble())
-//                                        toPrice = (toPriceText.toDouble() / usdAmount.toDouble())
-//                                    } else {
-//                                        fromPrice = fromPriceText.toDouble()
-//                                        toPrice = toPriceText.toDouble()
-//                                    }
-//                                    product.variants[0].price.toDouble() in fromPrice..toPrice
-//                                } else {
-//                                    true
-//                                }
-//                            }
-//                            if (fromPrice < toPrice) {
-//                                productRecycleAdapter.submitList(filteredProducts)
-//                            } else {
-//                                Toast.makeText(
-//                                    requireContext(), "!Unable Price Filter", Toast.LENGTH_SHORT
-//                                ).show()
-//                            }
-//                        }
-//
-//                        else -> {}
-//                    }
-//                }
-//            }
-//            filterDialog.dismiss()
-//        }
+
     }
-
-
-
-
 
     private fun setupProduct() {
         productRecycleAdapter = ProductListAdapterr(emptyList())

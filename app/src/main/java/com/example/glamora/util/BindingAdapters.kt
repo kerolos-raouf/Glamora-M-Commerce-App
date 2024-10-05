@@ -24,3 +24,4 @@ fun setPrice(view: TextView,price : String)
     val code = view.context.getSharedPreferences(Constants.SHARED_PREF_NAME,Context.MODE_PRIVATE).getString(Constants.CURRENCY_KEY,Constants.EGP)
     view.text = "$price $code"
 }
+
