@@ -10,15 +10,15 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardBackgroundColor="@android:color/transparent"
+        android:backgroundTint="@android:color/transparent"
         android:elevation="10dp"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_top_corners"
             >
-
 
 
             <TextView
@@ -27,77 +27,99 @@
                 android:layout_height="wrap_content"
 
                 android:layout_marginTop="30dp"
-                android:layout_marginStart="20dp"
+                android:text="Payment Method"
+                android:fontFamily="@font/poppines_bold"
 
-                tools:text="Country Name"
                 android:textAlignment="center"
-                android:textColor="@color/white"
-
+                android:textColor="@color/dark_blue"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/bottomSheetWeatherState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginStart="20dp"
-
-                tools:text="Clear Sky"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/bottomSheetCountryName" />
-
-            <TextView
-                android:id="@+id/bottomSheetTemperature"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginEnd="20dp"
-                tools:text="30° C"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/bottomSheetSaveButton"
-                app:layout_constraintEnd_toStartOf="@+id/bottomSheetWeatherStateIcon"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/bottomSheetWeatherStateIcon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-
-                android:layout_margin="30dp"
-                app:layout_constraintBottom_toTopOf="@+id/bottomSheetSaveButton"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
-                app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:id="@+id/bottomSheetDetailsLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@drawable/card_view_border"
+                android:orientation="vertical"
+                android:padding="5dp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bottomSheetCountryName">
+                <TextView
+                    android:id="@+id/cartItemsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:text="Name : Kerolos"
+                    android:textColor="@color/gray"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/cartShippingText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:text="Address : Alexandria"
+                    android:textColor="@color/gray"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+
+            <RadioGroup
+                android:id="@+id/bottomSheetPaymentMethodsRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bottomSheetDetailsLinearLayout">
+
+                <RadioButton
+                    android:id="@+id/bottomSheetPaymentMethodsCashOnDeliveryRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/cash_on_delivery" />
+
+                <RadioButton
+                    android:id="@+id/bottomSheetPaymentMethodsPayWithCardRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pay With Card" />
+
+            </RadioGroup>
 
 
             <Button
-                android:id="@+id/bottomSheetSaveButton"
+                android:id="@+id/bottomSheetPayNowButton"
 
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
                 android:layout_margin="20dp"
 
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-
-                android:backgroundTint="@null"
                 android:background="@drawable/check_out_button_background"
-                android:text="Save"
+                app:backgroundTint="@null"
+                android:text="@string/pay_now"
                 android:textColor="@color/dark_blue"
                 android:textSize="16sp"
                 android:textStyle="bold"
 
-                app:backgroundTint="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                />
+                app:layout_constraintTop_toBottomOf="@+id/bottomSheetPaymentMethodsRadioGroup" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

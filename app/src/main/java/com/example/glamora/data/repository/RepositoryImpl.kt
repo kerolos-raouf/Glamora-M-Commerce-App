@@ -9,10 +9,13 @@ import com.example.DiscountCodesQuery
 import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
+import com.example.UpdateCustomerAddressMutation
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.internetStateObserver.ConnectivityObserver
+import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
-import com.example.glamora.data.model.CutomerModels.Customer
+import com.example.glamora.data.model.customerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
@@ -20,26 +23,28 @@ import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
+import com.example.glamora.util.toAddressModel
 import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
+import com.example.nimbusweatherapp.data.model.CityForSearchItem
 import com.example.type.CustomerInput
+import com.example.type.MailingAddressInput
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.timeout
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 class RepositoryImpl @Inject constructor(
     private val apolloClient: ApolloClient,
     private val remoteDataSource: RemoteDataSource,
-    private val sharedPrefHandler: SharedPrefHandler
+    private val sharedPrefHandler: SharedPrefHandler,
+    private val connectivityObserver: ConnectivityObserver
 ) : Repository {
 
 
@@ -61,7 +66,6 @@ class RepositoryImpl @Inject constructor(
 
 
                     }
-
                     emit(State.Success(productList))
                 }else
                 {
@@ -75,10 +79,9 @@ class RepositoryImpl @Inject constructor(
         {
             emit(State.Error(e.message.toString()))
         }
-    }.timeout(20.seconds).catch {
+    }.timeout(15.seconds).catch {
         emit(State.Error(it.message.toString()))
     }
-
 
     @OptIn(FlowPreview::class)
     override fun getPriceRules(): Flow<State<List<PriceRulesDTO>>> = flow {
@@ -189,6 +192,46 @@ class RepositoryImpl @Inject constructor(
         emit(State.Error(it.message.toString()))
     }
 
+    @OptIn(FlowPreview::class)
+    override fun updateCustomerAddress(
+        customerId: String,
+        address: AddressModel
+    ): Flow<State<AddressModel>> = flow {
+        emit(State.Loading)
+        try {
+            val address = MailingAddressInput(
+                firstName = Optional.Present(address.firstName),
+                lastName = Optional.Present(address.lastName),
+                phone = Optional.Present(address.phone),
+                address1 = Optional.Present(address.street),
+                city = Optional.Present(address.city),
+                country = Optional.Present(address.country),
+            )
+            val customerInput = CustomerInput(
+                id = Optional.Present(customerId),
+                addresses = Optional.Present(listOf(address))
+            )
+            val customerResponse = apolloClient.mutation(UpdateCustomerAddressMutation(customerInput)).execute()
+            if (!customerResponse.hasErrors() && customerResponse.data?.customerUpdate?.customer != null)
+            {
+                val addressModel = customerResponse.data?.customerUpdate?.customer?.addresses?.get(0)?.toAddressModel()
+                if (addressModel != null) {
+                    emit(State.Success(addressModel))
+                }else {
+                    emit(State.Error(Constants.CUSTOMER_NOT_FOUND))
+                }
+            }else
+            {
+                emit(State.Error(Constants.CUSTOMER_NOT_FOUND))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }.timeout(15.seconds).catch {
+        emit(State.Error(it.message.toString()))
+    }
+
     override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {
         emit(State.Loading)
         try {
@@ -214,9 +257,26 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-//    override fun convertCurrency(amount: String, currency: String): Double {
-//        return remoteDataSource.convertCurrency(amount,currency)
-//    }
+    override fun getCitiesForSearch(name: String): Flow<State<List<CityForSearchItem>>> = flow{
+        emit(State.Loading)
+        try {
+            val citiesResponse = remoteDataSource.getCitiesForSearch(name)
+            if (citiesResponse.isSuccessful && citiesResponse.body() != null)
+            {
+                emit(State.Success(citiesResponse.body() ?: emptyList()))
+            }else
+            {
+                emit(State.Error(citiesResponse.message()))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun observeOnInternetState(): Flow<ConnectivityObserver.InternetState> {
+        return connectivityObserver.observer()
+    }
 
     override fun setSharedPrefString(key: String, value: String) {
         sharedPrefHandler.setSharedPrefString(key, value)

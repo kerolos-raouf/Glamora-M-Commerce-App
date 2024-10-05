@@ -26,7 +26,6 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.network.ApolloClientInterceptor
 import com.example.glamora.data.repository.RepositoryImpl
-import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.view.Communicator
@@ -50,8 +49,10 @@ class HomeFragment : Fragment() {
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
 
-
-
+    //communicator
+    private val communicator: Communicator by lazy {
+        (requireContext() as Communicator)
+    }
 
     companion object
     {
@@ -73,9 +74,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         navController = Navigation.findNavController(view)
-
 
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()
@@ -99,7 +98,7 @@ class HomeFragment : Fragment() {
     private fun setupBrandsRecyclerView() {
         brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
             val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
-                selectedBrand.title
+                selectedBrand.title,
             )
             navController.navigate(action)
         }
@@ -120,7 +119,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     private fun observeBrands() {
         lifecycleScope.launch {
             homeViewModel.brandsList.collect { brandsList ->
@@ -134,29 +132,32 @@ class HomeFragment : Fragment() {
 
             // Men category
             cvMen.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_MEN)
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    Constants.PRODUCT_BY_MEN)
                 navController.navigate(action)
             }
 
             // Women category
             cvWomen.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_WOMEN)
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    Constants.PRODUCT_BY_WOMEN)
                 navController.navigate(action)
             }
 
             // Kids category
             cvKids.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_KIDS)
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    Constants.PRODUCT_BY_KIDS)
                 navController.navigate(action)
             }
 
             // Sale category
             cvSale.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_SALE)
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    Constants.PRODUCT_BY_SALE)
                 navController.navigate(action)
             }
         }
-
     }
 
 
@@ -213,9 +214,12 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         scrollJob?.start()
+        communicator.showBottomNav()
     }
     override fun onStop() {
         super.onStop()
         scrollJob?.cancel()
     }
+
+
 }

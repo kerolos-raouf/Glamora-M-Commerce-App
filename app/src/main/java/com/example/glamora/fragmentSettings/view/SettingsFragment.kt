@@ -47,6 +47,9 @@ class SettingsFragment : Fragment() {
         binding.settingsBackButton.setOnClickListener {
             findNavController().popBackStack()
         }
+        binding.settingsDeliveryLocationLayout.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_mapFragment)
+        }
 
 
         //currency spinner
