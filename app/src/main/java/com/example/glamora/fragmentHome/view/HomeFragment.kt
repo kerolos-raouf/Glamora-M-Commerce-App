@@ -29,6 +29,7 @@ import com.example.glamora.data.repository.RepositoryImpl
 import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
+import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import jakarta.inject.Inject
@@ -72,6 +73,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         navController = Navigation.findNavController(view)
 
 
@@ -216,6 +218,4 @@ class HomeFragment : Fragment() {
         super.onStop()
         scrollJob?.cancel()
     }
-
-
 }

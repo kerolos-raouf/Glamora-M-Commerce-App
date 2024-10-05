@@ -37,6 +37,8 @@ class ProductListFragment : Fragment() {
     private var fromPrice: Double = 0.0
     private var toPrice: Double = 10000.0
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -202,6 +204,11 @@ class ProductListFragment : Fragment() {
             }
 
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
 
     }
+
 }
