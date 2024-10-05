@@ -38,7 +38,7 @@ class SharedViewModel @Inject constructor(
     private val _currencyChangedFlag = MutableStateFlow(false)
     val currencyChangedFlag: StateFlow<Boolean> get() = _currencyChangedFlag
 
-    var selectedCurrency: MutableStateFlow<String> = MutableStateFlow("EGP")
+
 
 
     fun fetchProducts()
@@ -132,7 +132,6 @@ class SharedViewModel @Inject constructor(
 
     fun setSharedPrefString(key: String,value: String){
     if (key == Constants.CURRENCY_KEY) {
-        selectedCurrency.value = Constants.CURRENCY_KEY
         _currencyChangedFlag.value = true
     }
     repository.setSharedPrefString(key, value)
