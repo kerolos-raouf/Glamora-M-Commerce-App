@@ -62,11 +62,24 @@ class ProductListFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        val title = arguments?.getString("title")
+        val titleOrCategory = arguments?.getString("titleOrCategory")
         val brandImageUrl = arguments?.getString("imageUrl")
-        if (title != null) {
-            productListViewModel.filterProductsByCategory(title)
+
+        if (titleOrCategory != null) {
+            when (titleOrCategory.uppercase()) {
+                "SHOES", "T-SHIRTS", "ACCESSORIES" -> {
+                    productListViewModel.filterProductsByCategory(titleOrCategory)
+                    binding.listofProductFilterbutton.visibility = View.GONE
+                }
+                else -> {
+                    // Treat it as a brand, filter by brand
+                    productListViewModel.filterProductsByBrand(titleOrCategory)
+                }
+            }
         }
+
+
+
         setupProduct()
         observeOnFilterdProduct()
 
@@ -81,9 +94,9 @@ class ProductListFragment : Fragment() {
             Log.e("ProductListFragment", "brandImageUrl is null")
         }
 
-        if (title != null) {
-            productListViewModel.filterProductsByBrand(title)
-        }
+//        if (title != null) {
+//            productListViewModel.filterProductsByBrand(title)
+//        }
         binding.listofProductFilterbutton.setOnClickListener {
             filterDialog.show()
         }
@@ -206,9 +219,8 @@ class ProductListFragment : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::productRecycleAdapter.isInitialized) productRecycleAdapter.updateData(emptyList())
     }
-
 }

@@ -132,29 +132,24 @@ class HomeFragment : Fragment() {
     private fun setupCardViews() {
         binding.apply {
 
-            // Men category
-            cvMen.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_MEN)
+            homeShoescv.setOnClickListener{
+                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
                 navController.navigate(action)
+                Log.d("HASSAN","$action")
+
+            }
+            homeTshirtcv.setOnClickListener{
+                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
+                navController.navigate(action)
+
             }
 
-            // Women category
-            cvWomen.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_WOMEN)
+            homeAccssCV.setOnClickListener{
+                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
                 navController.navigate(action)
+
             }
 
-            // Kids category
-            cvKids.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_KIDS)
-                navController.navigate(action)
-            }
-
-            // Sale category
-            cvSale.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_SALE)
-                navController.navigate(action)
-            }
         }
 
     }

@@ -60,7 +60,7 @@ class ProductListViewModel @Inject constructor(
                             Log.e("ProductListViewModel", "Error fetching products: ${state.message}")
                         }
                         State.Loading -> {
-                            Log.d("ProductListViewModel", "Loading products for brand: $category")
+                            //Log.d("ProductListViewModel", "Loading products for brand: $category")
                         }
                         is State.Success -> {
                             Log.d("ProductListViewModel", "All fetched products: ${state.data.map { it.category }}")
