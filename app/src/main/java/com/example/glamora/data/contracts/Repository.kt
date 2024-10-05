@@ -9,7 +9,7 @@ import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.util.State
-import com.example.nimbusweatherapp.data.model.CityForSearchItem
+import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {

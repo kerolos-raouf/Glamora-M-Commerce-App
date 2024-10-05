@@ -1,6 +1,7 @@
 package com.example.glamora.util
 
 import android.content.Context
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -23,4 +24,17 @@ fun setPrice(view: TextView,price : String)
 {
     val code = view.context.getSharedPreferences(Constants.SHARED_PREF_NAME,Context.MODE_PRIVATE).getString(Constants.CURRENCY_KEY,Constants.EGP)
     view.text = "$price $code"
+}
+
+@BindingAdapter("app:showProgressBar")
+fun showProgressBar(view: View,show : Boolean)
+{
+    if(show)
+    {
+        view.visibility = View.VISIBLE
+    }else
+    {
+        view.visibility = View.GONE
+
+    }
 }

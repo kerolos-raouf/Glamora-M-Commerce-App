@@ -28,7 +28,7 @@ import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
-import com.example.nimbusweatherapp.data.model.CityForSearchItem
+import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.type.CustomerInput
 import com.example.type.MailingAddressInput
 import com.google.firebase.auth.FirebaseAuth
