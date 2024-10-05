@@ -60,9 +60,8 @@ fun DiscountCodesQuery.CodeDiscountNodes.toDiscountCodesDTO() : List<DiscountCod
 
     this.nodes.forEach {
         val percentage = it.codeDiscount.onDiscountCodeBasic?.summary?.split("%")?.get(0)?.toDoubleOrNull()
-        val idList = it.id.split("/")
         discountCodes.add(DiscountCodeDTO(
-            id = idList[idList.size - 1],
+            id = it.id,
             code = it.codeDiscount.onDiscountCodeBasic?.title ?: "",
             percentage = percentage ?: 0.0,
         ))
@@ -76,8 +75,7 @@ fun BrandsQuery.Collections.toBrandDTO(): List<Brands> {
 
     this.nodes.forEachIndexed { index, node ->
         if (index > 0 && node.image != null) {
-            val splitId = node.id.split("/")
-            val brandId = splitId.last()
+            val brandId = node.id
 
             val brand = Brands(
                 id = brandId,
@@ -90,6 +88,28 @@ fun BrandsQuery.Collections.toBrandDTO(): List<Brands> {
 
     return brandsItem
 }
+
+
+//fun CategoriesQuery.CollectionByHandle.toProductDTO(): List<ProductDTO> {
+//    val products = mutableListOf<ProductDTO>()
+//
+//    this.products.edges.forEach { product ->
+//        products.add(ProductDTO(
+//            id = product.node.id,
+//            title = product.node.title,
+//            brand = "",
+//            category = "",
+//            description = "",
+//            mainImage = "",
+//            images = emptyList(),
+//            availableColors = emptyList(),
+//            availableSizes = emptyList(),
+//            availableProducts = emptyList()
+//        ))
+//    }
+//    return products
+//}
+
 
 
 

@@ -3,6 +3,7 @@ package com.example.glamora.di
 import com.apollographql.apollo.ApolloClient
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.network.CurrencyApi
 import com.example.glamora.data.network.RetrofitHandler
 import com.example.glamora.data.network.RetrofitInterface
 import com.example.glamora.data.repository.RepositoryImpl
@@ -20,8 +21,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideRemoteDataSource(retrofitInterface: RetrofitInterface) : RemoteDataSource {
-        return RetrofitHandler(retrofitInterface)
+    fun provideRemoteDataSource(retrofitInterface: RetrofitInterface,currencyApi: CurrencyApi) : RemoteDataSource {
+        return RetrofitHandler(retrofitInterface,currencyApi)
     }
 
     @Provides

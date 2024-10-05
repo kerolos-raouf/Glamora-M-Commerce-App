@@ -6,9 +6,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.glamora.R
 import com.example.glamora.data.model.ProductDTO
+import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.databinding.ItemListBinding
+import com.example.glamora.util.Constants
 
-class ProductsAdapter(private var productList: List<ProductDTO>) : RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>() {
+class ProductsAdapter(private var productList: List<ProductDTO>
+) : RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>() {
 
     inner class ProductViewHolder(val binding: ItemListBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -23,6 +26,8 @@ class ProductsAdapter(private var productList: List<ProductDTO>) : RecyclerView.
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productList[position]
         holder.binding.product = product
+        //holder.binding.itemPriceCardviewItemlist.text = convertPriceToSelectedCurrency(product.availableProducts[0].price)
+       // holder.binding.currencyCardviewItemlist.text = getSelectedCurrency()
         holder.binding.executePendingBindings()
     }
 
@@ -32,4 +37,7 @@ class ProductsAdapter(private var productList: List<ProductDTO>) : RecyclerView.
         productList = newProductList
         notifyDataSetChanged()
     }
+//    private fun getSelectedCurrency(): String {
+//        return sharedPrefHandler.getSharedPrefString("currency", Constants.EGP)
+//    }
 }

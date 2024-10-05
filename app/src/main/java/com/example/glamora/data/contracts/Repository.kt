@@ -1,5 +1,6 @@
 package com.example.glamora.data.contracts
 
+import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface Repository {
 
+    //graphql
     fun getProducts() : Flow<State<List<ProductDTO>>>
 
     fun getPriceRules() : Flow<State<List<PriceRulesDTO>>>
@@ -18,9 +20,11 @@ interface Repository {
 
     fun getAllBrands(): Flow<State<List<Brands>>>
 
+    fun getCartItemsForCustomer(customerId: String) : Flow<State<List<CartItemDTO>>>
+
     //retrofit
     fun getCustomerUsingEmail(email: String) : Flow<State<Customer>>
-
+    //fun convertCurrency(amount: String, currency: String): Double
 
     //shared pref
     fun setSharedPrefString(key: String, value: String)

@@ -7,4 +7,6 @@ interface RemoteDataSource {
 
     suspend fun getCustomersUsingEmail(email: String) : Response<CustomerDTO>
 
+    suspend fun convertCurrency(amount: String, currency: String): Double
+
 }

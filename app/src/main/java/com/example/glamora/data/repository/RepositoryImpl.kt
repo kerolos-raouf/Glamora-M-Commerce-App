@@ -6,10 +6,12 @@ import com.apollographql.apollo.api.Optional
 import com.example.BrandsQuery
 import com.example.CreateCustomerMutation
 import com.example.DiscountCodesQuery
+import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
@@ -24,11 +26,13 @@ import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.type.CustomerInput
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.timeout
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -49,6 +53,15 @@ class RepositoryImpl @Inject constructor(
                 Log.d("Kerolos", "getProducts: ${productsResponse.data?.products}")
                 val productList = productsResponse.data?.products?.toProductDTO()
                 if (productList != null) {
+                    val newPrice= remoteDataSource.convertCurrency(1.toString(), getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP))
+                    for (product in productList){
+                        val firstAvailableProduct = product.availableProducts[0]
+                        val currentPrice = firstAvailableProduct.price.toDouble()
+                        firstAvailableProduct.price = String.format("%.2f", currentPrice * newPrice)
+
+
+                    }
+
                     emit(State.Success(productList))
                 }else
                 {
@@ -62,9 +75,10 @@ class RepositoryImpl @Inject constructor(
         {
             emit(State.Error(e.message.toString()))
         }
-    }.timeout(15.seconds).catch {
+    }.timeout(20.seconds).catch {
         emit(State.Error(it.message.toString()))
     }
+
 
     @OptIn(FlowPreview::class)
     override fun getPriceRules(): Flow<State<List<PriceRulesDTO>>> = flow {
@@ -142,10 +156,38 @@ class RepositoryImpl @Inject constructor(
         {
             emit(State.Error(e.message.toString()))
         }
-    }
-        .timeout(15.seconds).catch {
+    }.timeout(15.seconds).catch {
             emit(State.Error(it.message.toString()))
+    }
+
+    override fun getCartItemsForCustomer(customerId: String) : Flow<State<List<CartItemDTO>>> = flow {
+        emit(State.Loading)
+        try {
+
+            val cartItemsResponse = apolloClient.query(GetDraftOrdersByCustomerQuery(
+                query = "{\"query\": \"customer_id:$customerId\"}"
+            )).execute()
+            if (cartItemsResponse.data != null) {
+
+                val draftOrdersResponse = cartItemsResponse.data?.draftOrders
+                Log.d("Kerolos", "getCartItemsForCustomer: ${draftOrdersResponse?.nodes?.size}")
+                if (draftOrdersResponse != null) {
+                    //emit(State.Success(discountCodesList))
+                }else
+                {
+                    emit(State.Error("No products found"))
+                }
+            }else
+            {
+                emit(State.Error(cartItemsResponse.errors.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
         }
+    }.timeout(15.seconds).catch {
+        emit(State.Error(it.message.toString()))
+    }
 
     override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {
         emit(State.Loading)
@@ -171,6 +213,10 @@ class RepositoryImpl @Inject constructor(
             emit(State.Error(e.message.toString()))
         }
     }
+
+//    override fun convertCurrency(amount: String, currency: String): Double {
+//        return remoteDataSource.convertCurrency(amount,currency)
+//    }
 
     override fun setSharedPrefString(key: String, value: String) {
         sharedPrefHandler.setSharedPrefString(key, value)

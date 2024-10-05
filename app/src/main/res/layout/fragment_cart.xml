@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragmentCart.CartFragment">
+        tools:context=".fragmentCart.view.CartFragment">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/cartToolbar"
@@ -114,7 +114,7 @@
                     android:layout_gravity="end"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/_766_56"
+                    android:text="@string/_0"
                     android:textColor="@color/dark_blue"
 
                     android:textSize="20sp"
@@ -145,7 +145,7 @@
                     android:layout_gravity="end"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:text="$15"
+                    android:text="@string/_0"
                     android:textColor="@color/dark_blue"
 
                     android:textSize="20sp"
@@ -178,7 +178,7 @@
                     android:layout_gravity="end"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:text="$0"
+                    android:text="@string/_0"
                     android:textColor="@color/dark_blue"
 
                     android:textSize="20sp"
@@ -216,7 +216,7 @@
                     android:layout_gravity="end"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/_766_56"
+                    android:text="@string/_0"
                     android:textColor="@color/light_blue"
                     android:textSize="20sp"
 

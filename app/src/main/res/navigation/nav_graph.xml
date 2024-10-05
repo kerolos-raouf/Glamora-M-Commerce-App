@@ -11,11 +11,18 @@
         android:label="HomeFragment" >
         <action
             android:id="@+id/action_homeFragment_to_productListFragment"
-            app:destination="@id/productListFragment" />
+            app:destination="@id/productListFragment">
+        <argument
+            android:name="title"
+            app:argType="string" />
+<!--            <argument-->
+<!--                android:name="imageUrl"-->
+<!--                app:argType="string" />-->
+        </action>
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
-        android:name="com.example.glamora.fragmentCart.CartFragment"
+        android:name="com.example.glamora.fragmentCart.view.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
     <fragment
@@ -50,7 +57,7 @@
         android:label="SettingsFragment" />
     <fragment
         android:id="@+id/productListFragment"
-        android:name="com.example.glamora.fragmentProductList.ProductListFragment"
+        android:name="com.example.glamora.fragmentProductList.view.ProductListFragment"
         android:label="ProductListFragment" />
     <fragment
         android:id="@+id/searchFragment"

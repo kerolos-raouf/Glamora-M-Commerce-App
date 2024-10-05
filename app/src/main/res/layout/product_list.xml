@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="product"
+            type="com.example.glamora.data.model.ProductDTO" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -13,28 +15,32 @@
         app:cardElevation="5dp"
         android:id="@+id/item"
         app:cardUseCompatPadding="true"
+        android:backgroundTint="@color/white"
         app:strokeWidth="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:layout_margin="6dp">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/productlist_cardview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/white"
                 android:layout_margin="2dp"
-                android:backgroundTint="@color/light_gray"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/productlist_image_cardview"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
                     android:padding="5dp"
+                    android:background="@color/white"
+                    app:srcCompat="@{product.mainImage}"
                     tools:src="@drawable/product" />
             </androidx.cardview.widget.CardView>
 
@@ -47,7 +53,7 @@
                 android:layout_marginEnd="14dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="@string/itemName"
+                android:text="@{product.title}"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -62,12 +68,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="@string/price"
+                android:text="@{product.availableProducts[0].price} EGP"
                 android:textSize="18sp"
                 android:textColor="@color/light_blue"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/productlist_cardview"
                 app:layout_constraintStart_toStartOf="@id/productlist_itemName_tv"
                 app:layout_constraintTop_toBottomOf="@+id/productlist_itemName_tv" />
+
+            <TextView
+                android:id="@+id/productlist_currency_cardview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EGP"
+                android:textSize="18sp"
+                android:textColor="@color/light_blue"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/productlist_itemPrice_cardview"
+                app:layout_constraintStart_toStartOf="@id/productlist_itemPrice_cardview"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

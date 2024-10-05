@@ -1,4 +1,4 @@
-package com.example.glamora.fragmentCart
+package com.example.glamora.fragmentCart.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,19 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import com.example.glamora.R
 import com.example.glamora.databinding.FragmentCartBinding
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.example.glamora.fragmentCart.viewModel.CartViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class CartFragment : Fragment() {
 
 
+    private val cartViewModel: CartViewModel by viewModels()
+
     private lateinit var binding : FragmentCartBinding
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,6 +34,7 @@ class CartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        cartViewModel.fetchCartItems()
     }
 
 }

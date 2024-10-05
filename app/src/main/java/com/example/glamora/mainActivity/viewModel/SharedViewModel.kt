@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 
@@ -22,6 +23,16 @@ class SharedViewModel @Inject constructor(
 
     private val _discountCodes = MutableStateFlow<List<DiscountCodeDTO>>(emptyList())
     val discountCodes: StateFlow<List<DiscountCodeDTO>> = _discountCodes
+
+    private val _ProductList = MutableStateFlow<List<ProductDTO>>(emptyList())
+    val productList: StateFlow<List<ProductDTO>> get() = _ProductList
+
+
+    private val _currencyChangedFlag = MutableStateFlow(false)
+    val currencyChangedFlag: StateFlow<Boolean> get() = _currencyChangedFlag
+
+    var selectedCurrency: MutableStateFlow<String> = MutableStateFlow("EGP")
+
 
     fun fetchProducts()
     {
@@ -36,7 +47,12 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
+                        _ProductList.value = state.data
                         Log.d("Kerolos", "fetchProducts: ${state.data.size}")
+                        for(item in state.data)
+                        {
+                            Log.d("Kerolos", "fetchPriceRules: ${item.id} ${item.title}")
+                        }
                     }
                 }
             }
@@ -107,10 +123,13 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun setSharedPrefString(key: String,value: String)
-    {
-        repository.setSharedPrefString(key, value)
+    fun setSharedPrefString(key: String,value: String){
+    if (key == Constants.CURRENCY_KEY) {
+        selectedCurrency.value = Constants.CURRENCY_KEY
+        _currencyChangedFlag.value = true
     }
+    repository.setSharedPrefString(key, value)
+}
 
     fun getSharedPrefString(key: String, defaultValue: String) : String
     {
