@@ -22,5 +22,10 @@ object Constants {
     const val AED_SELECTION_VALUE = 3
     const val SAR_SELECTION_VALUE = 4
 
+    const val PRODUCT_BY_MEN="452737990955"
+    const val PRODUCT_BY_WOMEN="452738023723"
+    const val PRODUCT_BY_KIDS="452738089259"
+    const val PRODUCT_BY_SALE="452738122027"
+
 
 }

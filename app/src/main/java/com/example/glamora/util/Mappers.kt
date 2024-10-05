@@ -75,8 +75,7 @@ fun BrandsQuery.Collections.toBrandDTO(): List<Brands> {
 
     this.nodes.forEachIndexed { index, node ->
         if (index > 0 && node.image != null) {
-            val splitId = node.id.split("/")
-            val brandId = splitId.last()
+            val brandId = node.id
 
             val brand = Brands(
                 id = brandId,
@@ -89,6 +88,7 @@ fun BrandsQuery.Collections.toBrandDTO(): List<Brands> {
 
     return brandsItem
 }
+
 
 
 
