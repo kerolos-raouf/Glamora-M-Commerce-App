@@ -12,5 +12,4 @@ interface RetrofitInterface {
     suspend fun getCustomerUsingEmail(
         @Query("email") email: String
     ) : Response<CustomerDTO>
-
 }

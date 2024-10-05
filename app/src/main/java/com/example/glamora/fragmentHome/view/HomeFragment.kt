@@ -16,6 +16,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apollographql.apollo.ApolloClient
@@ -41,12 +43,13 @@ class HomeFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var productsAdapter: ProductsAdapter
+    private lateinit var navController: NavController
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
 
     companion object
     {
-        private var scrollJob : Job ?= null
+        private var scrollJob : Job?= null
     }
 
     private val clipboardManager : ClipboardManager by lazy {
@@ -54,7 +57,6 @@ class HomeFragment : Fragment() {
     }
 
     private var currentIndex = 0;
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,10 +67,12 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
 
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()
         setupDiscountCodesRecyclerView()
+        setupCardViews()
 
         observeRandomProducts()
         observeBrands()
@@ -79,18 +83,70 @@ class HomeFragment : Fragment() {
     private fun setupRandomItemsRecyclerView() {
         productsAdapter = ProductsAdapter(emptyList())
         binding.homeRvItem.apply {
-            layoutManager = GridLayoutManager(context,2)
+            layoutManager = GridLayoutManager(context, 2)
             adapter = productsAdapter
         }
     }
 
     private fun setupBrandsRecyclerView() {
-        brandsAdapter = BrandsAdapter(emptyList())
+        brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
+            val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                selectedBrand.title,
+                selectedBrand.image.url
+            )
+            navController.navigate(action)
+        }
         binding.homeRvBrand.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = brandsAdapter
         }
     }
+
+    private fun observeRandomProducts() {
+        lifecycleScope.launch {
+            homeViewModel.randomProductList.collect { randomProducts ->
+                productsAdapter.updateData(randomProducts)
+                productsAdapter = ProductsAdapter(randomProducts)
+                binding.homeRvItem.adapter = productsAdapter
+            }
+
+        }
+    }
+
+    private fun observeBrands() {
+        lifecycleScope.launch {
+            homeViewModel.brandsList.collect { brandsList ->
+                brandsAdapter.updateData(brandsList)
+            }
+        }
+    }
+
+    private fun setupCardViews() {
+//        binding.apply {
+//
+//            cvMen.setOnClickListener {
+//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_MEN)
+//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
+//            }
+//            cvWomen.setOnClickListener {
+//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_WOMEN)
+//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
+//            }
+//
+//            cvKids.setOnClickListener {
+//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_KIDS)
+//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
+//
+//            }
+//            cvSale.setOnClickListener {
+//                homeViewModel.filterProductsByBrand(Constants.PRODUCT_BY_SALE)
+//                navController.navigate(R.id.action_homeFragment_to_productListFragment)
+//
+//            }
+//        }
+//
+    }
+
 
     private fun setupDiscountCodesRecyclerView() {
 
@@ -142,25 +198,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun observeRandomProducts() {
-        lifecycleScope.launch {
-            homeViewModel.randomProductList.collect { randomProducts ->
-                productsAdapter.updateData(randomProducts)
-                productsAdapter = ProductsAdapter(randomProducts)
-                binding.homeRvItem.adapter = productsAdapter
-            }
-
-        }
-    }
-
-    private fun observeBrands() {
-        lifecycleScope.launch {
-            homeViewModel.brandsList.collect { brandsList ->
-                brandsAdapter.updateData(brandsList)
-            }
-        }
-    }
-
     override fun onStart() {
         super.onStart()
         scrollJob?.start()
@@ -169,5 +206,6 @@ class HomeFragment : Fragment() {
         super.onStop()
         scrollJob?.cancel()
     }
+
 
 }
