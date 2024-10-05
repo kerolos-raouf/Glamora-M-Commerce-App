@@ -1,7 +1,9 @@
 package com.example.glamora.fragmentMap.view
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,6 +24,11 @@ import com.example.glamora.databinding.FragmentMapBinding
 import com.example.glamora.fragmentMap.viewModel.MapViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.util.Constants
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -48,6 +55,8 @@ class MapFragment : Fragment() {
         (requireActivity() as Communicator)
     }
 
+    //fusedLocationProviderClient
+    private lateinit var fusedLocationProviderClient : FusedLocationProviderClient
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,8 +71,27 @@ class MapFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initMap()
         autoCompleteEditTextSetup()
+        initView()
     }
 
+    private fun initView()
+    {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+        binding.mapFAB.setOnClickListener {
+            if(!communicator.isGPSEnabled())
+            {
+                Toast.makeText(requireContext(), "Please enable GPS", Toast.LENGTH_SHORT).show()
+            }else if(!communicator.isLocationPermissionGranted())
+            {
+                communicator.requestLocationPermission()
+                Toast.makeText(requireContext(), "Please allow location permission", Toast.LENGTH_SHORT).show()
+            }else
+            {
+                getCurrentLocation()
+            }
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     @OptIn(FlowPreview::class)
@@ -178,8 +206,42 @@ class MapFragment : Fragment() {
             invalidate()
         }
     }
+    private fun zoomAndAddMarker(geoPoint : GeoPoint)
+    {
+        zoomToLocation(geoPoint)
+        addMarker(geoPoint)
+    }
 
 
+    @SuppressLint("MissingPermission")
+    fun getCurrentLocation() {
+        fusedLocationProviderClient.lastLocation.addOnCompleteListener {
+            val location = it.result
+            if(location != null)
+            {
+                Log.d("Kerolos", "getCurrentLocation: $location")
+                zoomAndAddMarker(GeoPoint(location.latitude,location.longitude))
+            }else
+            {
+                val locationRequest = LocationRequest.Builder(0).build()
+                fusedLocationProviderClient.requestLocationUpdates(
+                    locationRequest,
+                    object : LocationCallback() {
+
+                        override fun onLocationResult(p0: LocationResult) {
+                            val lastLocation = p0.lastLocation
+                            lastLocation?.let {
+                                Log.d("Kerolos", "getCurrentLocation: $lastLocation")
+                                zoomAndAddMarker(GeoPoint(lastLocation.latitude,lastLocation.longitude))
+                            }
+                            fusedLocationProviderClient.removeLocationUpdates(this)
+                        }
+
+                    },
+                    Looper.getMainLooper())
+            }
+        }
+    }
 
 
 }

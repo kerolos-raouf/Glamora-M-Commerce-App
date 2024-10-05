@@ -1,5 +1,7 @@
 package com.example.glamora.mainActivity.view
 
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -30,6 +32,10 @@ class MainActivity : AppCompatActivity(), Communicator {
     private lateinit var navController : NavController
 
     private val sharedViewModel : SharedViewModel by viewModels()
+
+    companion object{
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,4 +88,22 @@ class MainActivity : AppCompatActivity(), Communicator {
     }
 
     override fun isInternetAvailable(): Boolean = sharedViewModel.internetState.value == ConnectivityObserver.InternetState.AVAILABLE
+
+    override fun isLocationPermissionGranted() : Boolean
+    {
+        return (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+    }
+
+    override fun requestLocationPermission() {
+        requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION),
+            LOCATION_PERMISSION_REQUEST_CODE)
+    }
+
+    override fun isGPSEnabled() : Boolean {
+        val locationManager : LocationManager = getSystemService(android.content.Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER)
+    }
+
 }
