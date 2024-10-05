@@ -30,6 +30,7 @@ interface Repository {
     //retrofit
     fun getCustomerUsingEmail(email: String) : Flow<State<Customer>>
     fun getCitiesForSearch(name: String) : Flow<State<List<CityForSearchItem>>>
+    fun convertCurrency() : Flow<State<Double>>
 
 
     //connectivity

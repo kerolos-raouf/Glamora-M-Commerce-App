@@ -23,7 +23,9 @@ fun setImageFromUrl(imageView: ImageView, url: String?) {
 fun setPrice(view: TextView,price : String)
 {
     val code = view.context.getSharedPreferences(Constants.SHARED_PREF_NAME,Context.MODE_PRIVATE).getString(Constants.CURRENCY_KEY,Constants.EGP)
-    view.text = "$price $code"
+    val valueToMultiply = view.context.getSharedPreferences(Constants.SHARED_PREF_NAME,Context.MODE_PRIVATE).getString(Constants.CURRENCY_MULTIPLIER_KEY,1.toString()) ?: "1"
+    val priceValue = String.format("%.2f",price.toDouble() * valueToMultiply.toDouble())
+    view.text = "$priceValue $code"
 }
 
 @BindingAdapter("app:showProgressBar")
