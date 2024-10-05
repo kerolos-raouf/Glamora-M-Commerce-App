@@ -4,6 +4,7 @@ object Constants {
 
     const val GRAPHQL_BASE_URL = "https://android-alex-team1.myshopify.com/admin/api/2024-07/graphql.json"
     const val RETROFIT_BASE_URL = "https://android-alex-team1.myshopify.com/admin/api/2024-07/"
+    const val  CURRENCY_API = "https://api.apilayer.com/exchangerates_data/"
 
     const val CUSTOMER_NOT_FOUND = "Customer not found"
 
@@ -22,10 +23,10 @@ object Constants {
     const val AED_SELECTION_VALUE = 3
     const val SAR_SELECTION_VALUE = 4
 
-    const val PRODUCT_BY_MEN="452737990955"
-    const val PRODUCT_BY_WOMEN="452738023723"
-    const val PRODUCT_BY_KIDS="452738089259"
-    const val PRODUCT_BY_SALE="452738122027"
+    const val PRODUCT_BY_MEN="man"
+    const val PRODUCT_BY_WOMEN="women"
+    const val PRODUCT_BY_KIDS="kids"
+    const val PRODUCT_BY_SALE="sale"
 
 
 }

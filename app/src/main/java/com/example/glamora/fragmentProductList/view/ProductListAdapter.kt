@@ -6,15 +6,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.glamora.R
 import com.example.glamora.data.model.ProductDTO
-import com.example.glamora.databinding.ProductListBinding
+import com.example.glamora.databinding.ItemListBinding
 
 class ProductListAdapterr(private var productList: List<ProductDTO>) : RecyclerView.Adapter<ProductListAdapterr.ProductListViewHolder>() {
-    inner class ProductListViewHolder(val binding: ProductListBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ProductListViewHolder(val binding: ItemListBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductListViewHolder {
-        val binding: ProductListBinding = DataBindingUtil.inflate(
+        val binding: ItemListBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
-            R.layout.product_list, parent, false
+            R.layout.item_list, parent, false
         )
         return ProductListViewHolder(binding)
     }

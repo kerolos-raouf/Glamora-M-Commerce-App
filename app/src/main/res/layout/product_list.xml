@@ -36,7 +36,7 @@
 
                 <ImageView
                     android:id="@+id/productlist_image_cardview"
-                    android:layout_width="150dp"
+                    android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:padding="5dp"
                     android:background="@color/white"
@@ -68,12 +68,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="@{product.availableProducts[0].price}"
+                android:text="@{product.availableProducts[0].price} EGP"
                 android:textSize="18sp"
                 android:textColor="@color/light_blue"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/productlist_cardview"
                 app:layout_constraintStart_toStartOf="@id/productlist_itemName_tv"
                 app:layout_constraintTop_toBottomOf="@+id/productlist_itemName_tv" />
+
+            <TextView
+                android:id="@+id/productlist_currency_cardview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EGP"
+                android:textSize="18sp"
+                android:textColor="@color/light_blue"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/productlist_itemPrice_cardview"
+                app:layout_constraintStart_toStartOf="@id/productlist_itemPrice_cardview"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

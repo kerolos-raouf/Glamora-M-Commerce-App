@@ -32,6 +32,9 @@ class MainActivity : AppCompatActivity(), Communicator {
         sharedViewModel.fetchPriceRules()
         sharedViewModel.fetchDiscountCodes()
         sharedViewModel.fetchCurrentCustomer()
+        sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)
+
+        //sharedViewModel.convertCurrency()
 
 
         initView()
