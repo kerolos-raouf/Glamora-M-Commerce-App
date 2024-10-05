@@ -27,7 +27,7 @@ fun setPrice(view: TextView,price : String)
 }
 
 @BindingAdapter("app:showProgressBar")
-fun showProgressBar(view: View,show : Boolean)
+fun showProgressBar(view: View, show : Boolean)
 {
     if(show)
     {

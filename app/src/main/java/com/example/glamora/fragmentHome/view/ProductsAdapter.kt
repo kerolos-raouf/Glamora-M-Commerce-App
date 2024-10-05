@@ -1,5 +1,6 @@
 package com.example.glamora.fragmentHome.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -26,9 +27,10 @@ class ProductsAdapter(private var productList: List<ProductDTO>
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productList[position]
         holder.binding.product = product
-        //holder.binding.itemPriceCardviewItemlist.text = convertPriceToSelectedCurrency(product.availableProducts[0].price)
-       // holder.binding.currencyCardviewItemlist.text = getSelectedCurrency()
         holder.binding.executePendingBindings()
+        holder.itemView.setOnClickListener {
+            Log.d("ProductListAdapter", "Product ID: ${product.id}")
+        }
     }
 
     override fun getItemCount(): Int = productList.size
@@ -37,7 +39,5 @@ class ProductsAdapter(private var productList: List<ProductDTO>
         productList = newProductList
         notifyDataSetChanged()
     }
-//    private fun getSelectedCurrency(): String {
-//        return sharedPrefHandler.getSharedPrefString("currency", Constants.EGP)
-//    }
+
 }
