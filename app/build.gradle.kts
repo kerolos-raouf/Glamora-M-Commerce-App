@@ -39,11 +39,13 @@ android {
         val adminApiAccessToken : String = localProperty.getProperty("ADMIN_API_ACCESS_TOKEN") ?: "null"
         val apiKey : String = localProperty.getProperty("API_KEY") ?: "null"
         val apiSecretKey : String = localProperty.getProperty("API_SECRET_KEY") ?: "null"
+        val countrySearchApiKey : String = localProperty.getProperty("COUNTRY_SEARCH_API_KEY") ?: "null"
 
 
         buildConfigField("String","ADMIN_API_ACCESS_TOKEN",adminApiAccessToken)
         buildConfigField("String","API_KEY",apiKey)
         buildConfigField("String","API_SECRET_KEY",apiSecretKey)
+        buildConfigField("String","COUNTRY_SEARCH_API_KEY",countrySearchApiKey)
     }
 
     buildFeatures{
@@ -99,6 +101,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.auth)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -154,7 +159,16 @@ dependencies {
     // Apollo Client for GraphQL
     implementation(libs.apollo.runtime)
     //implementation("com.apollographql.apollo3:apollo-api::4.0.1")
-
     //circular image view
     implementation(libs.circleimageview)
+
+    // google Auth
+    implementation (libs.play.services.auth)
+
+
+    //Stripe
+    implementation (libs.stripe.android)
+
+    //paypal
+    implementation (libs.card.payments)
 }

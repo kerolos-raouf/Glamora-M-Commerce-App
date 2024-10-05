@@ -7,12 +7,15 @@
         <variable
             name="product"
             type="com.example.glamora.data.model.ProductDTO" />
+        <variable
+            name="viewModel"
+            type="com.example.glamora.mainActivity.viewModel.SharedViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardview_itemlist"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="280dp"
         app:cardCornerRadius="5dp"
         app:cardElevation="5dp"
         android:layout_marginTop="5dp"
@@ -76,14 +79,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
-                android:text="@{product.availableProducts[0].price}"
+                app:setPrice="@{product.availableProducts[0].price}"
                 android:textColor="@color/blue"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textview_itemName_cardview_itemlits" />
+
 
             <TextView
                 android:id="@+id/originalPrice_cardview_itemlist"

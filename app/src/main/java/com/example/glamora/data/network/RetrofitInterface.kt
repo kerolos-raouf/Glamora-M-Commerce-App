@@ -1,6 +1,6 @@
 package com.example.glamora.data.network
 
-import com.example.glamora.data.model.CutomerModels.CustomerDTO
+import com.example.glamora.data.model.customerModels.CustomerDTO
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

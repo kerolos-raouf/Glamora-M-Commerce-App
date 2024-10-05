@@ -5,6 +5,8 @@ import com.apollographql.apollo.network.okHttpClient
 import com.example.glamora.BuildConfig
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.network.ApolloClientInterceptor
+import com.example.glamora.data.network.CitiesSearchApi
+import com.example.glamora.data.network.CurrencyApi
 import com.example.glamora.data.network.RetrofitHandler
 import com.example.glamora.data.network.RetrofitInterface
 import com.example.glamora.util.Constants
@@ -47,6 +49,27 @@ object RemoteDataSourceModule {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(RetrofitInterface::class.java)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideCitiesSearchClient() : CitiesSearchApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.CITIES_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(CitiesSearchApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCurrencyApi() : CurrencyApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.CURRENCY_API)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(CurrencyApi::class.java)
     }
 
 
