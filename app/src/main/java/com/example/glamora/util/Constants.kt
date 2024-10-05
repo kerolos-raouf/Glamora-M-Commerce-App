@@ -32,6 +32,6 @@ object Constants {
 
     //map fragment
     const val MAP_SHARED_PREFERENCE_NAME = "MAP_SHARED_PREFERENCE_NAME"
-
+    const val UNKNOWN = "Unknown"
 
 }

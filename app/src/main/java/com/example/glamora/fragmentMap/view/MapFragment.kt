@@ -1,6 +1,7 @@
 package com.example.glamora.fragmentMap.view
 
 import android.annotation.SuppressLint
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
@@ -19,7 +20,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
+import com.example.glamora.data.model.AddressModel
+import com.example.glamora.data.model.Coordinates
 import com.example.glamora.databinding.FragmentMapBinding
 import com.example.glamora.fragmentMap.viewModel.MapViewModel
 import com.example.glamora.mainActivity.view.Communicator
@@ -55,6 +59,10 @@ class MapFragment : Fragment() {
         (requireActivity() as Communicator)
     }
 
+    //current address
+    private val currentAddress = AddressModel()
+    private var coordinates : Coordinates? = null
+
     //fusedLocationProviderClient
     private lateinit var fusedLocationProviderClient : FusedLocationProviderClient
 
@@ -78,7 +86,8 @@ class MapFragment : Fragment() {
     {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
-        binding.mapFAB.setOnClickListener {
+        //fab
+        binding.mapFabGetCurrentLocation.setOnClickListener {
             if(!communicator.isGPSEnabled())
             {
                 Toast.makeText(requireContext(), "Please enable GPS", Toast.LENGTH_SHORT).show()
@@ -89,6 +98,18 @@ class MapFragment : Fragment() {
             }else
             {
                 getCurrentLocation()
+            }
+        }
+
+
+        //submit button
+        binding.mapSubmitAddress.setOnClickListener {
+            if(coordinates != null){
+                fillCountryAndCityNames(coordinates!!)
+                val action = MapFragmentDirections.actionMapFragmentToAddressDetailsFragment(currentAddress)
+                findNavController().navigate(action)
+            }else {
+                Toast.makeText(requireContext(), "Please select location", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -205,6 +226,7 @@ class MapFragment : Fragment() {
             overlays.add(marker)
             invalidate()
         }
+        coordinates = Coordinates(geoPoint.latitude,geoPoint.longitude)
     }
     private fun zoomAndAddMarker(geoPoint : GeoPoint)
     {
@@ -241,6 +263,13 @@ class MapFragment : Fragment() {
                     Looper.getMainLooper())
             }
         }
+    }
+
+    fun fillCountryAndCityNames(coordinates : Coordinates) {
+        val geoCoder = Geocoder(requireContext().applicationContext)
+        val address = geoCoder.getFromLocation(coordinates.latitude,coordinates.longitude,1)
+        currentAddress.country = address?.get(0)?.countryName ?: Constants.UNKNOWN
+        currentAddress.city = address?.get(0)?.locality ?: Constants.UNKNOWN
     }
 
 

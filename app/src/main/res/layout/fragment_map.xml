@@ -14,7 +14,7 @@
 
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/mapFAB"
+            android:id="@+id/mapFabGetCurrentLocation"
             style="@style/CustomFloatingActionButton"
             android:layout_width="wrap_content"
 
@@ -22,11 +22,26 @@
             android:layout_margin="16dp"
             android:contentDescription="Mian FAB"
 
-
             android:src="@drawable/icon_location"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/mapSubmitAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/check_out_button_background"
+            app:backgroundTint="@color/dark_blue"
+            android:text="Submit Location"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/mapFabGetCurrentLocation"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
 

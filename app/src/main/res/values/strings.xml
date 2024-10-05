@@ -74,5 +74,6 @@
     <string name="cash_on_delivery">Cash On Delivery</string>
     <string name="pay_now">Pay Now</string>
     <string name="reset">Forgot Password?</string>
+    <string name="address_details">Address Details</string>
 
 </resources>
