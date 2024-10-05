@@ -160,7 +160,7 @@ class RepositoryImpl @Inject constructor(
         try {
 
             val cartItemsResponse = apolloClient.query(GetDraftOrdersByCustomerQuery(
-                query = "{\"query\": \"customer_id:$customerId\"}"
+                query = "customer_id:$customerId"
             )).execute()
             if (cartItemsResponse.data != null) {
 
