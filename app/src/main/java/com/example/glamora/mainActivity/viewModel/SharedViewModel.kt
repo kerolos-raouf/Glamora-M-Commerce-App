@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -22,6 +24,25 @@ class SharedViewModel @Inject constructor(
 
     private val _discountCodes = MutableStateFlow<List<DiscountCodeDTO>>(emptyList())
     val discountCodes: StateFlow<List<DiscountCodeDTO>> = _discountCodes
+
+
+    ///internet state
+    private val _internetState = MutableStateFlow(ConnectivityObserver.InternetState.Unavailable)
+    val internetState : StateFlow<ConnectivityObserver.InternetState> = _internetState
+
+
+    init {
+        observeOnInternetState()
+    }
+
+    private fun observeOnInternetState()
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.observeOnInternetState().collect{
+                _internetState.value = it
+            }
+        }
+    }
 
     fun fetchProducts()
     {
@@ -42,6 +63,7 @@ class SharedViewModel @Inject constructor(
                             Log.d("Kerolos", "fetchPriceRules: ${item.id} ${item.title}")
                         }
                     }
+
                 }
             }
         }

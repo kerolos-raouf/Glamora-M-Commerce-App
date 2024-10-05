@@ -11,6 +11,7 @@ import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
@@ -37,7 +38,8 @@ import kotlin.time.Duration.Companion.seconds
 class RepositoryImpl @Inject constructor(
     private val apolloClient: ApolloClient,
     private val remoteDataSource: RemoteDataSource,
-    private val sharedPrefHandler: SharedPrefHandler
+    private val sharedPrefHandler: SharedPrefHandler,
+    private val connectivityObserver: ConnectivityObserver
 ) : Repository {
 
 
@@ -200,6 +202,10 @@ class RepositoryImpl @Inject constructor(
         {
             emit(State.Error(e.message.toString()))
         }
+    }
+
+    override fun observeOnInternetState(): Flow<ConnectivityObserver.InternetState> {
+        return connectivityObserver.observer()
     }
 
     override fun setSharedPrefString(key: String, value: String) {

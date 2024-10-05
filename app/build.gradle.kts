@@ -161,4 +161,9 @@ dependencies {
     implementation (libs.play.services.auth)
 
 
+    //Stripe
+    implementation (libs.stripe.android)
+
+    //paypal
+    implementation (libs.card.payments)
 }

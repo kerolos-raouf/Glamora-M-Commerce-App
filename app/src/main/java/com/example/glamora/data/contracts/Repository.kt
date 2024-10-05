@@ -1,5 +1,6 @@
 package com.example.glamora.data.contracts
 
+import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.CutomerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
@@ -24,6 +25,10 @@ interface Repository {
 
     //retrofit
     fun getCustomerUsingEmail(email: String) : Flow<State<Customer>>
+
+
+    //connectivity
+    fun observeOnInternetState() : Flow<ConnectivityObserver.InternetState>
 
 
     //shared pref

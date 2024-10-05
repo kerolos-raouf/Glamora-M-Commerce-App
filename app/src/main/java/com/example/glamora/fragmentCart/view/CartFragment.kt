@@ -12,6 +12,9 @@ import com.example.glamora.databinding.CartBottomSheetBinding
 import com.example.glamora.databinding.FragmentCartBinding
 import com.example.glamora.fragmentCart.viewModel.CartViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.paypal.android.cardpayments.CardClient
+import com.paypal.android.corepayments.CoreConfig
+import com.paypal.android.corepayments.Environment
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -27,6 +30,11 @@ class CartFragment : Fragment() {
 
     private lateinit var bottomSheet : BottomSheetDialog
     private lateinit var bottomSheetBinding : CartBottomSheetBinding
+
+    //paypal
+    private val clientId = "AQto284OoB8DVcUW4pE4CBMOAQ-LnVV-P88g00FpO7nSCF3ruUWb0KMWe64diUwMWFzDYT3_qdanNCG6"
+    private val secretId = "ECGkdlpIhYXe0rPYNZ4tvMcrNInFrM4J636j7H5n-M_DXiC2x6gykyjDm7XOIrC4PcNZ0dmqbsQRTa2I"
+    private val returnUrl = "com.example.glamora://demo"
 
 
 
@@ -47,11 +55,21 @@ class CartFragment : Fragment() {
     }
 
     private fun initViews() {
+
+        initPayPal()
+
         bottomSheet = BottomSheetDialog(requireContext())
         bottomSheetBinding = CartBottomSheetBinding.inflate(layoutInflater)
         binding.cartCheckOutButton.setOnClickListener {
             showBottomSheet()
         }
+    }
+
+    private fun initPayPal(){
+        val config = CoreConfig(clientId, environment = Environment.SANDBOX)
+        val cardClient = CardClient(requireActivity(),config)
+
+
     }
 
 
@@ -61,9 +79,19 @@ class CartFragment : Fragment() {
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
             bottomSheet.dismiss()
+            if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
+                payWithCard()
+            }else{
+
+            }
         }
 
         bottomSheet.show()
+    }
+
+
+    private fun payWithCard(){
+
     }
 
 }

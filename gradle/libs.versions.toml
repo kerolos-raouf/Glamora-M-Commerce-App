@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.1"
+cardPayments = "1.5.0"
 kotlin = "1.9.0"
 circleimageview = "3.1.0"
 firebaseAuthKtx = "24.8.0"
@@ -24,6 +25,7 @@ activity = "1.9.2"
 constraintlayout = "2.1.4"
 apolloRuntime = "4.0.1"
 dotsindicator = "4.3"
+stripeAndroid = "20.51.1"
 viewpager2 = "1.1.0"
 okhttp = "4.12.0"
 googleGmsGoogleServices = "4.4.2"
@@ -31,6 +33,7 @@ firebaseAuth = "23.0.0"
 
 
 [libraries]
+card-payments = { module = "com.paypal.android:card-payments", version.ref = "cardPayments" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
@@ -63,6 +66,7 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 
 
 [plugins]

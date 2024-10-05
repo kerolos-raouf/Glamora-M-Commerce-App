@@ -28,6 +28,7 @@ import com.example.glamora.data.network.ApolloClientInterceptor
 import com.example.glamora.data.repository.RepositoryImpl
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
+import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +47,12 @@ class HomeFragment : Fragment() {
     private lateinit var navController: NavController
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
+
+
+    //communicator
+    private val communicator: Communicator by lazy {
+        (requireContext() as Communicator)
+    }
 
     companion object
     {
@@ -79,6 +86,8 @@ class HomeFragment : Fragment() {
 
 
     }
+
+
 
     private fun setupRandomItemsRecyclerView() {
         productsAdapter = ProductsAdapter(emptyList())
@@ -201,6 +210,7 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         scrollJob?.start()
+        communicator.showBottomNav()
     }
     override fun onStop() {
         super.onStop()

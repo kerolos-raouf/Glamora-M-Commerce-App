@@ -6,4 +6,6 @@ interface Communicator {
 
     fun showBottomNav()
 
+    fun isInternetAvailable() : Boolean
+
 }
