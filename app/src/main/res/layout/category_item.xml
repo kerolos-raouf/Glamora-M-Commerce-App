@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="10dp"
-                app:srcCompat="@drawable/men"
+                app:srcCompat="@drawable/shoes"
                 android:background="@android:color/transparent" />
         </androidx.cardview.widget.CardView>
 
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@string/men"
+            android:text="@string/shoes"
             android:textSize="15sp"
             android:textColor="@color/gray"
             android:textStyle="bold"

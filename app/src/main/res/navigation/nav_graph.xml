@@ -13,7 +13,7 @@
             android:id="@+id/action_homeFragment_to_productListFragment"
             app:destination="@id/productListFragment">
         <argument
-            android:name="title"
+            android:name="titleOrCategory"
             app:argType="string" />
 <!--            <argument-->
 <!--                android:name="imageUrl"-->

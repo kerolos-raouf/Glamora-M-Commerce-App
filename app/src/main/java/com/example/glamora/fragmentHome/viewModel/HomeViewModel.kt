@@ -50,30 +50,25 @@ class HomeViewModel  @Inject constructor(
         }
     }
 
-    fun filterProductsByCategory(category: String) {
-        viewModelScope.launch {
-            repository.getProducts().collect { state ->
-                when (state) {
-                    is State.Error -> {
-                        Log.d("HomeViewModel", "Error fetching products: ${state.message}")
-                    }
-                    State.Loading -> {
-                    }
-                    is State.Success -> {
-                        val filteredProducts = when (category) {
-                            "men" -> state.data.filter { it.category == Constants.PRODUCT_BY_MEN }
-                            "women" -> state.data.filter { it.category == Constants.PRODUCT_BY_WOMEN }
-                            "kids" -> state.data.filter { it.category == Constants.PRODUCT_BY_KIDS}
-                            "sale" -> state.data.filter { it.category==Constants.PRODUCT_BY_SALE }
-                            else -> state.data
-                        }
-                        _filteredProductList.value = filteredProducts
-                        Log.d("HomeViewModel", "Filtered products for category '$category': ${filteredProducts.size}")
-                    }
-                }
-            }
-        }
-    }
+//    fun filterProductsByCategory(category: String) {
+//        viewModelScope.launch {
+//            repository.getProducts().collect { state ->
+//                when (state) {
+//                    is State.Error -> {
+//                        Log.d("HomeViewModel", "Error fetching products: ${state.message}")
+//                    }
+//                    State.Loading -> {
+//                    }
+//                    is State.Success -> {
+//                        _filteredProductList.value = state.data
+//                        Log.d("HomeViewModel", "Filtered products for category '$category': ${state.data}")
+//                        }
+//
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 
 }
