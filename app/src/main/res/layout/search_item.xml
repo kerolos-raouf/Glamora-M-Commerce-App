@@ -18,23 +18,25 @@
         <ImageView
             android:id="@+id/product_img"
             android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/circular_background"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/icon_settings_blue" />
+            android:src="@drawable/icon_settings_blue" />
 
         <TextView
             android:id="@+id/Product_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_regular"
             android:textColor="#9098B1"
             android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.111"
             app:layout_constraintStart_toEndOf="@+id/product_img"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Your Text Here" />

@@ -5,27 +5,30 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.glamora.R
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.databinding.FragmentSearchBinding
-import com.example.glamora.fragmentSearch.viewModel.SearchViewModel
+import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
 
 
-    private val searchViewModel: SearchViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var searchBinding: FragmentSearchBinding
 
     private lateinit var searchAdapter: SearchAdapter
+
 
 
     override fun onCreateView(
@@ -51,7 +54,7 @@ class SearchFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                searchViewModel.filterList(newText.orEmpty())
+                sharedViewModel.filterList(newText.orEmpty())
                 updateSearchViewAppearance(newText)
                 return true
             }
@@ -59,6 +62,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun updateSearchViewAppearance(query: String?) {
+
         if (!query.isNullOrEmpty()) {
             searchBinding.searchView.setBackgroundResource(R.drawable.button_background_focused)
         } else {
@@ -81,7 +85,7 @@ class SearchFragment : Fragment() {
 
     private fun setupObserver() {
         lifecycleScope.launch {
-            searchViewModel.filteredResults.collectLatest { results ->
+            sharedViewModel.filteredResults.collectLatest { results ->
                 searchAdapter.submitList(results)
             }
         }
