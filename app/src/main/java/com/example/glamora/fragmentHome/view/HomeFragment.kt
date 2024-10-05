@@ -74,7 +74,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
 
-        //sharedViewModel.changeCurrency(Constants.CURRENCY_KEY)
 
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()

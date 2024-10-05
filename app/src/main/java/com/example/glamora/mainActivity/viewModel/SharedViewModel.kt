@@ -132,11 +132,4 @@ class SharedViewModel @Inject constructor(
         return repository.getSharedPrefString(key, defaultValue)
     }
 
-
-//    fun changeCurrency(newCurrency: String) {
-//        selectedCurrency.value = newCurrency
-//        _currencyChangedFlag.value = true
-//        setSharedPrefString(Constants.CURRENCY_KEY, newCurrency)
-//    }
-
 }
