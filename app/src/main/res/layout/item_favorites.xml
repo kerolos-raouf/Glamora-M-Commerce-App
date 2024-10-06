@@ -51,14 +51,11 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
 
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="27dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/icon_delete"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/disc"
-            app:layout_constraintTop_toBottomOf="@+id/new_price" />
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <TextView
             android:id="@+id/new_price"
@@ -67,42 +64,14 @@
             android:layout_marginStart="16dp"
 
             android:layout_marginTop="30dp"
+            android:layout_marginBottom="16dp"
             android:text="@string/_766_56"
             android:textColor="@color/light_blue"
             android:textSize="14sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title" />
-
-        <TextView
-            android:id="@+id/old_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/_900_00"
-            android:textColor="#9098B1"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/new_price" />
-
-        <TextView
-            android:id="@+id/disc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/_24"
-            android:textColor="#FB7181"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/old_price"
-            app:layout_constraintTop_toBottomOf="@+id/new_price"
-            app:layout_constraintVertical_bias="0.0" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
