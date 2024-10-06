@@ -171,4 +171,7 @@ dependencies {
 
     //paypal
     implementation (libs.card.payments)
+
+    //Shopify Checkout Sheet Kit
+    implementation ("com.shopify:checkout-sheet-kit:3.0.1")
 }

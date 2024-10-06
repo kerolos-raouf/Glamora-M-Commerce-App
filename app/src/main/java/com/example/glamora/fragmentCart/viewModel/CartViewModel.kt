@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.CartItemDTO
+import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,8 @@ class CartViewModel @Inject constructor(
                     State.Loading -> {
                     }
                     is State.Success -> {
-                        _cartItems.value = state.data
+                        _cartItems.value = state.data.filter { it.title != Constants.UNKNOWN }
+                        Log.d("Kerolos", "fetchCartItems: ${_cartItems.value.size}")
                     }
                 }
             }

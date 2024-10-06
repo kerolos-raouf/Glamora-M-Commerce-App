@@ -29,6 +29,7 @@ import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
+import com.example.glamora.util.toCartItemsDTO
 import com.example.type.CustomerInput
 import com.example.type.MailingAddressInput
 import com.google.firebase.auth.FirebaseAuth
@@ -165,9 +166,8 @@ class RepositoryImpl @Inject constructor(
             if (cartItemsResponse.data != null) {
 
                 val draftOrdersResponse = cartItemsResponse.data?.draftOrders
-                Log.d("Kerolos", "getCartItemsForCustomer: ${draftOrdersResponse?.nodes?.size}")
                 if (draftOrdersResponse != null) {
-                    //emit(State.Success(discountCodesList))
+                    emit(State.Success(draftOrdersResponse.toCartItemsDTO()))
                 }else
                 {
                     emit(State.Error("No products found"))
