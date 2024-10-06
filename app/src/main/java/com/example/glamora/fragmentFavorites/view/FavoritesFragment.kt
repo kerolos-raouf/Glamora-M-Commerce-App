@@ -17,7 +17,6 @@ class FavoritesFragment : Fragment() {
 
     private val viewModel: FavoritesViewModel by viewModels()
     private lateinit var favoritesBinding: FragmentFavoritesBinding
-    private lateinit var favoritesItemBinding: ItemFavoritesBinding
 
 
     override fun onCreateView(
@@ -25,12 +24,10 @@ class FavoritesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         favoritesBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_favorites, container, false)
-        favoritesItemBinding = DataBindingUtil.inflate(inflater, R.layout.item_favorites, container, false)
         return favoritesBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        favoritesItemBinding.oldPrice.paintFlags = favoritesItemBinding.oldPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
     }
 }

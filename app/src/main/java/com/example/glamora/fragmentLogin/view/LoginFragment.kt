@@ -2,11 +2,11 @@ package com.example.glamora.fragmentLogin.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -40,7 +40,6 @@ class LoginFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Initialize ViewModel
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
     }
 
@@ -70,7 +69,34 @@ class LoginFragment : Fragment() {
         }
 
         loginBinding.guestBtn.setOnClickListener{
-            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+
+            val builder = AlertDialog.Builder(requireContext())
+
+            builder.setTitle("Guest User")
+            builder.setMessage("Are you sure you want to proceed as a guest?")
+
+            builder.setPositiveButton("OK") { dialog, _ ->
+                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                dialog.dismiss()
+
+            }
+
+            builder.setNegativeButton("Close") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            val alertDialog = builder.create()
+
+            alertDialog.setOnShowListener {
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.light_blue)
+                )
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.light_blue)
+                )
+            }
+
+            alertDialog.show()
         }
 
         loginBinding.resetBtn.setOnClickListener{
@@ -147,12 +173,9 @@ class LoginFragment : Fragment() {
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                // Google Sign-In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-                loginViewModel.loginWithGoogle(account.idToken!!) // Pass token to ViewModel
+                loginViewModel.loginWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
-                // Google Sign-In failed
-                Log.w("LoginFragment", "Google sign-in failed", e)
                 Toast.makeText(requireContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show()
             }
         }
@@ -164,13 +187,15 @@ class LoginFragment : Fragment() {
                 when (state) {
                     is LoginState.Success -> {
                         Toast.makeText(requireContext(), "Login successful!", Toast.LENGTH_SHORT).show()
-                        // Navigate to the main screen or next fragment
+                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                     }
                     is LoginState.Error -> {
-                        Toast.makeText(requireContext(), "Error: ${state.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Login failed", Toast.LENGTH_SHORT).show()
+                        showErrorEmail()
+                        showErrorPassword()
                     }
                     else -> {
-                        // Handle any other state if necessary
+
                     }
                 }
             }
