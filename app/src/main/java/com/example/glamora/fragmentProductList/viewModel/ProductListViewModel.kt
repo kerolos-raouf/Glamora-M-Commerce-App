@@ -24,64 +24,35 @@ class ProductListViewModel @Inject constructor(
 
 
 
-    fun filterProductsByBrand(title: String) {
+    fun filterProductsByBrand(products: List<ProductDTO>, title: String) {
         viewModelScope.launch {
             try {
-                _filteredProducts.value = emptyList()
-                repository.getProducts().collect { state ->
-                    when (state) {
-                        is State.Error -> {
-                            Log.e("ProductListViewModel", "Error fetching products: ${state.message}")
-                        }
-                        State.Loading -> {
-                            Log.d("ProductListViewModel", "Loading products for brand: $title")
-                        }
-                        is State.Success -> {
-                            Log.d("ProductListViewModel", "All fetched products: ${state.data.map { it.title }}")
-
-
-                            val filtered = state.data.filter { product ->
-                                product.brand == title
-                            }
-
-                            _filteredProducts.value = filtered
-                            Log.d("ProductListViewModel", "Fetched ${filtered.size} products for brand ID: $title")
-                        }
-                    }
+                val filtered = products.filter { product ->
+                    product.brand == title
                 }
+
+                _filteredProducts.value = filtered
+                Log.d("ProductListViewModel", "Fetched ${filtered.size} products for brand: $title")
+
             } catch (e: Exception) {
-                Log.e("ProductListViewModel", "Exception fetching products: ${e.message}")
+                Log.e("ProductListViewModel", "Exception filtering products: ${e.message}")
             }
         }
     }
 
-    fun filterProductsByCategory(category: String) {
+
+    fun filterProductsByCategory(products: List<ProductDTO>,category: String) {
         viewModelScope.launch {
             try {
-                _filteredProducts.value = emptyList()
-                repository.getProducts().collect { state ->
-                    when (state) {
-                        is State.Error -> {
-                            Log.e("ProductListViewModel", "Error fetching products: ${state.message}")
-                        }
-                        State.Loading -> {
-                            Log.d("ProductListViewModel", "Loading products for brand: $category")
-                        }
-                        is State.Success -> {
-                            Log.d("ProductListViewModel", "All fetched products: ${state.data.map { it.category }}")
-
-
-                            val filtered = state.data.filter { product ->
-                                product.category == category
-                            }
-
-                            _filteredProducts.value = filtered
-                            Log.d("ProductListViewModel", "Fetched ${filtered.size} products for brand ID: $category")
-                        }
-                    }
+                val filtered = products.filter { product ->
+                    product.category == category
                 }
+
+                _filteredProducts.value = filtered
+                Log.d("ProductListViewModel", "Fetched ${filtered.size} products for brand: $category")
+
             } catch (e: Exception) {
-                Log.e("ProductListViewModel", "Exception fetching products: ${e.message}")
+                Log.e("ProductListViewModel", "Exception filtering products: ${e.message}")
             }
         }
     }

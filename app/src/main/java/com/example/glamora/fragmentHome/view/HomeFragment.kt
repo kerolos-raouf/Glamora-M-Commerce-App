@@ -138,7 +138,6 @@ class HomeFragment : Fragment() {
             homeShoescv.setOnClickListener{
                 val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
                 navController.navigate(action)
-                Log.d("HASSAN","$action")
 
             }
             homeTshirtcv.setOnClickListener{
