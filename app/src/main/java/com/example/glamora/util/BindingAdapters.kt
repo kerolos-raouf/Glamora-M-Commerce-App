@@ -29,6 +29,12 @@ fun setPrice(view: TextView,price : String)
     view.text = "$priceValue $code"
 }
 
+@BindingAdapter("app:setText")
+fun setText(view: TextView,text : String)
+{
+    view.text = text
+}
+
 @BindingAdapter("app:showProgressBar")
 fun showProgressBar(view: View, show : Boolean)
 {

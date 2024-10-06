@@ -27,14 +27,12 @@ class CartRecyclerViewAdapter (
         val item = getItem(position)
         holder.binding.apply {
             Glide.with(cartItemImage).load(item.image).into(cartItemImage)
-            cartItemName.text = item.title
-            cartItemPrice.text = item.price
-            cartItemQuantity.text = item.quantity.toString()
+            cartItem = item
             cartItemPlusButton.setOnClickListener {
                 if(item.quantity < item.inventoryQuantity)
                 {
                     item.quantity++
-                    cartItemQuantity.text = item.quantity.toString()
+                    cartItem = item
                     listener.onItemPlusClicked(item)
                 }else{
                     listener.onReachedMaxQuantity(item)
@@ -44,7 +42,7 @@ class CartRecyclerViewAdapter (
                 if(item.quantity > 1)
                 {
                     item.quantity--
-                    cartItemQuantity.text = item.quantity.toString()
+                    cartItem = item
                     listener.onItemMinusClicked(item)
                 }else
                 {

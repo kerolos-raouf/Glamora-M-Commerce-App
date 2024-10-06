@@ -101,13 +101,9 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     private fun initObservers(){
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                cartViewModel.cartItems.collect{
-                    mAdapter.submitList(it)
-                    calculateTotalPrice(it)
-                }
-            }
+        cartViewModel.cartItems.observe(viewLifecycleOwner){
+            mAdapter.submitList(it)
+            calculateTotalPrice(it)
         }
 
         lifecycleScope.launch {
@@ -181,10 +177,12 @@ class CartFragment : Fragment(),CartItemInterface {
 
     override fun onItemPlusClicked(item: CartItemDTO) {
         cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
+        applyPriceChangeOnUI(-item.price.toDouble(), 0.0)
     }
 
     override fun onItemMinusClicked(item: CartItemDTO) {
         cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
+        applyPriceChangeOnUI(item.price.toDouble(), 0.0)
     }
 
     override fun onItemDeleteClicked(item: CartItemDTO) {
@@ -193,6 +191,7 @@ class CartFragment : Fragment(),CartItemInterface {
             actionText = "Delete"
         ){
             cartViewModel.deleteDraftOrder(item.draftOrderId)
+            applyPriceChangeOnUI(item.price.toDouble(), 0.0)
         }
     }
 
@@ -206,6 +205,14 @@ class CartFragment : Fragment(),CartItemInterface {
 
     override fun onReachedMaxQuantity(item: CartItemDTO) {
         Toast.makeText(requireContext(), "You reached to the maximum quantity", Toast.LENGTH_SHORT).show()
+    }
+
+    fun applyPriceChangeOnUI(newItemsPrice : Double,discount : Double)
+    {
+        val oldItemsPrice = binding.cartItemsNumber.text.toString().split(" ")[0].toDouble()
+        val aftersDiscount = if(oldItemsPrice - discount > 0) oldItemsPrice - newItemsPrice - discount else 0.0
+        binding.cartItemsNumber.text = "${String.format("%.2f", oldItemsPrice - newItemsPrice)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
+        binding.cartTotalPriceNumber.text = "${String.format("%.2f", aftersDiscount)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
     }
 
 }

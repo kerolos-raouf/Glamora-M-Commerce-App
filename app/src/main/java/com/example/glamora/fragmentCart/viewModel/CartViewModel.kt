@@ -1,5 +1,7 @@
 package com.example.glamora.fragmentCart.viewModel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
@@ -16,8 +18,8 @@ class CartViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel(){
 
-    private val _cartItems = MutableStateFlow<List<CartItemDTO>>(emptyList())
-    val cartItems : StateFlow<List<CartItemDTO>> = _cartItems
+    private val _cartItems = MutableLiveData<List<CartItemDTO>>(emptyList())
+    val cartItems : LiveData<List<CartItemDTO>> = _cartItems
 
     private val _message = MutableStateFlow("")
     val message : StateFlow<String> = _message
