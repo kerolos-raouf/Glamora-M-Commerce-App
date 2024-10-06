@@ -12,6 +12,7 @@ object Constants {
     //shared pref
     const val SHARED_PREF_NAME = "glamora_shared_pref"
     const val CURRENCY_KEY = "currency"
+    const val CURRENCY_MULTIPLIER_KEY = "currency_multiplier"
     const val CURRENCY_SELECTION_VALUE_KEY = "currency_selection_value"
     const val EGP = "EGP"
     const val USD = "USD"

@@ -1,7 +1,7 @@
 package com.example.glamora.data.network
 
 import com.example.glamora.BuildConfig
-import com.example.nimbusweatherapp.data.model.CitiesForSearch
+import com.example.glamora.data.model.citiesModel.CitiesForSearch
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

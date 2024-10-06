@@ -1,4 +1,4 @@
-package com.example.nimbusweatherapp.data.model
+package com.example.glamora.data.model.citiesModel
 
 
 class CitiesForSearch : ArrayList<CityForSearchItem>()

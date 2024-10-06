@@ -92,7 +92,7 @@ class ProductListFragment : Fragment() {
 
     private fun setupProduct() {
         productRecycleAdapter = ProductListAdapterr(emptyList())
-        binding.rvListOfProduct.apply {
+        binding.listOfProductRecyclerview.apply {
              layoutManager = GridLayoutManager(context, 2)
             adapter = productRecycleAdapter
         }

@@ -1,7 +1,8 @@
 package com.example.glamora.data.contracts
 
+import com.example.glamora.data.model.citiesModel.CitiesForSearch
 import com.example.glamora.data.model.customerModels.CustomerDTO
-import com.example.nimbusweatherapp.data.model.CitiesForSearch
+
 import retrofit2.Response
 
 interface RemoteDataSource {

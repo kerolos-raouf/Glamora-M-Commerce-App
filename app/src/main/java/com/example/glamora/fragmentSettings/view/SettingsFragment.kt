@@ -72,6 +72,7 @@ class SettingsFragment : Fragment() {
                 ) {
                     sharedViewModel.setSharedPrefString(Constants.CURRENCY_KEY,currencyList[position])
                     sharedViewModel.setSharedPrefString(Constants.CURRENCY_SELECTION_VALUE_KEY,position.toString())
+                    sharedViewModel.convertCurrency()
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
