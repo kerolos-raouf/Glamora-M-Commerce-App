@@ -30,7 +30,10 @@
     <string name="enter_coupon_code">Enter Coupon Code</string>
     <string name="nike_air_zoom_pegasus_36_miami">Nike Air Zoom Pegasus 36 Miami</string>
     <string name="favorite_button">Favourites</string>
-
+    <string name="men">Men</string>
+    <string name="women">Women</string>
+    <string name="kids">kids</string>
+    <string name="sale">Sale</string>
     <string name="brands">Brands</string>
     <string name="price">2000 EGP</string>
     <string name="itemName">Nike Air Max 270 React ENG</string>
@@ -68,10 +71,13 @@
     <string name="remove_filter">REMOVE</string>
     <string name="shipping">Shipping</string>
     <string name="_0">0 EGP</string>
+    <string name="reset">Forgot Password?</string>
+    <string name="_900_00">$900.00</string>
+    <string name="_24">24%</string>
+    <string name="address_details">Address Details</string>
+    <string name="orders">Orders</string>
     <string name="identity">Identity</string>
     <string name="cash_on_delivery">Cash On Delivery</string>
     <string name="pay_now">Pay Now</string>
-    <string name="reset">Forgot Password?</string>
-    <string name="address_details">Address Details</string>
-    <string name="orders">Orders</string>
+
 </resources>
