@@ -5,6 +5,7 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.example.BrandsQuery
 import com.example.CreateCustomerMutation
+import com.example.DeleteDraftOrderMutation
 import com.example.DiscountCodesQuery
 import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
@@ -31,6 +32,7 @@ import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.util.toCartItemsDTO
 import com.example.type.CustomerInput
+import com.example.type.DraftOrderDeleteInput
 import com.example.type.MailingAddressInput
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
@@ -49,6 +51,7 @@ class RepositoryImpl @Inject constructor(
 ) : Repository {
 
 
+    //graph queries
     @OptIn(FlowPreview::class)
     override fun getProducts(): Flow<State<List<ProductDTO>>> = flow {
         emit(State.Loading)
@@ -222,6 +225,28 @@ class RepositoryImpl @Inject constructor(
         }
     }.timeout(15.seconds).catch {
         emit(State.Error(it.message.toString()))
+    }
+
+    override fun deleteDraftOrder(draftOrderId: String): Flow<State<String>>  = flow {
+        emit(State.Loading)
+        try {
+            val draftOrderDeletingResponse = apolloClient.mutation(DeleteDraftOrderMutation(
+                DraftOrderDeleteInput(
+                    id = draftOrderId
+                )
+            )).execute()
+
+            if (!draftOrderDeletingResponse.hasErrors())
+            {
+                emit(State.Success(draftOrderDeletingResponse.data?.draftOrderDelete?.deletedId.toString()))
+            }else
+            {
+                emit(State.Error(draftOrderDeletingResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
     }
 
     override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {

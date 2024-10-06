@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -16,6 +17,8 @@ import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.databinding.CartBottomSheetBinding
 import com.example.glamora.databinding.FragmentCartBinding
 import com.example.glamora.fragmentCart.viewModel.CartViewModel
+import com.example.glamora.util.customAlertDialog.CustomAlertDialog
+import com.example.glamora.util.customAlertDialog.ICustomAlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.paypal.android.cardpayments.CardClient
 import com.paypal.android.corepayments.CoreConfig
@@ -37,8 +40,12 @@ class CartFragment : Fragment(),CartItemInterface {
     private lateinit var bottomSheet : BottomSheetDialog
     private lateinit var bottomSheetBinding : CartBottomSheetBinding
 
-    //mAdatper
+    //mAdapter
     private lateinit var mAdapter : CartRecyclerViewAdapter
+
+    //custom alert dialog
+    private lateinit var customAlertDialog : CustomAlertDialog
+
 
     //paypal
     private val clientId = "AQto284OoB8DVcUW4pE4CBMOAQ-LnVV-P88g00FpO7nSCF3ruUWb0KMWe64diUwMWFzDYT3_qdanNCG6"
@@ -66,6 +73,9 @@ class CartFragment : Fragment(),CartItemInterface {
 
     private fun initViews() {
 
+        //alert dialog
+        customAlertDialog = CustomAlertDialog(requireActivity())
+
         //adapter
         mAdapter = CartRecyclerViewAdapter(this)
         binding.cartRecyclerView.adapter = mAdapter
@@ -83,8 +93,17 @@ class CartFragment : Fragment(),CartItemInterface {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 cartViewModel.cartItems.collect{
-                    Log.d("Kerolos", "initObservers: ${it.size}")
                     mAdapter.submitList(it)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                cartViewModel.message.collect{
+                    if (it.isNotEmpty()){
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -128,7 +147,12 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     override fun onItemDeleteClicked(item: CartItemDTO) {
-
+        customAlertDialog.showAlertDialog(
+            message = "Are about deleting this item?",
+            actionText = "Delete"
+        ){
+            cartViewModel.deleteDraftOrder(item.draftOrderId)
+        }
     }
 
     override fun onAddToFavoriteClicked(item: CartItemDTO) {

@@ -27,6 +27,11 @@ interface Repository {
 
     fun updateCustomerAddress(customerId: String,address : AddressModel) : Flow<State<AddressModel>>
 
+    fun deleteDraftOrder(draftOrderId: String) : Flow<State<String>>
+
+    suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String)
+
+
     //retrofit
     fun getCustomerUsingEmail(email: String) : Flow<State<Customer>>
     fun getCitiesForSearch(name: String) : Flow<State<List<CityForSearchItem>>>
@@ -46,7 +51,8 @@ interface Repository {
 
     fun getSharedPrefBoolean(key: String, defaultValue: Boolean) : Boolean
 
-    suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String)
+
+
 
 
 }

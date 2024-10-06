@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:cardCornerRadius="25dp"
+        android:backgroundTint="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/alertMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="Are about deleting this item?"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:padding="20dp"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/alertCancelButton"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@drawable/cancel_button_background"
+
+                android:fontFamily="@font/poppins_regular"
+
+                android:text="cancel"
+                android:textColor="@color/black"
+                app:backgroundTint="@null"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/alertMessage" />
+
+            <Button
+                android:id="@+id/alertActionButton"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@drawable/cancel_button_background"
+                android:fontFamily="@font/poppins_regular"
+
+                tools:text="delete"
+
+                android:textColor="@color/white"
+                app:backgroundTint="@color/red"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/alertMessage" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>
