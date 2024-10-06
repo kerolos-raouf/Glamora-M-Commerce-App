@@ -49,6 +49,9 @@ class CartFragment : Fragment(),CartItemInterface {
     //custom alert dialog
     private lateinit var customAlertDialog : CustomAlertDialog
 
+    //discount value
+    private var discountValue = 0.0
+
 
     //paypal
     private val clientId = "AQto284OoB8DVcUW4pE4CBMOAQ-LnVV-P88g00FpO7nSCF3ruUWb0KMWe64diUwMWFzDYT3_qdanNCG6"
@@ -91,6 +94,29 @@ class CartFragment : Fragment(),CartItemInterface {
             binding.cartSwipeRefreshLayout.isRefreshing = false
         }
 
+        //apply discount code
+        binding.cartApplyButton.setOnClickListener {
+            var found = false
+            for (discount in sharedViewModel.discountCodes.value)
+            {
+                if(discount.code == binding.cartCuponCodeEditText.text.toString())
+                {
+                    discountValue = discount.percentage / 100
+                    applyPriceChangeOnUI(0.0)
+                    binding.cartCuponCodeEditText.setText("")
+                    binding.cartCuponCodeEditText.hint = discount.code
+                    binding.cartCuponCodeEditText.clearFocus()
+                    found = true
+                    Toast.makeText(requireContext(), "Discount code applied", Toast.LENGTH_SHORT).show()
+                    break
+                }
+            }
+            if (!found)
+            {
+                Toast.makeText(requireContext(), "Invalid code", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         initPayPal()
 
         bottomSheet = BottomSheetDialog(requireContext())
@@ -122,27 +148,27 @@ class CartFragment : Fragment(),CartItemInterface {
     {
         var itemsPrice = 0.0
         val shippingPrice = 0.0
-        val discountValue = 0.0
         cartItems.forEach {
             itemsPrice += it.price.toDouble() * it.quantity
         }
-        val totalPrice = itemsPrice + shippingPrice - discountValue
+        val totalPrice = itemsPrice + shippingPrice
 
-        showPricesBasedOnCurrency(itemsPrice, shippingPrice, discountValue, totalPrice)
+        showPricesBasedOnCurrency(itemsPrice, shippingPrice, totalPrice)
     }
 
-    private fun showPricesBasedOnCurrency(itemsPrice: Double, shippingPrice: Double, discountValue: Double, totalPrice: Double) {
+    private fun showPricesBasedOnCurrency(itemsPrice: Double, shippingPrice: Double, totalPrice: Double) {
         val currencyUnit = sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)
         val multiplier = sharedViewModel.getSharedPrefString(Constants.CURRENCY_MULTIPLIER_KEY,1.toString())
+        val newTotal = (totalPrice * multiplier.toDouble()) - (discountValue * totalPrice * multiplier.toDouble())
         binding.apply {
             cartItemsNumber.text =
                 "${String.format("%.2f", itemsPrice * multiplier.toDouble())} $currencyUnit"
             cartShippingNumber.text =
                 "${String.format("%.2f", shippingPrice * multiplier.toDouble())} $currencyUnit"
             cartDiscountNumber.text =
-                "${String.format("%.2f", discountValue * multiplier.toDouble())} $currencyUnit"
+                "${String.format("%.2f", discountValue * totalPrice)} $currencyUnit"
             cartTotalPriceNumber.text =
-                "${String.format("%.2f", totalPrice * multiplier.toDouble())} $currencyUnit"
+                "${String.format("%.2f", newTotal)} $currencyUnit"
         }
     }
 
@@ -177,12 +203,12 @@ class CartFragment : Fragment(),CartItemInterface {
 
     override fun onItemPlusClicked(item: CartItemDTO) {
         cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
-        applyPriceChangeOnUI(-item.price.toDouble(), 0.0)
+        applyPriceChangeOnUI(-item.price.toDouble())
     }
 
     override fun onItemMinusClicked(item: CartItemDTO) {
         cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
-        applyPriceChangeOnUI(item.price.toDouble(), 0.0)
+        applyPriceChangeOnUI(item.price.toDouble())
     }
 
     override fun onItemDeleteClicked(item: CartItemDTO) {
@@ -191,7 +217,7 @@ class CartFragment : Fragment(),CartItemInterface {
             actionText = "Delete"
         ){
             cartViewModel.deleteDraftOrder(item.draftOrderId)
-            applyPriceChangeOnUI(item.price.toDouble(), 0.0)
+            applyPriceChangeOnUI(item.price.toDouble())
         }
     }
 
@@ -207,12 +233,14 @@ class CartFragment : Fragment(),CartItemInterface {
         Toast.makeText(requireContext(), "You reached to the maximum quantity", Toast.LENGTH_SHORT).show()
     }
 
-    fun applyPriceChangeOnUI(newItemsPrice : Double,discount : Double)
+    private fun applyPriceChangeOnUI(newItemsPrice : Double)
     {
         val oldItemsPrice = binding.cartItemsNumber.text.toString().split(" ")[0].toDouble()
-        val aftersDiscount = if(oldItemsPrice - discount > 0) oldItemsPrice - newItemsPrice - discount else 0.0
+        val aftersDiscount = (oldItemsPrice - newItemsPrice) - ((oldItemsPrice - newItemsPrice) * discountValue)
+        val newDiscount = ((oldItemsPrice - newItemsPrice) * discountValue)
         binding.cartItemsNumber.text = "${String.format("%.2f", oldItemsPrice - newItemsPrice)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
         binding.cartTotalPriceNumber.text = "${String.format("%.2f", aftersDiscount)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
+        binding.cartDiscountNumber.text = "${String.format("%.2f", newDiscount)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
     }
 
 }
