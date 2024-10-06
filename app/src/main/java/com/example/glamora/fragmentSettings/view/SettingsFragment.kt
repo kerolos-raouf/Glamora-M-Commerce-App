@@ -47,6 +47,9 @@ class SettingsFragment : Fragment() {
         binding.settingsBackButton.setOnClickListener {
             findNavController().popBackStack()
         }
+        binding.settingsDeliveryLocationLayout.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_mapFragment)
+        }
 
 
         //currency spinner
@@ -69,6 +72,7 @@ class SettingsFragment : Fragment() {
                 ) {
                     sharedViewModel.setSharedPrefString(Constants.CURRENCY_KEY,currencyList[position])
                     sharedViewModel.setSharedPrefString(Constants.CURRENCY_SELECTION_VALUE_KEY,position.toString())
+                    sharedViewModel.convertCurrency()
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {

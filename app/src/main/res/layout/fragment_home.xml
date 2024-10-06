@@ -13,7 +13,6 @@
         android:background="@color/white"
         tools:context=".HomeFragment">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -219,10 +218,10 @@
                         android:layout_height="wrap_content">
 
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cvMen"
+                            android:id="@+id/home_shoescv"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginStart="20dp"
                             android:backgroundTint="@color/white"
                             app:cardCornerRadius="50dp"
                             app:layout_constraintStart_toStartOf="parent"
@@ -233,62 +232,44 @@
                                 android:layout_height="match_parent"
                                 android:scaleX="0.5"
                                 android:scaleY="0.5"
-                                app:srcCompat="@drawable/men" />
+                                app:srcCompat="@drawable/shoes" />
                         </androidx.cardview.widget.CardView>
 
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cvWomen"
+                            android:id="@+id/home_tshirtcv"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:layout_marginStart="24dp"
+                            android:layout_marginStart="25dp"
                             android:backgroundTint="@color/white"
                             app:cardCornerRadius="50dp"
-                            app:layout_constraintStart_toEndOf="@id/cvMen"
-                            app:layout_constraintTop_toTopOf="@id/cvMen">
+                            app:layout_constraintStart_toEndOf="@id/home_shoescv"
+                            app:layout_constraintTop_toTopOf="@id/home_shoescv">
 
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:scaleX="0.5"
                                 android:scaleY="0.5"
-                                app:srcCompat="@drawable/women"/>
+                                app:srcCompat="@drawable/tshirt"/>
                         </androidx.cardview.widget.CardView>
 
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cvKids"
+                            android:id="@+id/home_accssCV"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:layout_marginStart="24dp"
+                            android:layout_marginStart="25dp"
+                            android:layout_marginEnd="20dp"
                             android:backgroundTint="@color/white"
                             app:cardCornerRadius="50dp"
-                            app:layout_constraintStart_toEndOf="@id/cvWomen"
-                            app:layout_constraintTop_toTopOf="@id/cvWomen">
+                            app:layout_constraintStart_toEndOf="@id/home_tshirtcv"
+                            app:layout_constraintTop_toTopOf="@id/home_tshirtcv">
 
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:scaleX="0.5"
                                 android:scaleY="0.5"
-                                app:srcCompat="@drawable/kide"/>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cvSale"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginEnd="19dp"
-                            android:backgroundTint="@color/white"
-                            app:cardCornerRadius="50dp"
-                            app:layout_constraintStart_toEndOf="@id/cvKids"
-                            app:layout_constraintTop_toTopOf="@id/cvKids">
-
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleX="0.5"
-                                android:scaleY="0.5"
-                                app:srcCompat="@drawable/discount"/>
+                                app:srcCompat="@drawable/accessories"/>
                         </androidx.cardview.widget.CardView>
 
                         <TextView
@@ -297,69 +278,42 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="28dp"
                             android:layout_marginTop="4dp"
-                            android:text="@string/men"
+                            android:text="@string/shoes"
                             android:textColor="@color/dark_blue"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="@id/cvMen"
-                            app:layout_constraintTop_toBottomOf="@id/cvMen" />
+                            app:layout_constraintStart_toStartOf="@id/home_shoescv"
+                            app:layout_constraintTop_toBottomOf="@id/home_shoescv" />
 
                         <TextView
                             android:id="@+id/textView10"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="@string/women"
+                            android:text="@string/t_shirts"
                             android:textColor="@color/dark_blue"
                             android:layout_marginStart="20dp"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/cvWomen"
-                            app:layout_constraintStart_toStartOf="@id/cvWomen" />
+                            app:layout_constraintTop_toBottomOf="@id/home_tshirtcv"
+                            app:layout_constraintStart_toStartOf="@id/home_tshirtcv" />
 
                         <TextView
                             android:id="@+id/textView11"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="@string/kids"
+                            android:text="@string/accessories"
                             android:textColor="@color/dark_blue"
-                            android:layout_marginStart="35dp"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/cvKids"
-                            app:layout_constraintStart_toStartOf="@id/cvKids" />
+                            app:layout_constraintTop_toBottomOf="@id/home_accssCV"
+                            app:layout_constraintStart_toStartOf="@id/home_accssCV" />
 
-                        <TextView
-                            android:id="@+id/textView12"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/sale"
-                            android:layout_marginStart="30dp"
-                            android:textSize="16sp"
-                            android:textColor="@color/dark_blue"
-                            android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/cvSale"
-                            app:layout_constraintStart_toStartOf="@id/cvSale" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </HorizontalScrollView>
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <!--                <androidx.recyclerview.widget.RecyclerView-->
-<!--                    android:id="@+id/home_rv_category"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="16dp"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/categories_textview"-->
-<!--                    tools:listitem="@layout/category_item" />-->
-
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/home_brand_container"

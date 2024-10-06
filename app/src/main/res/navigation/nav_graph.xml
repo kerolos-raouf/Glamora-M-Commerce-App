@@ -13,7 +13,7 @@
             android:id="@+id/action_homeFragment_to_productListFragment"
             app:destination="@id/productListFragment">
         <argument
-            android:name="title"
+            android:name="titleOrCategory"
             app:argType="string" />
 <!--            <argument-->
 <!--                android:name="imageUrl"-->
@@ -37,7 +37,9 @@
             android:id="@+id/action_loginFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            />
+
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -56,7 +58,12 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.glamora.fragmentSettings.view.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_settingsFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/productListFragment"
         android:name="com.example.glamora.fragmentProductList.view.ProductListFragment"
@@ -66,8 +73,19 @@
         android:name="com.example.glamora.fragmentSearch.view.SearchFragment"
         android:label="search"
         tools:layout="@layout/fragment_search" />
+
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.glamora.fragmentFavorites.view.FavoritesFragment"
         android:label="Favorites Products" />
+
+    <fragment
+        android:id="@+id/addressDetailsFragment"
+        android:name="com.example.glamora.fragmentAddressDetails.view.AddressDetailsFragment"
+        android:label="fragment_address_details"
+        tools:layout="@layout/fragment_address_details" >
+        <argument
+            android:name="addressModel"
+            app:argType="com.example.glamora.data.model.AddressModel" />
+    </fragment>
 </navigation>

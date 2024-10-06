@@ -52,6 +52,9 @@ class HomeFragment : Fragment() {
 
 
 
+    private val communicator: Communicator by lazy {
+        (requireContext() as Communicator)
+    }
 
     companion object
     {
@@ -132,29 +135,23 @@ class HomeFragment : Fragment() {
     private fun setupCardViews() {
         binding.apply {
 
-            // Men category
-            cvMen.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_MEN)
+            homeShoescv.setOnClickListener{
+                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
                 navController.navigate(action)
+
+            }
+            homeTshirtcv.setOnClickListener{
+                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
+                navController.navigate(action)
+
             }
 
-            // Women category
-            cvWomen.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_WOMEN)
+            homeAccssCV.setOnClickListener{
+                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
                 navController.navigate(action)
+
             }
 
-            // Kids category
-            cvKids.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_KIDS)
-                navController.navigate(action)
-            }
-
-            // Sale category
-            cvSale.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.PRODUCT_BY_SALE)
-                navController.navigate(action)
-            }
         }
 
     }
@@ -213,6 +210,7 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         scrollJob?.start()
+        communicator.showBottomNav()
     }
     override fun onStop() {
         super.onStop()

@@ -1,5 +1,6 @@
 package com.example.glamora.fragmentProductList.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -23,6 +24,9 @@ class ProductListAdapterr(private var productList: List<ProductDTO>) : RecyclerV
         val product = productList[position]
         holder.binding.product = product
         holder.binding.executePendingBindings()
+        holder.itemView.setOnClickListener {
+            Log.d("ProductListAdapter", "Product ID: ${product.id}")
+        }
     }
 
     override fun getItemCount(): Int = productList.size

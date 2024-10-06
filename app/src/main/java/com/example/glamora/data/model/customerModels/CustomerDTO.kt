@@ -1,4 +1,4 @@
-package com.example.glamora.data.model.CutomerModels
+package com.example.glamora.data.model.customerModels
 
 
 import com.google.gson.annotations.SerializedName

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.util.Constants
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,8 +38,25 @@ class SharedViewModel @Inject constructor(
     private val _currencyChangedFlag = MutableStateFlow(false)
     val currencyChangedFlag: StateFlow<Boolean> get() = _currencyChangedFlag
 
-    var selectedCurrency: MutableStateFlow<String> = MutableStateFlow("EGP")
 
+
+    ///internet state
+    private val _internetState = MutableStateFlow(ConnectivityObserver.InternetState.AVAILABLE)
+    val internetState : StateFlow<ConnectivityObserver.InternetState> = _internetState
+
+
+    init {
+        observeOnInternetState()
+    }
+
+    private fun observeOnInternetState()
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.observeOnInternetState().collect{
+                _internetState.value = it
+            }
+        }
+    }
 
     fun fetchProducts()
     {
@@ -55,11 +72,6 @@ class SharedViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         _productList.value = state.data
-                        Log.d("Kerolos", "fetchProducts: ${state.data.size}")
-                        for(item in state.data)
-                        {
-                            Log.d("Kerolos", "fetchPriceRules: ${item.id} ${item.title}")
-                        }
                     }
                 }
             }
@@ -79,10 +91,6 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
-                        for(item in state.data)
-                        {
-                            Log.d("Kerolos", "fetchPriceRules: ${item.id} ${item.percentage}")
-                        }
                     }
                 }
             }
@@ -130,19 +138,35 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun setSharedPrefString(key: String,value: String){
-    if (key == Constants.CURRENCY_KEY) {
-        selectedCurrency.value = Constants.CURRENCY_KEY
-        _currencyChangedFlag.value = true
+    fun setSharedPrefString(key: String,value: String)
+    {
+        repository.setSharedPrefString(key, value)
     }
-    repository.setSharedPrefString(key, value)
-}
 
     fun getSharedPrefString(key: String, defaultValue: String) : String
     {
         return repository.getSharedPrefString(key, defaultValue)
     }
 
+    fun convertCurrency()
+    {
+        viewModelScope.launch {
+            repository.convertCurrency().collect{
+                when(it)
+                {
+                    is State.Error -> {
+
+                    }
+                    State.Loading -> {
+
+                    }
+                    is State.Success -> {
+                        setSharedPrefString(Constants.CURRENCY_MULTIPLIER_KEY,it.data.toString())
+                    }
+                }
+            }
+        }
+    }
 
     fun filterList(query: String) {
         CoroutineScope(Dispatchers.Default).launch {
