@@ -5,6 +5,8 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.example.BrandsQuery
 import com.example.CreateCustomerMutation
+import com.example.CreateDrafterOrderMutation
+import com.example.CreateOrderFromDraftOrderMutation
 import com.example.DeleteDraftOrderMutation
 import com.example.DiscountCodesQuery
 import com.example.GetDraftOrdersByCustomerQuery
@@ -279,6 +281,66 @@ class RepositoryImpl @Inject constructor(
             }else
             {
                 emit(State.Error(updateDraftOrderResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun createFinalDraftOrder(
+        customerId: String,
+        customerEmail: String,
+        cartItems: List<CartItemDTO>
+    ): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+
+            val draftOrderItemList = mutableListOf<DraftOrderLineItemInput>()
+
+            cartItems.forEach {
+                draftOrderItemList.add(
+                    DraftOrderLineItemInput(
+                        variantId = Optional.Present(it.id),
+                        quantity = it.quantity
+                    )
+                )
+            }
+
+            val createDraftOrder = apolloClient.mutation(CreateDrafterOrderMutation(
+                DraftOrderInput(
+                    customerId = Optional.Present(customerId),
+                    email = Optional.Present(customerEmail),
+                    lineItems = Optional.Present(draftOrderItemList)
+                )
+            )).execute()
+
+            if (!createDraftOrder.hasErrors())
+            {
+                emit(State.Success(createDraftOrder.data?.draftOrderCreate?.draftOrder?.id.toString()))
+            }else
+            {
+                emit(State.Error(createDraftOrder.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun createOrderFromDraftOrder(draftOrderId: String): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+            val orderResponse = apolloClient.mutation(CreateOrderFromDraftOrderMutation(
+                id = draftOrderId
+            )).execute()
+
+            if (!orderResponse.hasErrors())
+            {
+                emit(State.Success(orderResponse.data?.draftOrderComplete?.draftOrder?.id.toString()))
+            }else
+            {
+                emit(State.Error(orderResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
             }
         }catch (e : Exception)
         {

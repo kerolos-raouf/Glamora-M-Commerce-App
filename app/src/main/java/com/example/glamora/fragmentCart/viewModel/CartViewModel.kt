@@ -1,5 +1,6 @@
 package com.example.glamora.fragmentCart.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,7 +28,7 @@ class CartViewModel @Inject constructor(
     private val _loading = MutableStateFlow(false)
     val loading : StateFlow<Boolean> = _loading
 
-    fun fetchCartItems(userId: String = "7552199491722"){
+    fun fetchCartItems(userId: String = "7552199491722",deleteAllAfterFetch : Boolean = false){
         viewModelScope.launch {
             repository.getCartItemsForCustomer(userId).collect{state ->
                 when(state){
@@ -40,7 +41,12 @@ class CartViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         _cartItems.value = state.data.reversed()
-                        _loading.value = false
+                        if (deleteAllAfterFetch)
+                        {
+                            deleteAllDraftOrders()
+                        }else{
+                            _loading.value = false
+                        }
                     }
                 }
             }
@@ -88,5 +94,70 @@ class CartViewModel @Inject constructor(
         }
     }
 
+
+    ////create order steps
+    //1 - create final draft order
+    fun createFinalDraftOrder(customerId: String = "gid://shopify/Customer/7552199491722",customerEmail : String = "kerolos.raouf5600@gmail.com"){
+        viewModelScope.launch {
+            if(!cartItems.value.isNullOrEmpty()){
+                repository.createFinalDraftOrder(customerId,customerEmail, cartItems.value ?: emptyList()).collect{
+                    when(it){
+                        is State.Error -> {
+                            _message.value = it.message
+                            _loading.value = false
+                        }
+                        State.Loading -> {
+                            _loading.value = true
+                        }
+                        is State.Success -> {
+                            createOrderFromDraftOrder(it.data)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //2 - create order from draft order
+    private fun createOrderFromDraftOrder(draftOrderId: String){
+        viewModelScope.launch {
+            repository.createOrderFromDraftOrder(draftOrderId).collect{state ->
+                when(state){
+                    is State.Error -> {
+                        _message.value = state.message
+                        _loading.value = false
+                    }
+                    State.Loading -> {
+                    }
+                    is State.Success -> {
+                        fetchCartItems(deleteAllAfterFetch = true)
+                    }
+                }
+            }
+        }
+    }
+
+    //3 - create order from draft order
+    private fun deleteAllDraftOrders(){
+        viewModelScope.launch {
+            _cartItems.value?.forEach {
+                repository.deleteDraftOrder(it.draftOrderId).collect{state->
+                    when(state){
+                        is State.Error -> {
+                            _message.value = state.message
+                            _loading.value = false
+                        }
+                        State.Loading -> {
+                        }
+                        is State.Success -> {
+                            fetchCartItems()
+                            _loading.value = false
+                        }
+                    }
+                }
+            }
+
+        }
+    }
 
 }

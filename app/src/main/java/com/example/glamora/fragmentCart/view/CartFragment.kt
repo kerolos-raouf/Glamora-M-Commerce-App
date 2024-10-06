@@ -117,6 +117,9 @@ class CartFragment : Fragment(),CartItemInterface {
             }
         }
 
+
+
+
         initPayPal()
 
         bottomSheet = BottomSheetDialog(requireContext())
@@ -186,6 +189,7 @@ class CartFragment : Fragment(),CartItemInterface {
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
             bottomSheet.dismiss()
+            cartViewModel.createFinalDraftOrder()
             if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
                 payWithCard()
             }else{
@@ -217,7 +221,7 @@ class CartFragment : Fragment(),CartItemInterface {
             actionText = "Delete"
         ){
             cartViewModel.deleteDraftOrder(item.draftOrderId)
-            applyPriceChangeOnUI(item.price.toDouble())
+            applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
         }
     }
 
