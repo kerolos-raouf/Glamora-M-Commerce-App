@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_profileFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_ordersFragment"
+            app:destination="@id/ordersFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -88,6 +91,18 @@
             android:name="addressModel"
             app:argType="com.example.glamora.data.model.AddressModel" />
     </fragment>
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.example.glamora.fragmentOrders.view.OrdersFragment"
+        android:label="OrdersFragment" >
+        <action
+            android:id="@+id/action_ordersFragment_to_orderDetailsFragment"
+            app:destination="@id/orderDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailsFragment"
+        android:name="com.example.glamora.fragmentOrderDetails.view.OrderDetailsFragment"
+        android:label="OrderDetailsFragment" />
 
 
 </navigation>

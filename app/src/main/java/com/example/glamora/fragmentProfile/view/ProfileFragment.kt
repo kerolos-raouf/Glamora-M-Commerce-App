@@ -39,6 +39,10 @@ class ProfileFragment : Fragment() {
             communicator.hideBottomNav()
             findNavController().navigate(R.id.action_profileFragment_to_settingsFragment)
         }
+        binding.profileOrdersIcon.setOnClickListener {
+            communicator.hideBottomNav()
+            findNavController().navigate((R.id.action_profileFragment_to_ordersFragment))
+        }
     }
 
     override fun onStart() {
