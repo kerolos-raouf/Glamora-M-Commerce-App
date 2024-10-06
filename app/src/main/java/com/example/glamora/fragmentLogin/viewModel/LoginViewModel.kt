@@ -44,7 +44,7 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             firebaseHandler.signInWithGoogle(idToken) { success, error ->
                 if (success) {
-                    _loginState.value = LoginState.Success(firebaseHandler.getCurrentUser())
+                    _loginState.value = LoginState.Success(firebaseHandler.getCurrentUser())    // firebaseHandler.getCurrentUser()?.email
                 } else {
                     _loginState.value = LoginState.Error(error ?: "Unknown error")
                 }
@@ -52,8 +52,8 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun resetLoginState() {
-        _loginState.value = LoginState.Idle
-    }
+//    fun resetLoginState() {
+//        _loginState.value = LoginState.Idle
+//    }
 
 }

@@ -28,14 +28,18 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.glamora.fragmentLogin.view.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        android:label="login"
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            />
+
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -59,26 +63,22 @@
             android:id="@+id/action_settingsFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/productListFragment"
         android:name="com.example.glamora.fragmentProductList.view.ProductListFragment"
         android:label="ProductListFragment" />
-
-    <fragment
-        android:id="@+id/mapFragment"
-        android:name="com.example.glamora.fragmentMap.view.MapFragment"
-        android:label="fragment_map"
-        tools:layout="@layout/fragment_map" >
-        <action
-            android:id="@+id/action_mapFragment_to_addressDetailsFragment"
-            app:destination="@id/addressDetailsFragment" />
-    </fragment>
-
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.glamora.fragmentSearch.view.SearchFragment"
         android:label="search"
         tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.glamora.fragmentFavorites.view.FavoritesFragment"
+        android:label="Favorites Products" />
+
     <fragment
         android:id="@+id/addressDetailsFragment"
         android:name="com.example.glamora.fragmentAddressDetails.view.AddressDetailsFragment"
@@ -88,6 +88,12 @@
             android:name="addressModel"
             app:argType="com.example.glamora.data.model.AddressModel" />
     </fragment>
-
-
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.glamora.fragmentMap.view.MapFragment"
+        android:label="MapFragment" >
+        <action
+            android:id="@+id/action_mapFragment_to_addressDetailsFragment"
+            app:destination="@id/addressDetailsFragment" />
+    </fragment>
 </navigation>
