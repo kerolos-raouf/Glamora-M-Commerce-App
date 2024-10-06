@@ -27,6 +27,7 @@ import com.example.glamora.databinding.DialogFilterBinding
 import com.example.glamora.databinding.FragmentProductListBinding
 import com.example.glamora.fragmentProductList.viewModel.ProductListViewModel
 import com.example.glamora.mainActivity.view.Communicator
+import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,6 +37,7 @@ class ProductListFragment : Fragment() {
 
     private lateinit var binding: FragmentProductListBinding
     private val productListViewModel: ProductListViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var productRecycleAdapter: ProductListAdapterr
     private lateinit var navController: NavController
     private lateinit var filterDialog: Dialog
@@ -79,28 +81,52 @@ class ProductListFragment : Fragment() {
         val titleOrCategory = arguments?.getString("titleOrCategory")
         binding.listOfProductIdentity.text = titleOrCategory
 
+        setupProduct()
 
-        if (titleOrCategory != null) {
-            when (titleOrCategory.uppercase()) {
-                "SHOES", "T-SHIRTS", "ACCESSORIES" -> {
-                    productListViewModel.filterProductsByCategory(titleOrCategory)
-                    binding.listofProductFilterbutton.visibility = View.GONE
-                }
+        setupProductListObserver()
 
-                else -> {
-                    productListViewModel.filterProductsByBrand(titleOrCategory)
+
+        setupFilterDialog()
+
+    }
+
+    private fun setupProduct() {
+        productRecycleAdapter = ProductListAdapterr(emptyList())
+        binding.rvListOfProduct.apply {
+             layoutManager = GridLayoutManager(context, 2)
+            adapter = productRecycleAdapter
+        }
+
+    }
+
+    private fun setupProductListObserver() {
+        lifecycleScope.launch {
+            sharedViewModel.productList.collectLatest { products ->
+                val titleOrCategory = arguments?.getString("titleOrCategory")
+                when (titleOrCategory?.uppercase()) {
+                    "SHOES", "T-SHIRTS", "ACCESSORIES" -> {
+                        productListViewModel.filterProductsByCategory(products, titleOrCategory)
+                        binding.listofProductFilterbutton.visibility = View.GONE
+                    }
+                    else -> {
+                        productListViewModel.filterProductsByBrand(products, titleOrCategory ?: "")
+                    }
                 }
             }
         }
 
+        observeOnFilteredProduct()
+    }
 
+    private fun observeOnFilteredProduct() {
+        lifecycleScope.launch {
+            productListViewModel.filteredProducts.collectLatest { products ->
+                productRecycleAdapter.updateData(products)
+            }
+        }
+    }
 
-        setupProduct()
-        observeOnFilterdProduct()
-
-
-
-
+    private fun setupFilterDialog() {
         filterDialog = Dialog(requireContext())
         filterDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         filterBinding = DialogFilterBinding.inflate(layoutInflater)
@@ -115,11 +141,9 @@ class ProductListFragment : Fragment() {
                 filterBinding.rbtnShoes.id -> {
                     type = Constants.SHOES
                 }
-
                 filterBinding.rbtnShirt.id -> {
                     type = Constants.T_SHIRT
                 }
-
                 filterBinding.rbtnAccessories.id -> {
                     type = Constants.ACCESSEORIES
                 }
@@ -131,7 +155,7 @@ class ProductListFragment : Fragment() {
                 rbtnShoes.isChecked = false
                 rbtnAccessories.isChecked = false
                 rbtnShirt.isChecked = false
-                observeOnFilterdProduct()
+                observeOnFilteredProduct()
                 filterDialog.dismiss()
             }
         }
@@ -146,33 +170,10 @@ class ProductListFragment : Fragment() {
                         else -> productList
                     }
 
-
                     productRecycleAdapter.updateData(filteredList)
-
                     filterDialog.dismiss()
                 }
             }
         }
     }
-
-    private fun setupProduct() {
-        productRecycleAdapter = ProductListAdapterr(emptyList())
-        binding.rvListOfProduct.apply {
-             layoutManager = GridLayoutManager(context, 2)
-            adapter = productRecycleAdapter
-        }
-
-    }
-
-    private fun observeOnFilterdProduct() {
-        lifecycleScope.launch {
-            //binding.listOfProductLoading.visibility = View.VISIBLE
-            productListViewModel.filteredProducts.collect { products ->
-                //binding.listOfProductIdentity.visibility = View.GONE
-                productRecycleAdapter.updateData(products)
-            }
-
-        }
-    }
-
 }
