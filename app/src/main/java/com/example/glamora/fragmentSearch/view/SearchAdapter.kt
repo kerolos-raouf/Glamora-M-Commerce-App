@@ -5,14 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.glamora.R
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.databinding.SearchItemBinding
 
 class ProductDiffUtil : DiffUtil.ItemCallback<ProductDTO>() {
     override fun areItemsTheSame(oldItem: ProductDTO, newItem: ProductDTO): Boolean {
-        return oldItem.title == newItem.title
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: ProductDTO, newItem: ProductDTO): Boolean {
@@ -24,20 +22,15 @@ class SearchAdapter(private val listener: SearchClickListener) : ListAdapter<Pro
 
     class ViewHolder(private val binding: SearchItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: ProductDTO, listener: SearchClickListener) {
-            Glide.with(binding.productImg.context)
-                .load(product.mainImage)
-                .into(binding.productImg)
-
-            binding.ProductName.text = product.title
-
-            binding.root.setOnClickListener {
-                listener.onItemClick(product)
-            }
+            binding.product = product
+            binding.listener = listener
+            binding.executePendingBindings()
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = SearchItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = SearchItemBinding.inflate(layoutInflater, parent, false)
         return ViewHolder(binding)
     }
 
@@ -46,4 +39,3 @@ class SearchAdapter(private val listener: SearchClickListener) : ListAdapter<Pro
         holder.bind(product, listener)
     }
 }
-

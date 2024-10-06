@@ -48,7 +48,6 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout using Data Binding
         loginBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
         return loginBinding.root
     }
@@ -131,7 +130,7 @@ class LoginFragment : Fragment() {
 
     private fun setupGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)) // Replace with your actual client ID
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)

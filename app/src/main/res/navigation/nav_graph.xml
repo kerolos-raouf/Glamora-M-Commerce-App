@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/searchFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -64,4 +64,8 @@
         android:name="com.example.glamora.fragmentSearch.view.SearchFragment"
         android:label="search"
         tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.glamora.fragmentFavorites.view.FavoritesFragment"
+        android:label="Favorites Products" />
 </navigation>

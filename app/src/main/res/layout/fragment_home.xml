@@ -394,6 +394,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/brand_textview"
                 tools:listitem="@layout/brands_item" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>

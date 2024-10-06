@@ -72,4 +72,6 @@
     <string name="shipping">Shipping</string>
     <string name="_0">0 EGP</string>
     <string name="reset">Forgot Password?</string>
+    <string name="_900_00">$900.00</string>
+    <string name="_24">24%</string>
 </resources>

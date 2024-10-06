@@ -4,7 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="product"
+            type="com.example.glamora.data.model.ProductDTO" />
+        <variable
+            name="listener"
+            type="com.example.glamora.fragmentSearch.view.SearchClickListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +27,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/icon_settings_blue" />
+            app:srcCompat="@{product.mainImage}"/>
 
         <TextView
             android:id="@+id/Product_name"
@@ -39,8 +44,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/product_img"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Your Text Here" />
-
+            android:text="@{product.title}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
