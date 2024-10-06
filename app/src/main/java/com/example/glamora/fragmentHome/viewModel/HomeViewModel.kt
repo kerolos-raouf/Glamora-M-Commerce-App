@@ -27,9 +27,6 @@ class HomeViewModel  @Inject constructor(
     val brandsList: StateFlow<List<Brands>> get() = _brandsList
 
 
-    private val _filteredProductList = MutableStateFlow<List<ProductDTO>>(emptyList())
-    val filteredProductList: StateFlow<List<ProductDTO>> get() = _filteredProductList
-
 
     fun getALlBrands() {
         viewModelScope.launch {
@@ -49,26 +46,5 @@ class HomeViewModel  @Inject constructor(
             }
         }
     }
-
-//    fun filterProductsByCategory(category: String) {
-//        viewModelScope.launch {
-//            repository.getProducts().collect { state ->
-//                when (state) {
-//                    is State.Error -> {
-//                        Log.d("HomeViewModel", "Error fetching products: ${state.message}")
-//                    }
-//                    State.Loading -> {
-//                    }
-//                    is State.Success -> {
-//                        _filteredProductList.value = state.data
-//                        Log.d("HomeViewModel", "Filtered products for category '$category': ${state.data}")
-//                        }
-//
-//                    }
-//                }
-//            }
-//        }
-//    }
-
 
 }
