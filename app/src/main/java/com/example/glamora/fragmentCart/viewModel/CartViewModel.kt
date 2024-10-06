@@ -22,6 +22,9 @@ class CartViewModel @Inject constructor(
     private val _cartItems = MutableLiveData<List<CartItemDTO>>(emptyList())
     val cartItems : LiveData<List<CartItemDTO>> = _cartItems
 
+    private val _cartItemsForDelete = MutableLiveData<List<CartItemDTO>>(emptyList())
+    val cartItemsForDelete : LiveData<List<CartItemDTO>> = _cartItemsForDelete
+
     private val _message = MutableStateFlow("")
     val message : StateFlow<String> = _message
 
@@ -40,11 +43,12 @@ class CartViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _cartItems.value = state.data.reversed()
                         if (deleteAllAfterFetch)
                         {
+                            _cartItemsForDelete.value = state.data
                             deleteAllDraftOrders()
                         }else{
+                            _cartItems.value = state.data.reversed()
                             _loading.value = false
                         }
                     }
@@ -140,7 +144,7 @@ class CartViewModel @Inject constructor(
     //3 - create order from draft order
     private fun deleteAllDraftOrders(){
         viewModelScope.launch {
-            _cartItems.value?.forEach {
+            _cartItemsForDelete.value?.forEach {
                 repository.deleteDraftOrder(it.draftOrderId).collect{state->
                     when(state){
                         is State.Error -> {
