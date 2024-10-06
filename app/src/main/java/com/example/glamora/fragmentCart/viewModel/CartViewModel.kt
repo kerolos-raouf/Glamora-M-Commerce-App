@@ -1,11 +1,9 @@
 package com.example.glamora.fragmentCart.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.CartItemDTO
-import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +37,7 @@ class CartViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _cartItems.value = state.data
+                        _cartItems.value = state.data.reversed()
                         _loading.value = false
                     }
                 }
@@ -61,6 +59,27 @@ class CartViewModel @Inject constructor(
                     is State.Success -> {
                         _message.value = "Draft order was deleted successfully"
                         fetchCartItems(userId)
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateDraftOrder(draftOrderId: String,variantId : String,quantity : Int,userId: String = "7552199491722"){
+        viewModelScope.launch {
+            repository.updateDraftOrder(draftOrderId,variantId,quantity).collect{
+                when(it){
+                    is State.Error -> {
+                        _message.value = it.message
+                        _loading.value = false
+                    }
+                    State.Loading -> {
+                        _loading.value = true
+                    }
+                    is State.Success -> {
+                        _message.value = "Draft order was updated successfully"
+                        //fetchCartItems(userId)
+                        _loading.value = false
                     }
                 }
             }

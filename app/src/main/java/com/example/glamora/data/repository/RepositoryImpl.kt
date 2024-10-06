@@ -11,9 +11,9 @@ import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
+import com.example.UpdateDraftOrderMutation
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
-import com.example.glamora.data.firebase.FirebaseHandler
 import com.example.glamora.data.firebase.IFirebaseHandler
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.AddressModel
@@ -35,6 +35,8 @@ import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.util.toCartItemsDTO
 import com.example.type.CustomerInput
 import com.example.type.DraftOrderDeleteInput
+import com.example.type.DraftOrderInput
+import com.example.type.DraftOrderLineItemInput
 import com.example.type.MailingAddressInput
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
@@ -245,6 +247,38 @@ class RepositoryImpl @Inject constructor(
             }else
             {
                 emit(State.Error(draftOrderDeletingResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun updateDraftOrder(
+        draftOrderId: String,
+        variantId: String,
+        quantity: Int
+    ): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+            val updateDraftOrderResponse = apolloClient.mutation(UpdateDraftOrderMutation(
+                DraftOrderInput(
+                    lineItems = Optional.Present(listOf(
+                        DraftOrderLineItemInput(
+                            variantId = Optional.Present(variantId),
+                            quantity = quantity
+                        )
+                    ))
+                ),
+                ownerId = draftOrderId
+            )).execute()
+
+            if (!updateDraftOrderResponse.hasErrors())
+            {
+                emit(State.Success(updateDraftOrderResponse.data?.draftOrderUpdate?.draftOrder?.id.toString()))
+            }else
+            {
+                emit(State.Error(updateDraftOrderResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
             }
         }catch (e : Exception)
         {

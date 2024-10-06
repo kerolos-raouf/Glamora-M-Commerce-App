@@ -1,6 +1,7 @@
 package com.example.glamora.util
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -37,6 +38,5 @@ fun showProgressBar(view: View, show : Boolean)
     }else
     {
         view.visibility = View.GONE
-
     }
 }

@@ -9,5 +9,6 @@ interface CartItemInterface {
     fun onItemDeleteClicked(item: CartItemDTO)
     fun onAddToFavoriteClicked(item: CartItemDTO)
     fun onItemClicked(item: CartItemDTO)
+    fun onReachedMaxQuantity(item: CartItemDTO)
 
 }

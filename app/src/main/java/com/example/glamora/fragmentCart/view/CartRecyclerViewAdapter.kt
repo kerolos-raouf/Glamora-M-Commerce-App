@@ -31,10 +31,25 @@ class CartRecyclerViewAdapter (
             cartItemPrice.text = item.price
             cartItemQuantity.text = item.quantity.toString()
             cartItemPlusButton.setOnClickListener {
-                listener.onItemPlusClicked(item)
+                if(item.quantity < item.inventoryQuantity)
+                {
+                    item.quantity++
+                    cartItemQuantity.text = item.quantity.toString()
+                    listener.onItemPlusClicked(item)
+                }else{
+                    listener.onReachedMaxQuantity(item)
+                }
             }
             cartItemMinusButton.setOnClickListener {
-                listener.onItemMinusClicked(item)
+                if(item.quantity > 1)
+                {
+                    item.quantity--
+                    cartItemQuantity.text = item.quantity.toString()
+                    listener.onItemMinusClicked(item)
+                }else
+                {
+                    listener.onItemDeleteClicked(item)
+                }
             }
             cartItemDeleteButton.setOnClickListener {
                 listener.onItemDeleteClicked(item)

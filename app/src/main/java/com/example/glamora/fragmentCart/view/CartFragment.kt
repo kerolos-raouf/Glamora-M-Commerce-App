@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,8 @@ import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.databinding.CartBottomSheetBinding
 import com.example.glamora.databinding.FragmentCartBinding
 import com.example.glamora.fragmentCart.viewModel.CartViewModel
+import com.example.glamora.mainActivity.viewModel.SharedViewModel
+import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
 import com.example.glamora.util.customAlertDialog.ICustomAlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -32,11 +35,11 @@ class CartFragment : Fragment(),CartItemInterface {
 
 
     private val cartViewModel: CartViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var binding : FragmentCartBinding
 
     //bottom sheet
-
     private lateinit var bottomSheet : BottomSheetDialog
     private lateinit var bottomSheetBinding : CartBottomSheetBinding
 
@@ -59,6 +62,8 @@ class CartFragment : Fragment(),CartItemInterface {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_cart, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = cartViewModel
         return binding.root
     }
 
@@ -80,6 +85,12 @@ class CartFragment : Fragment(),CartItemInterface {
         mAdapter = CartRecyclerViewAdapter(this)
         binding.cartRecyclerView.adapter = mAdapter
 
+        //refresh layout
+        binding.cartSwipeRefreshLayout.setOnRefreshListener {
+            cartViewModel.fetchCartItems()
+            binding.cartSwipeRefreshLayout.isRefreshing = false
+        }
+
         initPayPal()
 
         bottomSheet = BottomSheetDialog(requireContext())
@@ -94,6 +105,7 @@ class CartFragment : Fragment(),CartItemInterface {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 cartViewModel.cartItems.collect{
                     mAdapter.submitList(it)
+                    calculateTotalPrice(it)
                 }
             }
         }
@@ -106,6 +118,35 @@ class CartFragment : Fragment(),CartItemInterface {
                     }
                 }
             }
+        }
+
+    }
+
+    private fun calculateTotalPrice(cartItems: List<CartItemDTO>)
+    {
+        var itemsPrice = 0.0
+        val shippingPrice = 0.0
+        val discountValue = 0.0
+        cartItems.forEach {
+            itemsPrice += it.price.toDouble() * it.quantity
+        }
+        val totalPrice = itemsPrice + shippingPrice - discountValue
+
+        showPricesBasedOnCurrency(itemsPrice, shippingPrice, discountValue, totalPrice)
+    }
+
+    private fun showPricesBasedOnCurrency(itemsPrice: Double, shippingPrice: Double, discountValue: Double, totalPrice: Double) {
+        val currencyUnit = sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)
+        val multiplier = sharedViewModel.getSharedPrefString(Constants.CURRENCY_MULTIPLIER_KEY,1.toString())
+        binding.apply {
+            cartItemsNumber.text =
+                "${String.format("%.2f", itemsPrice * multiplier.toDouble())} $currencyUnit"
+            cartShippingNumber.text =
+                "${String.format("%.2f", shippingPrice * multiplier.toDouble())} $currencyUnit"
+            cartDiscountNumber.text =
+                "${String.format("%.2f", discountValue * multiplier.toDouble())} $currencyUnit"
+            cartTotalPriceNumber.text =
+                "${String.format("%.2f", totalPrice * multiplier.toDouble())} $currencyUnit"
         }
     }
 
@@ -139,11 +180,11 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {
-
+        cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
     }
 
     override fun onItemMinusClicked(item: CartItemDTO) {
-
+        cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
     }
 
     override fun onItemDeleteClicked(item: CartItemDTO) {
@@ -161,6 +202,10 @@ class CartFragment : Fragment(),CartItemInterface {
 
     override fun onItemClicked(item: CartItemDTO) {
 
+    }
+
+    override fun onReachedMaxQuantity(item: CartItemDTO) {
+        Toast.makeText(requireContext(), "You reached to the maximum quantity", Toast.LENGTH_SHORT).show()
     }
 
 }
