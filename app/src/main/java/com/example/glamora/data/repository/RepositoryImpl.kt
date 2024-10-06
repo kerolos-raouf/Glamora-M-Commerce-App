@@ -28,7 +28,7 @@ import com.example.glamora.util.toBrandDTO
 import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
-import com.example.nimbusweatherapp.data.model.CityForSearchItem
+import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.type.CustomerInput
 import com.example.type.MailingAddressInput
 import com.google.firebase.auth.FirebaseAuth
@@ -58,14 +58,6 @@ class RepositoryImpl @Inject constructor(
                 Log.d("Kerolos", "getProducts: ${productsResponse.data?.products}")
                 val productList = productsResponse.data?.products?.toProductDTO()
                 if (productList != null) {
-                    val newPrice= remoteDataSource.convertCurrency(1.toString(), getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP))
-                    for (product in productList){
-                        val firstAvailableProduct = product.availableProducts[0]
-                        val currentPrice = firstAvailableProduct.price.toDouble()
-                        firstAvailableProduct.price = String.format("%.2f", currentPrice * newPrice)
-
-
-                    }
                     emit(State.Success(productList))
                 }else
                 {
@@ -168,7 +160,7 @@ class RepositoryImpl @Inject constructor(
         try {
 
             val cartItemsResponse = apolloClient.query(GetDraftOrdersByCustomerQuery(
-                query = "{\"query\": \"customer_id:$customerId\"}"
+                query = "customer_id:$customerId"
             )).execute()
             if (cartItemsResponse.data != null) {
 
@@ -268,6 +260,17 @@ class RepositoryImpl @Inject constructor(
             {
                 emit(State.Error(citiesResponse.message()))
             }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun convertCurrency(): Flow<State<Double>> = flow{
+        emit(State.Loading)
+        try {
+            val newPrice= remoteDataSource.convertCurrency(1.toString(), getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP))
+            emit(State.Success(newPrice))
         }catch (e : Exception)
         {
             emit(State.Error(e.message.toString()))

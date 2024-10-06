@@ -148,6 +148,26 @@ class SharedViewModel @Inject constructor(
         return repository.getSharedPrefString(key, defaultValue)
     }
 
+    fun convertCurrency()
+    {
+        viewModelScope.launch {
+            repository.convertCurrency().collect{
+                when(it)
+                {
+                    is State.Error -> {
+
+                    }
+                    State.Loading -> {
+
+                    }
+                    is State.Success -> {
+                        setSharedPrefString(Constants.CURRENCY_MULTIPLIER_KEY,it.data.toString())
+                    }
+                }
+            }
+        }
+    }
+
     fun filterList(query: String) {
         CoroutineScope(Dispatchers.Default).launch {
             val results = if (query.isEmpty()) {

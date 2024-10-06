@@ -12,10 +12,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.databinding.FragmentAddressDetailsBinding
 import com.example.glamora.fragmentAddressDetails.viewModel.AddressViewModel
+import com.example.glamora.mainActivity.view.Communicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -31,11 +33,17 @@ class AddressDetailsFragment : Fragment() {
     //current address
     private var currentAddress = AddressModel()
 
+
+    private val communicator : Communicator by lazy {
+        (requireActivity() as Communicator)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_address_details, container, false)
+        binding.viewModel = addressViewModel
         return binding.root
     }
 
@@ -56,8 +64,14 @@ class AddressDetailsFragment : Fragment() {
                     && addressPhone.text.isNotEmpty()
                     && addressStreet.text.isNotEmpty())
                 {
-                    fillCurrentAddress()
-                    updateCustomerAddress()
+                    if(communicator.isInternetAvailable())
+                    {
+                        fillCurrentAddress()
+                        updateCustomerAddress()
+                    }else
+                    {
+                        Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                    }
 
                 }else
                 {
@@ -65,13 +79,19 @@ class AddressDetailsFragment : Fragment() {
                 }
             }
         }
+
+        binding.addressBackArrow.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun initObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 addressViewModel.message.collect {
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                    if(it.isNotEmpty()){
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
