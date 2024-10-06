@@ -29,6 +29,12 @@ interface Repository {
 
     fun deleteDraftOrder(draftOrderId: String) : Flow<State<String>>
 
+    fun updateDraftOrder(draftOrderId: String,variantId : String,quantity : Int) : Flow<State<String>>
+
+    fun createFinalDraftOrder(customerId: String,customerEmail : String, cartItems : List<CartItemDTO>,discountAmount: Double) : Flow<State<String>>
+
+    fun createOrderFromDraftOrder(draftOrderId: String) : Flow<State<String>>
+
     suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String)
 
 

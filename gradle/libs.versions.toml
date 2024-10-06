@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.1"
+checkoutSheetKit = "3.0.1"
 kotlin = "1.9.0"
 circleimageview = "3.1.0"
 firebaseAuthKtx = "24.8.0"
@@ -24,6 +25,7 @@ activity = "1.9.2"
 constraintlayout = "2.1.4"
 apolloRuntime = "4.0.1"
 dotsindicator = "4.3"
+swiperefreshlayout = "1.2.0-alpha01"
 viewpager2 = "1.1.0"
 okhttp = "4.12.0"
 googleGmsGoogleServices = "4.4.2"
@@ -36,6 +38,8 @@ cardPayments = "1.5.0"
 
 
 [libraries]
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+checkout-sheet-kit = { module = "com.shopify:checkout-sheet-kit", version.ref = "checkoutSheetKit" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }

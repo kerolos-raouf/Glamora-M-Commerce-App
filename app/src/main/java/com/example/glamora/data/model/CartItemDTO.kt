@@ -4,7 +4,7 @@ data class CartItemDTO(
     val id : String,
     val draftOrderId : String,
     val title : String,
-    val quantity : Int,
+    var quantity : Int,
     val inventoryQuantity : Int,
     val price : String,
     val image : String,
