@@ -13,6 +13,8 @@ import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.firebase.FirebaseHandler
+import com.example.glamora.data.firebase.IFirebaseHandler
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
@@ -47,7 +49,8 @@ class RepositoryImpl @Inject constructor(
     private val apolloClient: ApolloClient,
     private val remoteDataSource: RemoteDataSource,
     private val sharedPrefHandler: SharedPrefHandler,
-    private val connectivityObserver: ConnectivityObserver
+    private val connectivityObserver: ConnectivityObserver,
+    private val firebaseHandler: IFirebaseHandler
 ) : Repository {
 
 

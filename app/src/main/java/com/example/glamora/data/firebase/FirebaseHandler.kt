@@ -3,8 +3,11 @@ package com.example.glamora.data.firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import javax.inject.Inject
 
-class FirebaseHandler : IFirebaseHandler {
+class FirebaseHandler @Inject constructor(
+
+) : IFirebaseHandler {
 
     private val auth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()

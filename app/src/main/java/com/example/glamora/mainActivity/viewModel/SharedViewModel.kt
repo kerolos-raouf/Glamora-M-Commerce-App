@@ -7,6 +7,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.ProductDTO
+import com.example.glamora.data.model.customerModels.CustomerInfo
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,8 +36,9 @@ class SharedViewModel @Inject constructor(
     val filteredResults = _filteredResults.asSharedFlow()
 
 
-    private val _currencyChangedFlag = MutableStateFlow(false)
-    val currencyChangedFlag: StateFlow<Boolean> get() = _currencyChangedFlag
+    //current user info
+    private val _currentCustomerInfo = MutableStateFlow(CustomerInfo())
+    val currentCustomerInfo: StateFlow<CustomerInfo> = _currentCustomerInfo
 
 
 
