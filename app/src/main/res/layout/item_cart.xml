@@ -21,8 +21,10 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:src="@drawable/product"
-            android:background="@color/light_gray"
-            android:layout_margin="20dp"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -50,7 +52,7 @@
             android:src="@drawable/icon_delete"
 
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -93,7 +95,7 @@
             android:background="@drawable/card_view_border"
 
 
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="20dp"
             >
 

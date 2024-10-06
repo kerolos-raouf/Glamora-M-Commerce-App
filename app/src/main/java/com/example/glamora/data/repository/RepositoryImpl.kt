@@ -5,6 +5,7 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.example.BrandsQuery
 import com.example.CreateCustomerMutation
+import com.example.DeleteDraftOrderMutation
 import com.example.DiscountCodesQuery
 import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
@@ -12,6 +13,8 @@ import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.firebase.FirebaseHandler
+import com.example.glamora.data.firebase.IFirebaseHandler
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
@@ -29,7 +32,9 @@ import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
+import com.example.glamora.util.toCartItemsDTO
 import com.example.type.CustomerInput
+import com.example.type.DraftOrderDeleteInput
 import com.example.type.MailingAddressInput
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
@@ -44,10 +49,12 @@ class RepositoryImpl @Inject constructor(
     private val apolloClient: ApolloClient,
     private val remoteDataSource: RemoteDataSource,
     private val sharedPrefHandler: SharedPrefHandler,
-    private val connectivityObserver: ConnectivityObserver
+    private val connectivityObserver: ConnectivityObserver,
+    private val firebaseHandler: IFirebaseHandler
 ) : Repository {
 
 
+    //graph queries
     @OptIn(FlowPreview::class)
     override fun getProducts(): Flow<State<List<ProductDTO>>> = flow {
         emit(State.Loading)
@@ -165,9 +172,8 @@ class RepositoryImpl @Inject constructor(
             if (cartItemsResponse.data != null) {
 
                 val draftOrdersResponse = cartItemsResponse.data?.draftOrders
-                Log.d("Kerolos", "getCartItemsForCustomer: ${draftOrdersResponse?.nodes?.size}")
                 if (draftOrdersResponse != null) {
-                    //emit(State.Success(discountCodesList))
+                    emit(State.Success(draftOrdersResponse.toCartItemsDTO()))
                 }else
                 {
                     emit(State.Error("No products found"))
@@ -222,6 +228,28 @@ class RepositoryImpl @Inject constructor(
         }
     }.timeout(15.seconds).catch {
         emit(State.Error(it.message.toString()))
+    }
+
+    override fun deleteDraftOrder(draftOrderId: String): Flow<State<String>>  = flow {
+        emit(State.Loading)
+        try {
+            val draftOrderDeletingResponse = apolloClient.mutation(DeleteDraftOrderMutation(
+                DraftOrderDeleteInput(
+                    id = draftOrderId
+                )
+            )).execute()
+
+            if (!draftOrderDeletingResponse.hasErrors())
+            {
+                emit(State.Success(draftOrderDeletingResponse.data?.draftOrderDelete?.deletedId.toString()))
+            }else
+            {
+                emit(State.Error(draftOrderDeletingResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
     }
 
     override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {

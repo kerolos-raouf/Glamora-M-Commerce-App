@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.CartItemDTO
+import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,21 +21,51 @@ class CartViewModel @Inject constructor(
     private val _cartItems = MutableStateFlow<List<CartItemDTO>>(emptyList())
     val cartItems : StateFlow<List<CartItemDTO>> = _cartItems
 
+    private val _message = MutableStateFlow("")
+    val message : StateFlow<String> = _message
+
+    private val _loading = MutableStateFlow(false)
+    val loading : StateFlow<Boolean> = _loading
 
     fun fetchCartItems(userId: String = "7552199491722"){
         viewModelScope.launch {
             repository.getCartItemsForCustomer(userId).collect{state ->
                 when(state){
                     is State.Error -> {
-                        Log.d("Kerolos", "fetchCartItems: ${state.message}")
+                        _message.value = state.message
+                        _loading.value = false
                     }
                     State.Loading -> {
+                        _loading.value = true
                     }
                     is State.Success -> {
                         _cartItems.value = state.data
+                        _loading.value = false
                     }
                 }
             }
         }
     }
+
+    fun deleteDraftOrder(draftOrderId: String,userId: String = "7552199491722"){
+        viewModelScope.launch {
+            repository.deleteDraftOrder(draftOrderId).collect{
+                when(it){
+                    is State.Error -> {
+                        _message.value = it.message
+                        _loading.value = false
+                    }
+                    State.Loading -> {
+                        _loading.value = true
+                    }
+                    is State.Success -> {
+                        _message.value = "Draft order was deleted successfully"
+                        fetchCartItems(userId)
+                    }
+                }
+            }
+        }
+    }
+
+
 }
