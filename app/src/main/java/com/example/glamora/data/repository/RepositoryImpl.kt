@@ -36,6 +36,8 @@ import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.util.toCartItemsDTO
 import com.example.type.CustomerInput
+import com.example.type.DraftOrderAppliedDiscountInput
+import com.example.type.DraftOrderAppliedDiscountType
 import com.example.type.DraftOrderDeleteInput
 import com.example.type.DraftOrderInput
 import com.example.type.DraftOrderLineItemInput
@@ -291,7 +293,8 @@ class RepositoryImpl @Inject constructor(
     override fun createFinalDraftOrder(
         customerId: String,
         customerEmail: String,
-        cartItems: List<CartItemDTO>
+        cartItems: List<CartItemDTO>,
+        discountAmount: Double
     ): Flow<State<String>> = flow {
         emit(State.Loading)
         try {
@@ -311,7 +314,12 @@ class RepositoryImpl @Inject constructor(
                 DraftOrderInput(
                     customerId = Optional.Present(customerId),
                     email = Optional.Present(customerEmail),
-                    lineItems = Optional.Present(draftOrderItemList)
+                    lineItems = Optional.Present(draftOrderItemList),
+                    appliedDiscount = Optional.Present(DraftOrderAppliedDiscountInput(
+                        value = discountAmount,
+                        valueType = DraftOrderAppliedDiscountType.PERCENTAGE
+                      )
+                    )
                 )
             )).execute()
 

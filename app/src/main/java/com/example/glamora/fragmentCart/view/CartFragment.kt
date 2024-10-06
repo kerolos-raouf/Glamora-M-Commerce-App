@@ -189,7 +189,9 @@ class CartFragment : Fragment(),CartItemInterface {
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
             bottomSheet.dismiss()
-            cartViewModel.createFinalDraftOrder()
+            cartViewModel.createFinalDraftOrder(
+                discountAmount = discountValue * 100
+            )
             if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
                 payWithCard()
             }else{

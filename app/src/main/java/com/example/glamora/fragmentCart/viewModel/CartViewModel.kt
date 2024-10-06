@@ -101,10 +101,14 @@ class CartViewModel @Inject constructor(
 
     ////create order steps
     //1 - create final draft order
-    fun createFinalDraftOrder(customerId: String = "gid://shopify/Customer/7552199491722",customerEmail : String = "kerolos.raouf5600@gmail.com"){
+    fun createFinalDraftOrder(
+        customerId: String = "gid://shopify/Customer/7552199491722",
+        customerEmail : String = "kerolos.raouf5600@gmail.com",
+        discountAmount : Double
+    ){
         viewModelScope.launch {
             if(!cartItems.value.isNullOrEmpty()){
-                repository.createFinalDraftOrder(customerId,customerEmail, cartItems.value ?: emptyList()).collect{
+                repository.createFinalDraftOrder(customerId,customerEmail, cartItems.value ?: emptyList(),discountAmount).collect{
                     when(it){
                         is State.Error -> {
                             _message.value = it.message
