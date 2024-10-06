@@ -2,11 +2,13 @@ package com.example.glamora.util
 
 import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
+import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.AvailableProductsModel
+import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
@@ -106,6 +108,24 @@ fun UpdateCustomerAddressMutation.Address.toAddressModel(): AddressModel {
 }
 
 
+fun GetDraftOrdersByCustomerQuery.DraftOrders.toCartItemsDTO() : List<CartItemDTO> {
+    val cartItems = mutableListOf<CartItemDTO>()
+
+    nodes.forEach {
+        cartItems.add(CartItemDTO(
+            id = it.lineItems.nodes[0].variant?.id ?: Constants.UNKNOWN,
+            draftOrderId = it.id ?: Constants.UNKNOWN,
+            title = it.lineItems.nodes[0].title ?: Constants.UNKNOWN,
+            quantity = it.lineItems.nodes[0].quantity ?: 0,
+            inventoryQuantity = it.lineItems.nodes[0].variant?.inventoryQuantity ?: 0,
+            price = it.lineItems.nodes[0].variant?.price.toString() ?: "0",
+            image = it.lineItems.nodes[0].variant?.product?.media?.nodes?.get(0)?.onMediaImage?.image?.url?.toString() ?: Constants.UNKNOWN,
+            )
+        )
+    }
+
+    return cartItems
+}
 //fun CategoriesQuery.CollectionByHandle.toProductDTO(): List<ProductDTO> {
 //    val products = mutableListOf<ProductDTO>()
 //
