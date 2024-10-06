@@ -1,4 +1,4 @@
-package com.example.glamora.data.model.Currency
+package com.example.glamora.data.model.currency
 
 data class Query(
     val amount: Double,

@@ -4,6 +4,8 @@ import android.content.Context
 import com.apollographql.apollo.ApolloClient
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.firebase.FirebaseHandler
+import com.example.glamora.data.firebase.IFirebaseHandler
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.internetStateObserver.InternetStateObserver
 import com.example.glamora.data.network.CitiesSearchApi
@@ -37,13 +39,18 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseHandler() : IFirebaseHandler = FirebaseHandler()
+
+    @Provides
+    @Singleton
     fun provideRepository(
         apolloClient: ApolloClient,
         remoteDataSource: RemoteDataSource,
         sharedPrefHandler: SharedPrefHandler,
-        connectivityObserver: ConnectivityObserver
+        connectivityObserver: ConnectivityObserver,
+        firebaseHandler: IFirebaseHandler
     ): Repository {
-        return RepositoryImpl(apolloClient,remoteDataSource,sharedPrefHandler,connectivityObserver)
+        return RepositoryImpl(apolloClient,remoteDataSource,sharedPrefHandler,connectivityObserver,firebaseHandler)
     }
 
 }
