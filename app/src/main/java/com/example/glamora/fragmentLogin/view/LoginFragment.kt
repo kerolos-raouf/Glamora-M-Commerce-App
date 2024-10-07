@@ -20,6 +20,7 @@ import com.example.glamora.databinding.FragmentLoginBinding
 import com.example.glamora.fragmentLogin.viewModel.LoginViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
+import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import com.example.glamora.util.isNotShort
 import com.example.glamora.util.isValidEmail
@@ -29,6 +30,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -48,6 +50,10 @@ class LoginFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         communicator.hideBottomNav()
+
+        if(sharedViewModel.getSharedPrefBoolean(Constants.IS_LOGIN_KEY,false)){
+            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+        }
     }
 
     override fun onCreateView(
@@ -229,14 +235,11 @@ class LoginFragment : Fragment() {
 
                     is State.Success -> {
                         lifecycleScope.launch {
-                            // Collect email once and wait for completion
                             val email = loginViewModel.customerEmail.firstOrNull()
 
                             if (email != null) {
-                                // Fetch user by email and wait for the result
                                 loginViewModel.fetchUserByEmail(email)
 
-                                // Collect the customerResult and handle it
                                 loginViewModel.customerResult.collect { result ->
                                     result?.onSuccess { customerInfo ->
                                         if (customerInfo != null) {
@@ -246,6 +249,8 @@ class LoginFragment : Fragment() {
                                         }
 
                                         loginBinding.progressBar.visibility = View.GONE
+                                        sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGIN_KEY,true)
+
                                         Toast.makeText(requireContext(), "Login successful!", Toast.LENGTH_SHORT).show()
                                         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                                     }
@@ -254,12 +259,27 @@ class LoginFragment : Fragment() {
                         }
                     }
 
-
                     is State.Error -> {
                         loginBinding.progressBar.visibility = View.GONE
-                        Toast.makeText(requireContext(), "Login failed", Toast.LENGTH_SHORT).show()
-                        showErrorEmail()
-                        showErrorPassword()
+                        val errorMessage = when (state.message) {
+                            "Email is not verified. Please verify your email before logging in." -> {
+                                showErrorEmail()
+                                "Please verify your email before logging in."
+                            }
+                            "The password is invalid" -> {
+                                showErrorPassword()
+                                "Incorrect password. Please try again."
+                            }
+                            "There is no user record corresponding to this email." -> {
+                                showErrorEmail()
+                                "No account found with this email. Please sign up first."
+                            }
+                            else -> {
+                                "Login failed: ${state.message}"
+                            }
+                        }
+
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                     }
 
                     null -> {}

@@ -151,6 +151,16 @@ class SignUpFragment : Fragment() {
                 )
 
             }
+            "InValid phone number" -> {
+                signUpBinding.errPhoneTxt.text = getString(R.string.err_phone_msg)
+                signUpBinding.errPhoneTxt.visibility = View.VISIBLE
+                signUpBinding.editPhone.setBackgroundError(
+                    requireContext(),
+                    R.drawable.button_background_err,
+                    R.drawable.ic_phone_err
+                )
+
+            }
 
             "Email has already been taken" -> {
                 signUpBinding.errEmailTxt.text = getString(R.string.err_email_msg2)

@@ -33,4 +33,8 @@ object Constants {
     const val MAP_SHARED_PREFERENCE_NAME = "MAP_SHARED_PREFERENCE_NAME"
     const val UNKNOWN = "Unknown"
 
+
+    // Customer Login State
+    const val IS_LOGIN_KEY = "IS_LOGIN"
+
 }

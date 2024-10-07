@@ -154,6 +154,16 @@ class SharedViewModel @Inject constructor(
         return repository.getSharedPrefString(key, defaultValue)
     }
 
+    fun setSharedPrefBoolean(key: String,value: Boolean)
+    {
+        repository.setSharedPrefBoolean(key, value)
+    }
+
+    fun getSharedPrefBoolean(key: String, defaultValue: Boolean) : Boolean
+    {
+        return repository.getSharedPrefBoolean(key, defaultValue)
+    }
+
     fun convertCurrency()
     {
         viewModelScope.launch {
