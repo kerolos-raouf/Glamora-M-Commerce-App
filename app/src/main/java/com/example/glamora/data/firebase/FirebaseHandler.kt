@@ -20,7 +20,13 @@ class FirebaseHandler @Inject constructor(
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        continuation.resume(Result.success(Unit)) // Sign-in successful
+                        val user = auth.currentUser
+                        if (user?.isEmailVerified == true) {
+                            continuation.resume(Result.success(Unit))
+                        } else {
+                            auth.signOut()
+                            continuation.resume(Result.failure(Exception("Email is not verified. Please verify your email before logging in.")))
+                        }
                     } else {
                         continuation.resume(
                             Result.failure(

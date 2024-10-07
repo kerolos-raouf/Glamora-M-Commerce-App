@@ -451,12 +451,16 @@ class RepositoryImpl @Inject constructor(
                 if (shopifyUserId != null) {
                     emit(Result.success(CustomerInfo()))
                 } else {
-
+                    Log.d("Abanob", "createShopifyUser: ${response.data}")
                     if (response.data.toString().contains("Phone has already been taken")) {
                         emit(Result.failure(Throwable("Phone has already been taken")))
                     } else if (response.data.toString().contains("Email has already been taken")) {
                         emit(Result.failure(Throwable("Email has already been taken")))
-                    } else {
+                    }
+                    else if (response.data.toString().contains("Enter a valid phone number")) {
+                        emit(Result.failure(Throwable("InValid phone number")))
+                    }
+                    else {
                         emit(Result.failure(Throwable("User creation failed without errors.")))
                     }
 
@@ -484,11 +488,11 @@ class RepositoryImpl @Inject constructor(
                     val customerInfo = CustomerInfo(
                         displayName = "${customer.firstName} ${customer.lastName}",
                         email = customer.email.toString(),
-                        userId = customer.id.split("/")[4]
+                        userId = customer.id
                     )
                     emit(Result.success(customerInfo))
                 } else {
-                    emit(Result.success(null)) // No customer found
+                    emit(Result.success(null))
                 }
             }
         } catch (e: Exception) {
