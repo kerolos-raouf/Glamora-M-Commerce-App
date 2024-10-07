@@ -10,6 +10,7 @@ import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.AvailableProductsModel
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.DiscountCodeDTO
+import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
@@ -130,6 +131,28 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toCartItemsDTO() : List<CartItemDT
 
     return cartItems
 }
+
+fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<FavoriteItemDTO> {
+    val favoritesItems = mutableListOf<FavoriteItemDTO>()
+
+    nodes.forEach {draftOrder->
+        if(draftOrder.tags[0] == Constants.FAVORITES_DRAFT_ORDER_KEY)
+        {
+            draftOrder.lineItems.nodes.forEach { lineItem ->
+                favoritesItems.add(FavoriteItemDTO(
+                    id = lineItem.variant?.id ?: Constants.UNKNOWN,
+                    draftOrderId = draftOrder.id ?: Constants.UNKNOWN,
+                    title = lineItem.title ?: Constants.UNKNOWN,
+                    price = lineItem.variant?.price.toString() ?: "0",
+                    image = lineItem.variant?.product?.media?.nodes?.get(0)?.onMediaImage?.image?.url?.toString() ?: Constants.UNKNOWN,
+                ))
+            }
+        }
+    }
+
+    return favoritesItems
+}
+
 //fun CategoriesQuery.CollectionByHandle.toProductDTO(): List<ProductDTO> {
 //    val products = mutableListOf<ProductDTO>()
 //

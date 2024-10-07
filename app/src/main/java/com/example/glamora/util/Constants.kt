@@ -35,6 +35,7 @@ object Constants {
 
     //draftOrders
     const val CART_DRAFT_ORDER_KEY = "CART_DRAFT_ORDER"
+    const val FAVORITES_DRAFT_ORDER_KEY = "FAVORITES_DRAFT_ORDER_KEY"
 
 
     // Customer Email

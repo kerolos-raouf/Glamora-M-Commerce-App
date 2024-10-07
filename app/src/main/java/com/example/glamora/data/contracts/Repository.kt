@@ -5,6 +5,7 @@ import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.customerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
+import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
@@ -26,11 +27,15 @@ interface Repository {
 
     fun getCartItemsForCustomer(customerId: String) : Flow<State<List<CartItemDTO>>>
 
+    fun getFavoriteItemsForCustomer(customerId: String) : Flow<State<List<FavoriteItemDTO>>>
+
     fun updateCustomerAddress(customerId: String,address : AddressModel) : Flow<State<AddressModel>>
 
     fun deleteDraftOrder(draftOrderId: String) : Flow<State<String>>
 
     fun updateCartDraftOrder(draftOrderId: String, newCartItemsList: List<CartItemDTO>) : Flow<State<String>>
+
+    fun updateFavoritesDraftOrder(draftOrderId: String,newFavoriteItemsList: List<FavoriteItemDTO>,): Flow<State<String>>
 
     fun createFinalDraftOrder(customerId: String,customerEmail : String, cartItems : List<CartItemDTO>,discountAmount: Double) : Flow<State<String>>
 
