@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.glamora.R
 import com.example.glamora.data.model.CartItemDTO
+import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.databinding.CartBottomSheetBinding
 import com.example.glamora.databinding.FragmentCartBinding
 import com.example.glamora.databinding.OperationDoneBottomSheetBinding
@@ -52,6 +53,7 @@ class CartFragment : Fragment(),CartItemInterface {
 
     //discount value
     private var discountValue = 0.0
+    private var discountCode = Constants.UNKNOWN
 
 
     //paypal
@@ -84,7 +86,6 @@ class CartFragment : Fragment(),CartItemInterface {
         //fetch cart items
         if(sharedViewModel.currentCustomerInfo.value.userId != Constants.UNKNOWN)
         {
-            Log.d("Kerolos", "initViews: ${sharedViewModel.currentCustomerInfo.value.userIdAsNumber}")
             cartViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
         }
 
@@ -97,7 +98,10 @@ class CartFragment : Fragment(),CartItemInterface {
 
         //refresh layout
         binding.cartSwipeRefreshLayout.setOnRefreshListener {
-            cartViewModel.fetchCartItems()
+            if(sharedViewModel.currentCustomerInfo.value.userId != Constants.UNKNOWN)
+            {
+                cartViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
+            }
             binding.cartSwipeRefreshLayout.isRefreshing = false
         }
 
@@ -108,13 +112,8 @@ class CartFragment : Fragment(),CartItemInterface {
             {
                 if(discount.code == binding.cartCuponCodeEditText.text.toString())
                 {
-                    discountValue = discount.percentage / 100
-                    applyPriceChangeOnUI(0.0)
-                    binding.cartCuponCodeEditText.setText("")
-                    binding.cartCuponCodeEditText.hint = discount.code
-                    binding.cartCuponCodeEditText.clearFocus()
+                    actionAfterGettingFoundDiscountCode(discount)
                     found = true
-                    Toast.makeText(requireContext(), "Discount code applied", Toast.LENGTH_SHORT).show()
                     break
                 }
             }
@@ -125,8 +124,6 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
 
-
-
         initPayPal()
 
         bottomSheet = BottomSheetDialog(requireContext())
@@ -134,6 +131,18 @@ class CartFragment : Fragment(),CartItemInterface {
         binding.cartCheckOutButton.setOnClickListener {
             showBottomSheet()
         }
+    }
+
+
+    private fun actionAfterGettingFoundDiscountCode(discount: DiscountCodeDTO)
+    {
+        discountValue = discount.percentage / 100
+        applyPriceChangeOnUI(0.0)
+        binding.cartCuponCodeEditText.setText("")
+        binding.cartCuponCodeEditText.hint = discount.code
+        binding.cartCuponCodeEditText.clearFocus()
+        discountCode = discount.code
+        Toast.makeText(requireContext(), "Discount code applied", Toast.LENGTH_SHORT).show()
     }
 
     private fun initObservers(){
@@ -214,9 +223,16 @@ class CartFragment : Fragment(),CartItemInterface {
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
             bottomSheet.dismiss()
+
+            //create order from drat order
             cartViewModel.createFinalDraftOrder(
+                customerId = sharedViewModel.currentCustomerInfo.value.userId,
+                customerEmail = sharedViewModel.currentCustomerInfo.value.email,
                 discountAmount = discountValue * 100
             )
+            discountValue = 0.0
+            discountCode = Constants.UNKNOWN
+
             if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
                 payWithCard()
             }else{
@@ -247,7 +263,7 @@ class CartFragment : Fragment(),CartItemInterface {
             message = "Are about deleting this item?",
             actionText = "Delete"
         ){
-            cartViewModel.deleteCartItemFromDraftOrder(item)
+            cartViewModel.deleteCartItemFromDraftOrder(item,sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
             applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
         }
     }

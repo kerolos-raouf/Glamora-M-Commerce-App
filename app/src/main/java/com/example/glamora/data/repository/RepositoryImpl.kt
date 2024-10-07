@@ -525,7 +525,6 @@ class RepositoryImpl @Inject constructor(
                 if (shopifyUserId != null) {
                     emit(Result.success(CustomerInfo()))
                 } else {
-                    Log.d("Abanob", "createShopifyUser: ${response.data}")
                     if (response.data.toString().contains("Phone has already been taken")) {
                         emit(Result.failure(Throwable("Phone has already been taken")))
                     } else if (response.data.toString().contains("Email has already been taken")) {
@@ -545,14 +544,14 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getShopifyUserByEmail(email: String): Flow<Result<CustomerInfo?>> = flow {
+    override fun getShopifyUserByEmail(email: String): Flow<State<CustomerInfo>> = flow {
         val query = GetCustomerByEmailQuery(email)
 
         try {
             val response = apolloClient.query(query).execute()
 
             if (response.hasErrors()) {
-                emit(Result.failure(Throwable("Error fetching user: ${response.errors}")))
+                emit(State.Error("Error fetching user: ${response.errors}"))
             } else {
                 val customerEdges = response.data?.customers?.edges
 
@@ -565,13 +564,13 @@ class RepositoryImpl @Inject constructor(
                         userId = customer.id,
                         userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1]
                     )
-                    emit(Result.success(customerInfo))
+                    emit(State.Success(customerInfo))
                 } else {
-                    emit(Result.success(null))
+                    emit(State.Error("User not found"))
                 }
             }
         } catch (e: Exception) {
-            emit(Result.failure(Throwable("Query failed: ${e.message}")))
+            emit(State.Error(e.message.toString()))
         }
     }
 
