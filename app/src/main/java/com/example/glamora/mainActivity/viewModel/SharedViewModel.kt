@@ -51,6 +51,10 @@ class SharedViewModel @Inject constructor(
         observeOnInternetState()
     }
 
+    fun setCustomerInfo(customerInfo: CustomerInfo){
+        _currentCustomerInfo.value = customerInfo
+    }
+
     private fun observeOnInternetState()
     {
         viewModelScope.launch(Dispatchers.IO) {

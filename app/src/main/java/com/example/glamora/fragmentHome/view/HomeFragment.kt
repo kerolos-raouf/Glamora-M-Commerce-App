@@ -79,6 +79,17 @@ class HomeFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
+        lifecycleScope.launch{
+            sharedViewModel.currentCustomerInfo.collect{ customerInfo ->
+                customerInfo?.let{
+                    Log.d("Abanob", "onViewCreated: ${customerInfo.email}")
+                    Log.d("Abanob", "onViewCreated: ${customerInfo.displayName}")
+                    Log.d("Abanob", "onViewCreated: ${customerInfo.userId}")
+                }
+
+            }
+        }
+
 
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()

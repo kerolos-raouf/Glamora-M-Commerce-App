@@ -10,6 +10,7 @@ import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.util.State
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
+import com.example.glamora.data.model.customerModels.CustomerInfo
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
@@ -29,13 +30,20 @@ interface Repository {
 
     fun deleteDraftOrder(draftOrderId: String) : Flow<State<String>>
 
+    fun createShopifyUser(
+        email: String,
+        firstName: String,
+        lastName: String,
+        phone: String?
+    ): Flow<Result<CustomerInfo>>
+
+    fun getShopifyUserByEmail(email: String): Flow<Result<CustomerInfo?>>
+
     fun updateDraftOrder(draftOrderId: String,variantId : String,quantity : Int) : Flow<State<String>>
 
     fun createFinalDraftOrder(customerId: String,customerEmail : String, cartItems : List<CartItemDTO>,discountAmount: Double) : Flow<State<String>>
 
     fun createOrderFromDraftOrder(draftOrderId: String) : Flow<State<String>>
-
-    suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String)
 
 
     //retrofit
@@ -57,6 +65,12 @@ interface Repository {
 
     fun getSharedPrefBoolean(key: String, defaultValue: Boolean) : Boolean
 
+
+    // Firebase Functions
+    fun loginWithEmail(email: String, password: String): Flow<Result<CustomerInfo>>
+    fun loginWithGoogle(idToken: String): Flow<Result<CustomerInfo>>
+    fun resetUserPassword(email: String): Flow<Result<CustomerInfo>>
+    fun signUp(email: String, password: String): Flow<Result<CustomerInfo>>
 
 
 
