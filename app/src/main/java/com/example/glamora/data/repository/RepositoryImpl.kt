@@ -34,6 +34,7 @@ import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
+import com.example.glamora.data.model.customerModels.CustomerInfo
 import com.example.glamora.util.toCartItemsDTO
 import com.example.type.CustomerInput
 import com.example.type.DraftOrderAppliedDiscountInput
@@ -168,6 +169,7 @@ class RepositoryImpl @Inject constructor(
             emit(State.Error(it.message.toString()))
     }
 
+    @OptIn(FlowPreview::class)
     override fun getCartItemsForCustomer(customerId: String) : Flow<State<List<CartItemDTO>>> = flow {
         emit(State.Loading)
         try {
@@ -175,14 +177,14 @@ class RepositoryImpl @Inject constructor(
             val cartItemsResponse = apolloClient.query(GetDraftOrdersByCustomerQuery(
                 query = "customer_id:$customerId"
             )).execute()
+            if (cartItemsResponse.data != null) {
 
-            if (!cartItemsResponse.hasErrors()) {//check if there is error in response
-                val cartDraftOrderResponse = cartItemsResponse.data?.draftOrders
-                if (cartDraftOrderResponse != null && cartDraftOrderResponse.nodes.isNotEmpty()) {//check if list is not empty
-                    emit(State.Success(cartDraftOrderResponse.toCartItemsDTO()))
+                val draftOrdersResponse = cartItemsResponse.data?.draftOrders
+                if (draftOrdersResponse != null) {
+                    emit(State.Success(draftOrdersResponse.toCartItemsDTO()))
                 }else
                 {
-                    emit(State.Success(emptyList<CartItemDTO>()))
+                    emit(State.Error("No products found"))
                 }
             }else
             {
@@ -363,23 +365,19 @@ class RepositoryImpl @Inject constructor(
         emit(State.Loading)
         try {
             val customerResponse = remoteDataSource.getCustomersUsingEmail(email)
-            if (customerResponse.isSuccessful)
-            {
+            if (customerResponse.isSuccessful) {
                 if (customerResponse.body()?.customers != null
                     && customerResponse.body()?.customers?.size!! > 0
-                    && customerResponse.body()?.customers?.get(0) != null)
-                {
+                    && customerResponse.body()?.customers?.get(0) != null
+                ) {
                     emit(State.Success(customerResponse.body()?.customers?.get(0)!!))
-                }else
-                {
+                } else {
                     emit(State.Error(Constants.CUSTOMER_NOT_FOUND))
                 }
-            }else
-            {
+            } else {
                 emit(State.Error(customerResponse.message()))
             }
-        }catch (e : Exception)
-        {
+        } catch (e: Exception) {
             emit(State.Error(e.message.toString()))
         }
     }
@@ -433,45 +431,124 @@ class RepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String) {
-
+    override fun createShopifyUser(
+        email: String,
+        firstName: String,
+        lastName: String,
+        phone: String?
+    ): Flow<Result<CustomerInfo>> = flow {
         val client = apolloClient
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "unknown"
 
-        Log.d("Abanob", "createShopifyUser: $userId")
-
-        // Create mutation to add the customer to Shopify
         val customerInput = CustomerInput(
             email = Optional.Present(email),
             firstName = Optional.Present(firstName),
             lastName = Optional.Present(lastName),
-            tags = Optional.Present(listOf(userId))
+            phone = Optional.Present(phone)
         )
 
-        // Create mutation with the CustomerInput
         val mutation = CreateCustomerMutation(customerInput)
 
         try {
             val response = client.mutation(mutation).execute()
 
-            Log.d("Abanob", "createShopifyUser: ${response.data}")
-
             if (response.hasErrors()) {
-                Log.e("Abanob", "Error creating user: ${response.errors}")
+                emit(Result.failure(Throwable("Error creating user: ${response.errors}")))
             } else {
                 val shopifyUserId = response.data?.customerCreate?.customer?.id
+                if (shopifyUserId != null) {
+                    emit(Result.success(CustomerInfo()))
+                } else {
+                    Log.d("Abanob", "createShopifyUser: ${response.data}")
+                    if (response.data.toString().contains("Phone has already been taken")) {
+                        emit(Result.failure(Throwable("Phone has already been taken")))
+                    } else if (response.data.toString().contains("Email has already been taken")) {
+                        emit(Result.failure(Throwable("Email has already been taken")))
+                    }
+                    else if (response.data.toString().contains("Enter a valid phone number")) {
+                        emit(Result.failure(Throwable("InValid phone number")))
+                    }
+                    else {
+                        emit(Result.failure(Throwable("User creation failed without errors.")))
+                    }
 
-                Log.d("Abanob", "User created successfully in Shopify: $shopifyUserId")
-                Log.d("Abanob", "Firebase User ID: $userId, Shopify User ID: $shopifyUserId")
-
-                // Ensure both User IDs are logged properly
-                Log.d("Abanob", "Firebase ID: $userId")
-                Log.d("Abanob", "Shopify ID: $shopifyUserId")
-
-                // Optionally, you can return the Shopify user ID or handle it as needed
+                }
             }
         } catch (e: Exception) {
-            Log.e("Abanob", "Mutation failed: ${e.message}")
+            emit(Result.failure(Throwable("Mutation failed: ${e.message}")))
+        }
+    }
+
+    override fun getShopifyUserByEmail(email: String): Flow<Result<CustomerInfo?>> = flow {
+        val query = GetCustomerByEmailQuery(email)
+
+        try {
+            val response = apolloClient.query(query).execute()
+
+            if (response.hasErrors()) {
+                emit(Result.failure(Throwable("Error fetching user: ${response.errors}")))
+            } else {
+                val customerEdges = response.data?.customers?.edges
+
+                if (!customerEdges.isNullOrEmpty()) {
+                    val customer = customerEdges[0].node
+
+                    val customerInfo = CustomerInfo(
+                        displayName = "${customer.firstName} ${customer.lastName}",
+                        email = customer.email.toString(),
+                        userId = customer.id
+                    )
+                    emit(Result.success(customerInfo))
+                } else {
+                    emit(Result.success(null))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Result.failure(Throwable("Query failed: ${e.message}")))
+        }
+    }
+
+
+    override fun loginWithEmail(email: String, password: String): Flow<Result<CustomerInfo>> =
+        flow {
+            val result = firebaseHandler.signInWithEmail(email, password)
+            if (result.isSuccess) {
+                val currentUser = firebaseHandler.getCurrentUser()
+                emit(Result.success(CustomerInfo(email = currentUser?.email ?: Constants.UNKNOWN)))
+            } else {
+                emit(Result.failure(result.exceptionOrNull() ?: Throwable("Login failed")))
+            }
+        }
+
+    override fun loginWithGoogle(idToken: String): Flow<Result<CustomerInfo>> = flow {
+        val result = firebaseHandler.signInWithGoogle(idToken)
+        if (result.isSuccess) {
+            val currentUser = firebaseHandler.getCurrentUser()
+            emit(Result.success(CustomerInfo(email = currentUser?.email ?: Constants.UNKNOWN)))
+        } else {
+            emit(Result.failure(result.exceptionOrNull() ?: Throwable("Google login failed")))
+        }
+    }
+
+    override fun resetUserPassword(email: String): Flow<Result<CustomerInfo>> = flow {
+        val result = firebaseHandler.resetPassword(email)
+        if (result.isSuccess) {
+            emit(Result.success(CustomerInfo(email = email)))
+        } else {
+            emit(
+                Result.failure(
+                    result.exceptionOrNull() ?: Throwable("Failed to send reset email")
+                )
+            )
+        }
+    }
+
+    override fun signUp(email: String, password: String): Flow<Result<CustomerInfo>> = flow {
+        val result = firebaseHandler.signUp(email, password)
+        if (result.isSuccess) {
+            val currentUser = firebaseHandler.getCurrentUser()
+            emit(Result.success(CustomerInfo(email = currentUser?.email ?: Constants.UNKNOWN)))
+        } else {
+            emit(Result.failure(result.exceptionOrNull() ?: Throwable("Sign-up failed")))
         }
     }
 

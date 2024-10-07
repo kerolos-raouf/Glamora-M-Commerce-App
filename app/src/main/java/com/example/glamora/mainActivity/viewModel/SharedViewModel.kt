@@ -51,6 +51,10 @@ class SharedViewModel @Inject constructor(
         observeOnInternetState()
     }
 
+    fun setCustomerInfo(customerInfo: CustomerInfo){
+        _currentCustomerInfo.value = customerInfo
+    }
+
     private fun observeOnInternetState()
     {
         viewModelScope.launch(Dispatchers.IO) {
@@ -148,6 +152,16 @@ class SharedViewModel @Inject constructor(
     fun getSharedPrefString(key: String, defaultValue: String) : String
     {
         return repository.getSharedPrefString(key, defaultValue)
+    }
+
+    fun setSharedPrefBoolean(key: String,value: Boolean)
+    {
+        repository.setSharedPrefBoolean(key, value)
+    }
+
+    fun getSharedPrefBoolean(key: String, defaultValue: Boolean) : Boolean
+    {
+        return repository.getSharedPrefBoolean(key, defaultValue)
     }
 
     fun convertCurrency()
