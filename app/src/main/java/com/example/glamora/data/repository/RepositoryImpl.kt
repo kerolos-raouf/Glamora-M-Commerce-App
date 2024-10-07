@@ -37,6 +37,7 @@ import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
+import com.example.glamora.util.toAddressMode
 import com.example.glamora.util.toCartItemsDTO
 import com.example.glamora.util.toFavoriteItemsDTO
 import com.example.type.CustomerInput
@@ -46,7 +47,6 @@ import com.example.type.DraftOrderDeleteInput
 import com.example.type.DraftOrderInput
 import com.example.type.DraftOrderLineItemInput
 import com.example.type.MailingAddressInput
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -233,21 +233,28 @@ class RepositoryImpl @Inject constructor(
     @OptIn(FlowPreview::class)
     override fun updateCustomerAddress(
         customerId: String,
-        address: AddressModel
+        address: List<AddressModel>
     ): Flow<State<AddressModel>> = flow {
         emit(State.Loading)
         try {
-            val address = MailingAddressInput(
-                firstName = Optional.Present(address.firstName),
-                lastName = Optional.Present(address.lastName),
-                phone = Optional.Present(address.phone),
-                address1 = Optional.Present(address.street),
-                city = Optional.Present(address.city),
-                country = Optional.Present(address.country),
-            )
+            val mailingAddressInputList = mutableListOf<MailingAddressInput>()
+
+            address.forEach {
+                mailingAddressInputList.add(
+                    MailingAddressInput(
+                        firstName = Optional.Present(it.firstName),
+                        lastName = Optional.Present(it.lastName),
+                        phone = Optional.Present(it.phone),
+                        address1 = Optional.Present(it.street),
+                        city = Optional.Present(it.city),
+                        country = Optional.Present(it.country),
+                    )
+                )
+            }
+
             val customerInput = CustomerInput(
                 id = Optional.Present(customerId),
-                addresses = Optional.Present(listOf(address))
+                addresses = Optional.Present(mailingAddressInputList)
             )
             val customerResponse = apolloClient.mutation(UpdateCustomerAddressMutation(customerInput)).execute()
             if (!customerResponse.hasErrors() && customerResponse.data?.customerUpdate?.customer != null)
@@ -424,6 +431,33 @@ class RepositoryImpl @Inject constructor(
             }
         }catch (e : Exception)
         {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun getCustomerAddressesByEmail(email: String): Flow<State<List<AddressModel>>> = flow {
+        val query = GetCustomerByEmailQuery(email)
+
+        try {
+            val response = apolloClient.query(query).execute()
+
+            if (response.hasErrors()) {
+                emit(State.Error("Error fetching user: ${response.errors}"))
+            } else {
+                val customerEdges = response.data?.customers?.edges
+
+                if (!customerEdges.isNullOrEmpty()) {
+                    val addresses = customerEdges[0].node.addresses
+                    val addressModelList = mutableListOf<AddressModel>()
+                    addresses.forEach {
+                        addressModelList.add(it.toAddressMode())
+                    }
+                    emit(State.Success(addressModelList))
+                } else {
+                    emit(State.Error("User not found"))
+                }
+            }
+        } catch (e: Exception) {
             emit(State.Error(e.message.toString()))
         }
     }
@@ -617,6 +651,10 @@ class RepositoryImpl @Inject constructor(
         } else {
             emit(Result.failure(result.exceptionOrNull() ?: Throwable("Sign-up failed")))
         }
+    }
+
+    override fun signOut() {
+         firebaseHandler.signOut()
     }
 
 }

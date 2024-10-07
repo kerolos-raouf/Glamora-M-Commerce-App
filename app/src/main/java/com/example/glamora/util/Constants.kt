@@ -20,10 +20,6 @@ object Constants {
     const val AED = "AED"
     const val SAR = "SAR"
     const val EGP_SELECTION_VALUE = 0
-    const val USD_SELECTION_VALUE = 1
-    const val EUR_SELECTION_VALUE = 2
-    const val AED_SELECTION_VALUE = 3
-    const val SAR_SELECTION_VALUE = 4
 
 
     const val SHOES= "SHOES"

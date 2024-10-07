@@ -136,13 +136,19 @@ class CartFragment : Fragment(),CartItemInterface {
 
     private fun actionAfterGettingFoundDiscountCode(discount: DiscountCodeDTO)
     {
-        discountValue = discount.percentage / 100
-        applyPriceChangeOnUI(0.0)
-        binding.cartCuponCodeEditText.setText("")
-        binding.cartCuponCodeEditText.hint = discount.code
-        binding.cartCuponCodeEditText.clearFocus()
-        discountCode = discount.code
-        Toast.makeText(requireContext(), "Discount code applied", Toast.LENGTH_SHORT).show()
+        if (!sharedViewModel.getSharedPrefBoolean(discount.code,false))
+        {
+            discountValue = discount.percentage / 100
+            applyPriceChangeOnUI(0.0)
+            binding.cartCuponCodeEditText.setText("")
+            binding.cartCuponCodeEditText.hint = discount.code
+            binding.cartCuponCodeEditText.clearFocus()
+            discountCode = discount.code
+            Toast.makeText(requireContext(), "Discount code applied", Toast.LENGTH_SHORT).show()
+        }else
+        {
+            Toast.makeText(requireContext(), "This code is already used", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initObservers(){
@@ -231,7 +237,12 @@ class CartFragment : Fragment(),CartItemInterface {
                 discountAmount = discountValue * 100
             )
             discountValue = 0.0
-            discountCode = Constants.UNKNOWN
+            if(discountCode != Constants.UNKNOWN)
+            {
+                sharedViewModel.setSharedPrefBoolean(discountCode,true)
+                discountCode = Constants.UNKNOWN
+            }
+
 
             if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
                 payWithCard()
