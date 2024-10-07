@@ -28,7 +28,7 @@ class DiscountCodesAdapter (
         val item = getItem(position)
         holder.binding.apply {
             Glide.with(offerImageCardview).load(discountImages[position%discountImages.size]).into(offerImageCardview)
-            textviewSaleCardview.text = "Super Flash Sale \n ${item.percentage}% Off"
+            textviewSaleCardview.text = "Super Flash Sale \n ${item.percentage.toInt()}% Off"
             root.setOnClickListener {
                 listener.onDiscountCodeClicked(item)
             }

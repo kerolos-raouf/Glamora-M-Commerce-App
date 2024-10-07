@@ -173,5 +173,9 @@ dependencies {
     implementation (libs.card.payments)
 
     //Shopify Checkout Sheet Kit
-    implementation ("com.shopify:checkout-sheet-kit:3.0.1")
+    implementation (libs.checkout.sheet.kit)
+
+    //swiperefreshlayout
+    implementation(libs.androidx.swiperefreshlayout)
+
 }

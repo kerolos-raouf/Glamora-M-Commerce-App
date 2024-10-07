@@ -12,8 +12,6 @@ import com.example.glamora.util.State
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.callbackFlow
 
 interface Repository {
 
@@ -41,6 +39,12 @@ interface Repository {
 
     fun getShopifyUserByEmail(email: String): Flow<Result<CustomerInfo?>>
 
+    fun updateDraftOrder(draftOrderId: String,variantId : String,quantity : Int) : Flow<State<String>>
+
+    fun createFinalDraftOrder(customerId: String,customerEmail : String, cartItems : List<CartItemDTO>,discountAmount: Double) : Flow<State<String>>
+
+    fun createOrderFromDraftOrder(draftOrderId: String) : Flow<State<String>>
+
 
     //retrofit
     fun getCustomerUsingEmail(email: String) : Flow<State<Customer>>
@@ -67,5 +71,8 @@ interface Repository {
     fun loginWithGoogle(idToken: String): Flow<Result<CustomerInfo>>
     fun resetUserPassword(email: String): Flow<Result<CustomerInfo>>
     fun signUp(email: String, password: String): Flow<Result<CustomerInfo>>
+
+
+
 
 }
