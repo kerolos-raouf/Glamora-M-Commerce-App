@@ -332,11 +332,7 @@ class RepositoryImpl @Inject constructor(
             email = Optional.Present(email),
             firstName = Optional.Present(firstName),
             lastName = Optional.Present(lastName),
-            phone = if (phone != null) {
-                Optional.Present(phone)
-            } else {
-                Optional.Absent
-            }
+            phone = Optional.Present(phone)
         )
 
         val mutation = CreateCustomerMutation(customerInput)
