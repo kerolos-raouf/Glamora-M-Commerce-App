@@ -2,6 +2,7 @@ package com.example.glamora.fragmentLogin.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,38 +11,41 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
-import com.example.glamora.data.firebase.LoginState
+import com.example.glamora.data.model.customerModels.CustomerInfo
 import com.example.glamora.databinding.FragmentLoginBinding
 import com.example.glamora.fragmentLogin.viewModel.LoginViewModel
 import com.example.glamora.mainActivity.view.Communicator
+import com.example.glamora.mainActivity.viewModel.SharedViewModel
+import com.example.glamora.util.State
 import com.example.glamora.util.isNotShort
 import com.example.glamora.util.isValidEmail
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private lateinit var loginBinding: FragmentLoginBinding
-    private lateinit var loginViewModel: LoginViewModel
+    private val loginViewModel: LoginViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
-    private val communicator : Communicator by lazy {
+    private val communicator: Communicator by lazy {
         (requireActivity() as Communicator)
     }
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,9 +58,38 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val userEmail = arguments?.getString("userEmail")
+        val userPassword = arguments?.getString("userPassword")
+
+        if (userEmail != null && userPassword != null) {
+            loginBinding.editEmail.setText(userEmail)
+            loginBinding.editPassword.setText(userPassword)
+        }
+
+
+//        loginViewModel.fetchUserByEmail("kerolos.raouf5600@gmail.com")
+//
+//        lifecycleScope.launch {
+//            loginViewModel.customerResult.collect { result ->
+//                result?.onSuccess { customerInfo ->
+//                    if (customerInfo != null) {
+//                        Log.d("Abanob", "onViewCreated: ${customerInfo.userId}")
+//                        Log.d("Abanob", "onViewCreated: ${customerInfo.email}")
+//                        Log.d("Abanob", "onViewCreated: ${customerInfo.displayName}")
+//                    } else {
+//                        Log.d("Abanob", "onViewCreated: Null")
+//                    }
+//
+//                }?.onFailure { exception ->
+//                    Log.d("Abanob", "onViewCreated: ${exception.message}")
+//                }
+//            }
+//        }
+
         setupGoogleSignIn()
 
         loginBinding.loginBtn.setOnClickListener {
+            resetErrors()
             validateAndLogin()
         }
 
@@ -68,7 +101,7 @@ class LoginFragment : Fragment() {
             signInWithGoogle()
         }
 
-        loginBinding.guestBtn.setOnClickListener{
+        loginBinding.guestBtn.setOnClickListener {
 
             val builder = AlertDialog.Builder(requireContext())
 
@@ -99,14 +132,24 @@ class LoginFragment : Fragment() {
             alertDialog.show()
         }
 
-        loginBinding.resetBtn.setOnClickListener{
+        loginBinding.resetBtn.setOnClickListener {
             val email = loginBinding.editEmail.text.toString()
             val isEmailValid = isValidEmail(email)
 
-            if(isEmailValid){
+            if (isEmailValid) {
                 loginViewModel.resetUserPass(email)
+            } else {
+                showErrorEmail()
             }
 
+            lifecycleScope.launch {
+                loginViewModel.toastMessage.collect { message ->
+                    message?.let {
+                        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                        loginViewModel.clearToastMessage()
+                    }
+                }
+            }
         }
 
         observeLoginState()
@@ -116,14 +159,10 @@ class LoginFragment : Fragment() {
         val email = loginBinding.editEmail.text.toString()
         val password = loginBinding.editPassword.text.toString()
 
-        // Reset error messages
-        resetErrors()
-
         val isEmailValid = isValidEmail(email)
         val isPasswordValid = isNotShort(password)
 
         if (isEmailValid && isPasswordValid) {
-            // Perform login
             loginViewModel.loginWithEmail(email, password)
         } else {
             if (!isEmailValid) showErrorEmail()
@@ -134,24 +173,38 @@ class LoginFragment : Fragment() {
     private fun resetErrors() {
         loginBinding.errEmailTxt.visibility = View.GONE
         loginBinding.errPassTxt.visibility = View.GONE
-        loginBinding.editEmail.background = ContextCompat.getDrawable(requireContext(), R.drawable.button_background)
-        loginBinding.editPassword.background = ContextCompat.getDrawable(requireContext(), R.drawable.button_background)
+        loginBinding.editEmail.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.button_background)
+        loginBinding.editPassword.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.button_background)
         loginBinding.editEmail.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
         loginBinding.editPassword.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
     }
 
     private fun showErrorEmail() {
         loginBinding.errEmailTxt.visibility = View.VISIBLE
-        loginBinding.editEmail.background = ContextCompat.getDrawable(requireContext(), R.drawable.button_background_err)
+        loginBinding.editEmail.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.button_background_err)
         val drawableIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_email_err)
-        loginBinding.editEmail.setCompoundDrawablesWithIntrinsicBounds(drawableIcon, null, null, null)
+        loginBinding.editEmail.setCompoundDrawablesWithIntrinsicBounds(
+            drawableIcon,
+            null,
+            null,
+            null
+        )
     }
 
     private fun showErrorPassword() {
         loginBinding.errPassTxt.visibility = View.VISIBLE
-        loginBinding.editPassword.background = ContextCompat.getDrawable(requireContext(), R.drawable.button_background_err)
+        loginBinding.editPassword.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.button_background_err)
         val drawableIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_pass_err)
-        loginBinding.editPassword.setCompoundDrawablesWithIntrinsicBounds(drawableIcon, null, null, null)
+        loginBinding.editPassword.setCompoundDrawablesWithIntrinsicBounds(
+            drawableIcon,
+            null,
+            null,
+            null
+        )
     }
 
     private fun setupGoogleSignIn() {
@@ -185,22 +238,51 @@ class LoginFragment : Fragment() {
         lifecycleScope.launch {
             loginViewModel.loginState.collect { state ->
                 when (state) {
-                    is LoginState.Success -> {
-                        Toast.makeText(requireContext(), "Login successful!", Toast.LENGTH_SHORT).show()
-                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                    is State.Loading -> {
+                        loginBinding.progressBar.visibility = View.VISIBLE
                     }
-                    is LoginState.Error -> {
+
+                    is State.Success -> {
+                        lifecycleScope.launch {
+                            // Collect email once and wait for completion
+                            val email = loginViewModel.customerEmail.firstOrNull()
+
+                            if (email != null) {
+                                // Fetch user by email and wait for the result
+                                loginViewModel.fetchUserByEmail(email)
+
+                                // Collect the customerResult and handle it
+                                loginViewModel.customerResult.collect { result ->
+                                    result?.onSuccess { customerInfo ->
+                                        if (customerInfo != null) {
+                                            sharedViewModel.setCustomerInfo(customerInfo)
+                                        } else {
+                                            sharedViewModel.setCustomerInfo(CustomerInfo(displayName = email.split("@")[0]))
+                                        }
+
+                                        loginBinding.progressBar.visibility = View.GONE
+                                        Toast.makeText(requireContext(), "Login successful!", Toast.LENGTH_SHORT).show()
+                                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                    is State.Error -> {
+                        loginBinding.progressBar.visibility = View.GONE
                         Toast.makeText(requireContext(), "Login failed", Toast.LENGTH_SHORT).show()
                         showErrorEmail()
                         showErrorPassword()
                     }
-                    else -> {
 
-                    }
+                    null -> {}
                 }
             }
         }
     }
+
 
     override fun onStart() {
         super.onStart()
