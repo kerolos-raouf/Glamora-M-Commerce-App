@@ -28,7 +28,7 @@ class HomeViewModel  @Inject constructor(
 
 
 
-    fun getALlBrands() {
+    private fun getALlBrands() {
         viewModelScope.launch {
             repository.getAllBrands().collect { state ->
                 when (state) {

@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -32,6 +33,7 @@ import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
+import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -39,12 +41,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var productsAdapter: ProductsAdapter
     private lateinit var navController: NavController
     private lateinit var brandsAdapter: BrandsAdapter
@@ -53,7 +55,7 @@ class HomeFragment : Fragment() {
 
 
     private val communicator: Communicator by lazy {
-        (requireContext() as Communicator)
+        (requireActivity() as Communicator)
     }
 
     companion object
@@ -91,6 +93,7 @@ class HomeFragment : Fragment() {
         }
 
 
+        initHome()
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()
         setupDiscountCodesRecyclerView()
@@ -100,6 +103,15 @@ class HomeFragment : Fragment() {
         observeBrands()
 
 
+    }
+
+    private fun initHome() {
+        ///fetch user date
+        val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
+        if(userEmail != Constants.UNKNOWN)
+        {
+            sharedViewModel.getCustomerInfo(userEmail)
+        }
     }
 
     private fun setupRandomItemsRecyclerView() {
@@ -169,6 +181,9 @@ class HomeFragment : Fragment() {
 
 
     private fun setupDiscountCodesRecyclerView() {
+
+
+
 
         val imagesList = listOf(
             R.drawable.promotion,

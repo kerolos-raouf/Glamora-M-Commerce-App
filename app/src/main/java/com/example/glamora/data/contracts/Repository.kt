@@ -43,7 +43,7 @@ interface Repository {
         phone: String?
     ): Flow<Result<CustomerInfo>>
 
-    fun getShopifyUserByEmail(email: String): Flow<Result<CustomerInfo?>>
+    fun getShopifyUserByEmail(email: String): Flow<State<CustomerInfo>>
 
 
 

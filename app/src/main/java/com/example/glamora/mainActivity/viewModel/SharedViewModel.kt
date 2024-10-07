@@ -196,4 +196,25 @@ class SharedViewModel @Inject constructor(
         }
     }
 
+
+    fun getCustomerInfo(userEmail : String)
+    {
+        viewModelScope.launch {
+            repository.getShopifyUserByEmail(userEmail).collect{state->
+                when(state)
+                {
+                    is State.Error -> {
+
+                    }
+                    State.Loading -> {
+
+                    }
+                    is State.Success -> {
+                        _currentCustomerInfo.value = state.data
+                    }
+                }
+            }
+        }
+    }
+
 }
