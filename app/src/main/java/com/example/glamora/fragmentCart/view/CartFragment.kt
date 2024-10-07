@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.glamora.R
 import com.example.glamora.data.model.CartItemDTO
+import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.databinding.CartBottomSheetBinding
 import com.example.glamora.databinding.FragmentCartBinding
 import com.example.glamora.databinding.OperationDoneBottomSheetBinding
@@ -52,6 +53,7 @@ class CartFragment : Fragment(),CartItemInterface {
 
     //discount value
     private var discountValue = 0.0
+    private var discountCode = Constants.UNKNOWN
 
 
     //paypal
@@ -110,13 +112,8 @@ class CartFragment : Fragment(),CartItemInterface {
             {
                 if(discount.code == binding.cartCuponCodeEditText.text.toString())
                 {
-                    discountValue = discount.percentage / 100
-                    applyPriceChangeOnUI(0.0)
-                    binding.cartCuponCodeEditText.setText("")
-                    binding.cartCuponCodeEditText.hint = discount.code
-                    binding.cartCuponCodeEditText.clearFocus()
+                    actionAfterGettingFoundDiscountCode(discount)
                     found = true
-                    Toast.makeText(requireContext(), "Discount code applied", Toast.LENGTH_SHORT).show()
                     break
                 }
             }
@@ -127,8 +124,6 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
 
-
-
         initPayPal()
 
         bottomSheet = BottomSheetDialog(requireContext())
@@ -136,6 +131,18 @@ class CartFragment : Fragment(),CartItemInterface {
         binding.cartCheckOutButton.setOnClickListener {
             showBottomSheet()
         }
+    }
+
+
+    private fun actionAfterGettingFoundDiscountCode(discount: DiscountCodeDTO)
+    {
+        discountValue = discount.percentage / 100
+        applyPriceChangeOnUI(0.0)
+        binding.cartCuponCodeEditText.setText("")
+        binding.cartCuponCodeEditText.hint = discount.code
+        binding.cartCuponCodeEditText.clearFocus()
+        discountCode = discount.code
+        Toast.makeText(requireContext(), "Discount code applied", Toast.LENGTH_SHORT).show()
     }
 
     private fun initObservers(){
@@ -216,11 +223,16 @@ class CartFragment : Fragment(),CartItemInterface {
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
             bottomSheet.dismiss()
+
+            //create order from drat order
             cartViewModel.createFinalDraftOrder(
                 customerId = sharedViewModel.currentCustomerInfo.value.userId,
                 customerEmail = sharedViewModel.currentCustomerInfo.value.email,
                 discountAmount = discountValue * 100
             )
+            discountValue = 0.0
+            discountCode = Constants.UNKNOWN
+
             if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
                 payWithCard()
             }else{
