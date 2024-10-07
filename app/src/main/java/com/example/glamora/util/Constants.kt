@@ -34,7 +34,6 @@ object Constants {
     const val UNKNOWN = "Unknown"
 
 
-    // Customer Login State
-    const val IS_LOGIN_KEY = "IS_LOGIN"
-
+    // Customer Email
+    const val  CUSTOMER_EMAIL = "CUSTOMER_EMAIL"
 }

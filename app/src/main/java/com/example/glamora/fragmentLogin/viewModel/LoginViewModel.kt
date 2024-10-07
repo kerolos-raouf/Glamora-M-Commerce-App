@@ -22,20 +22,9 @@ class LoginViewModel @Inject constructor(
     private val _toastMessage = MutableStateFlow<String?>(null)
     val toastMessage: StateFlow<String?> get() = _toastMessage
 
-    private val _customerResult = MutableStateFlow<Result<CustomerInfo?>?>(null)
-    val customerResult: StateFlow<Result<CustomerInfo?>?> get() = _customerResult
-
     private val _customerEmail = MutableStateFlow<String?>(null)
     val customerEmail: StateFlow<String?> get() = _customerEmail
 
-    fun fetchUserByEmail(email: String) {
-        viewModelScope.launch {
-            repository.getShopifyUserByEmail(email)
-                .collect { result ->
-                    _customerResult.value = result
-                }
-        }
-    }
 
 
     fun loginWithEmail(email: String, password: String) {
