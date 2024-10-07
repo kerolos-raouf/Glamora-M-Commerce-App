@@ -33,4 +33,8 @@ object Constants {
     const val MAP_SHARED_PREFERENCE_NAME = "MAP_SHARED_PREFERENCE_NAME"
     const val UNKNOWN = "Unknown"
 
+
+    //draftOrders
+    const val CART_DRAFT_ORDER_KEY = "CART_DRAFT_ORDER"
+
 }

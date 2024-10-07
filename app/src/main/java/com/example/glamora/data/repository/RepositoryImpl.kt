@@ -175,14 +175,14 @@ class RepositoryImpl @Inject constructor(
             val cartItemsResponse = apolloClient.query(GetDraftOrdersByCustomerQuery(
                 query = "customer_id:$customerId"
             )).execute()
-            if (cartItemsResponse.data != null) {
 
-                val draftOrdersResponse = cartItemsResponse.data?.draftOrders
-                if (draftOrdersResponse != null) {
-                    emit(State.Success(draftOrdersResponse.toCartItemsDTO()))
+            if (!cartItemsResponse.hasErrors()) {//check if there is error in response
+                val cartDraftOrderResponse = cartItemsResponse.data?.draftOrders
+                if (cartDraftOrderResponse != null && cartDraftOrderResponse.nodes.isNotEmpty()) {//check if list is not empty
+                    emit(State.Success(cartDraftOrderResponse.toCartItemsDTO()))
                 }else
                 {
-                    emit(State.Error("No products found"))
+                    emit(State.Success(emptyList<CartItemDTO>()))
                 }
             }else
             {
@@ -258,21 +258,24 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override fun updateDraftOrder(
+    override fun updateCartDraftOrder(
         draftOrderId: String,
-        variantId: String,
-        quantity: Int
+        newCartItemsList: List<CartItemDTO>,
     ): Flow<State<String>> = flow {
         emit(State.Loading)
         try {
+            val draftOrderLineItemInputList = mutableListOf<DraftOrderLineItemInput>()//create list of line items from cart items
+            newCartItemsList.forEach {
+                draftOrderLineItemInputList.add(
+                    DraftOrderLineItemInput(
+                        variantId = Optional.Present(it.id),
+                        quantity = it.quantity
+                    )
+                )
+            }
             val updateDraftOrderResponse = apolloClient.mutation(UpdateDraftOrderMutation(
                 DraftOrderInput(
-                    lineItems = Optional.Present(listOf(
-                        DraftOrderLineItemInput(
-                            variantId = Optional.Present(variantId),
-                            quantity = quantity
-                        )
-                    ))
+                    lineItems = Optional.Present(draftOrderLineItemInputList)
                 ),
                 ownerId = draftOrderId
             )).execute()

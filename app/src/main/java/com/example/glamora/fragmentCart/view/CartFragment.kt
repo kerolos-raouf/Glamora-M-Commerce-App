@@ -222,7 +222,7 @@ class CartFragment : Fragment(),CartItemInterface {
             message = "Are about deleting this item?",
             actionText = "Delete"
         ){
-            cartViewModel.deleteDraftOrder(item.draftOrderId)
+            cartViewModel.deleteCartItemFromDraftOrder(item)
             applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
         }
     }

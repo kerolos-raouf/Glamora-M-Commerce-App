@@ -29,7 +29,7 @@ interface Repository {
 
     fun deleteDraftOrder(draftOrderId: String) : Flow<State<String>>
 
-    fun updateDraftOrder(draftOrderId: String,variantId : String,quantity : Int) : Flow<State<String>>
+    fun updateCartDraftOrder(draftOrderId: String, newCartItemsList: List<CartItemDTO>) : Flow<State<String>>
 
     fun createFinalDraftOrder(customerId: String,customerEmail : String, cartItems : List<CartItemDTO>,discountAmount: Double) : Flow<State<String>>
 

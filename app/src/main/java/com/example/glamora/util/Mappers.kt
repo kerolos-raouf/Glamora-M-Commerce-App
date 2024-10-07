@@ -111,17 +111,21 @@ fun UpdateCustomerAddressMutation.Address.toAddressModel(): AddressModel {
 fun GetDraftOrdersByCustomerQuery.DraftOrders.toCartItemsDTO() : List<CartItemDTO> {
     val cartItems = mutableListOf<CartItemDTO>()
 
-    nodes.forEach {
-        cartItems.add(CartItemDTO(
-            id = it.lineItems.nodes[0].variant?.id ?: Constants.UNKNOWN,
-            draftOrderId = it.id ?: Constants.UNKNOWN,
-            title = it.lineItems.nodes[0].title ?: Constants.UNKNOWN,
-            quantity = it.lineItems.nodes[0].quantity ?: 0,
-            inventoryQuantity = it.lineItems.nodes[0].variant?.inventoryQuantity ?: 0,
-            price = it.lineItems.nodes[0].variant?.price.toString() ?: "0",
-            image = it.lineItems.nodes[0].variant?.product?.media?.nodes?.get(0)?.onMediaImage?.image?.url?.toString() ?: Constants.UNKNOWN,
-            )
-        )
+    nodes.forEach {draftOrder->
+        if(draftOrder.tags[0] == Constants.CART_DRAFT_ORDER_KEY)
+        {
+            draftOrder.lineItems.nodes.forEach { lineItem ->
+                cartItems.add(CartItemDTO(
+                    id = lineItem.variant?.id ?: Constants.UNKNOWN,
+                    draftOrderId = draftOrder.id ?: Constants.UNKNOWN,
+                    title = lineItem.title ?: Constants.UNKNOWN,
+                    quantity = lineItem.quantity ?: 0,
+                    inventoryQuantity = lineItem.variant?.inventoryQuantity ?: 0,
+                    price = lineItem.variant?.price.toString() ?: "0",
+                    image = lineItem.variant?.product?.media?.nodes?.get(0)?.onMediaImage?.image?.url?.toString() ?: Constants.UNKNOWN,
+                ))
+            }
+        }
     }
 
     return cartItems

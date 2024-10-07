@@ -22,8 +22,7 @@ class CartViewModel @Inject constructor(
     private val _cartItems = MutableLiveData<List<CartItemDTO>>(emptyList())
     val cartItems : LiveData<List<CartItemDTO>> = _cartItems
 
-    private val _cartItemsForDelete = MutableLiveData<List<CartItemDTO>>(emptyList())
-    val cartItemsForDelete : LiveData<List<CartItemDTO>> = _cartItemsForDelete
+
 
     private val _message = MutableStateFlow("")
     val message : StateFlow<String> = _message
@@ -31,7 +30,7 @@ class CartViewModel @Inject constructor(
     private val _loading = MutableStateFlow(false)
     val loading : StateFlow<Boolean> = _loading
 
-    fun fetchCartItems(userId: String = "7552199491722",deleteAllAfterFetch : Boolean = false){
+    fun fetchCartItems(userId: String = "7552199491722"){
         viewModelScope.launch {
             repository.getCartItemsForCustomer(userId).collect{state ->
                 when(state){
@@ -43,21 +42,26 @@ class CartViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
-                        if (deleteAllAfterFetch)
-                        {
-                            _cartItemsForDelete.value = state.data
-                            deleteAllDraftOrders()
-                        }else{
-                            _cartItems.value = state.data.reversed()
-                            _loading.value = false
-                        }
+                        _cartItems.value = state.data.reversed()
+                        _loading.value = false
                     }
                 }
             }
         }
     }
 
-    fun deleteDraftOrder(draftOrderId: String,userId: String = "7552199491722"){
+    fun deleteCartItemFromDraftOrder(cartItemDTO: CartItemDTO,userId: String = "7552199491722")
+    {
+        val newCartItems = _cartItems.value?.filter { it.id != cartItemDTO.id} ?: emptyList()
+        if(newCartItems.isEmpty()){
+            deleteDraftOrder(cartItemDTO.draftOrderId,userId)
+        }else
+        {
+            deleteDraftOrderItem(cartItemDTO.draftOrderId,newCartItems,userId)
+        }
+    }
+
+    private fun deleteDraftOrder(draftOrderId: String, userId: String = "7552199491722"){
         viewModelScope.launch {
             repository.deleteDraftOrder(draftOrderId).collect{
                 when(it){
@@ -77,25 +81,46 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun updateDraftOrder(draftOrderId: String,variantId : String,quantity : Int,userId: String = "7552199491722"){
+    private fun deleteDraftOrderItem(draftOrderId: String, newCartItems: List<CartItemDTO>,userId: String = "7552199491722"){
         viewModelScope.launch {
-            repository.updateDraftOrder(draftOrderId,variantId,quantity).collect{
-                when(it){
+            repository.updateCartDraftOrder(draftOrderId,newCartItems).collect{state->
+                when(state){
                     is State.Error -> {
-                        _message.value = it.message
+                        _message.value = state.message
                         _loading.value = false
                     }
                     State.Loading -> {
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _message.value = "Draft order was updated successfully"
-                        //fetchCartItems(userId)
+                        _message.value = "Cart item was deleted successfully"
                         _loading.value = false
+                        fetchCartItems()
                     }
                 }
             }
         }
+    }
+
+    fun updateDraftOrder(draftOrderId: String,variantId : String,quantity : Int,userId: String = "7552199491722"){
+//        viewModelScope.launch {
+//            repository.updateCartDraftOrder(draftOrderId,variantId,quantity).collect{
+//                when(it){
+//                    is State.Error -> {
+//                        _message.value = it.message
+//                        _loading.value = false
+//                    }
+//                    State.Loading -> {
+//                        _loading.value = true
+//                    }
+//                    is State.Success -> {
+//                        _message.value = "Draft order was updated successfully"
+//                        //fetchCartItems(userId)
+//                        _loading.value = false
+//                    }
+//                }
+//            }
+//        }
     }
 
 
@@ -138,34 +163,13 @@ class CartViewModel @Inject constructor(
                     State.Loading -> {
                     }
                     is State.Success -> {
-                        fetchCartItems(deleteAllAfterFetch = true)
+
                     }
                 }
             }
         }
     }
 
-    //3 - create order from draft order
-    private fun deleteAllDraftOrders(){
-        viewModelScope.launch {
-            _cartItemsForDelete.value?.forEach {
-                repository.deleteDraftOrder(it.draftOrderId).collect{state->
-                    when(state){
-                        is State.Error -> {
-                            _message.value = state.message
-                            _loading.value = false
-                        }
-                        State.Loading -> {
-                        }
-                        is State.Success -> {
-                            fetchCartItems()
-                            _loading.value = false
-                        }
-                    }
-                }
-            }
 
-        }
-    }
 
 }
