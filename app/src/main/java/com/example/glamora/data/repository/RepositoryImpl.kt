@@ -23,6 +23,7 @@ import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.customerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
+import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
@@ -37,6 +38,7 @@ import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
 import com.example.glamora.util.toCartItemsDTO
+import com.example.glamora.util.toFavoriteItemsDTO
 import com.example.type.CustomerInput
 import com.example.type.DraftOrderAppliedDiscountInput
 import com.example.type.DraftOrderAppliedDiscountType
@@ -200,6 +202,35 @@ class RepositoryImpl @Inject constructor(
     }
 
     @OptIn(FlowPreview::class)
+    override fun getFavoriteItemsForCustomer(customerId: String) : Flow<State<List<FavoriteItemDTO>>> = flow {
+        emit(State.Loading)
+        try {
+
+            val favoriteItemsResponse = apolloClient.query(GetDraftOrdersByCustomerQuery(
+                query = "customer_id:$customerId"
+            )).execute()
+            if (favoriteItemsResponse.data != null) {
+
+                val draftOrdersResponse = favoriteItemsResponse.data?.draftOrders
+                if (draftOrdersResponse != null) {
+                    emit(State.Success(draftOrdersResponse.toFavoriteItemsDTO()))
+                }else
+                {
+                    emit(State.Error("No products found"))
+                }
+            }else
+            {
+                emit(State.Error(favoriteItemsResponse.errors.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }.timeout(15.seconds).catch {
+        emit(State.Error(it.message.toString()))
+    }
+
+    @OptIn(FlowPreview::class)
     override fun updateCustomerAddress(
         customerId: String,
         address: AddressModel
@@ -273,6 +304,41 @@ class RepositoryImpl @Inject constructor(
                     DraftOrderLineItemInput(
                         variantId = Optional.Present(it.id),
                         quantity = it.quantity
+                    )
+                )
+            }
+            val updateDraftOrderResponse = apolloClient.mutation(UpdateDraftOrderMutation(
+                DraftOrderInput(
+                    lineItems = Optional.Present(draftOrderLineItemInputList)
+                ),
+                ownerId = draftOrderId
+            )).execute()
+
+            if (!updateDraftOrderResponse.hasErrors())
+            {
+                emit(State.Success(updateDraftOrderResponse.data?.draftOrderUpdate?.draftOrder?.id.toString()))
+            }else
+            {
+                emit(State.Error(updateDraftOrderResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun updateFavoritesDraftOrder(
+        draftOrderId: String,
+        newFavoriteItemsList: List<FavoriteItemDTO>,
+    ): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+            val draftOrderLineItemInputList = mutableListOf<DraftOrderLineItemInput>()
+            newFavoriteItemsList.forEach {
+                draftOrderLineItemInputList.add(
+                    DraftOrderLineItemInput(
+                        variantId = Optional.Present(it.id),
+                        quantity = 1
                     )
                 )
             }
