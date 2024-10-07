@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.glamora.R
 import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.databinding.FragmentFavoritesBinding
@@ -54,6 +55,7 @@ class FavoritesFragment : Fragment() {
         })
 
         favoritesBinding.recFavorites.apply {
+            layoutManager = GridLayoutManager(context, 2)
             adapter = fvAdapter
         }
 
@@ -67,9 +69,7 @@ class FavoritesFragment : Fragment() {
                     is State.Success -> {
                         favoritesBinding.progressBar.visibility = View.GONE
                         val favoriteItems = state.data
-                        Log.d("Abanob", "onViewCreated: ${favoriteItems[0]}")
-                        Log.d("Abanob", "onViewCreated: ${favoriteItems[1]}")
-
+                        Log.d("Abanob", "onViewCreated: ${favoriteItems.size}")
                         fvAdapter.submitList(favoriteItems)
                     }
                     is State.Error -> {

@@ -80,14 +80,11 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         binding.homeFavoriteButton.setOnClickListener{
             findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
         }
 
         navController = Navigation.findNavController(view)
-
 
 
         initHome()

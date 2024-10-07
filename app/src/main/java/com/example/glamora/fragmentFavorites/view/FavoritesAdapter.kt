@@ -29,6 +29,7 @@ class FavoritesAdapter(private val listener: FavoritesClickListener) : ListAdapt
                 .load(product.image)
                 .into(aBinding.img)
 
+
             aBinding.title.text = product.title
             aBinding.newPrice.text = product.price
 

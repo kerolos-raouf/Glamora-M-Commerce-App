@@ -73,8 +73,9 @@ class SharedViewModel @Inject constructor(
     fun fetchFavoriteItems() {
         if(_currentCustomerInfo.value.userId != Constants.UNKNOWN)
         {
+            val userID = _currentCustomerInfo.value.userId.split("/")[4]
             viewModelScope.launch {
-                repository.getFavoriteItemsForCustomer(_currentCustomerInfo.value.userId)
+                repository.getFavoriteItemsForCustomer(userID)
                     .collect { state ->
                         _favoriteItemsState.value = state
                     }
@@ -89,19 +90,28 @@ class SharedViewModel @Inject constructor(
             if (currentState is State.Success) {
                 val currentList = currentState.data
 
-                if (currentList.size == 1) {
-                    _favoriteItemsState.value = State.Loading
+                var updatedList = currentList
+
+                if(updatedList.size == 1){
+                    updatedList = emptyList()
+                }
+                else{
+                    updatedList = currentList.filterNot { it.id == product.id }
+                }
+
+                if (updatedList.isEmpty()) {
                     withContext(Dispatchers.IO) {
-                        repository.deleteDraftOrder(product.draftOrderId)
+                        repository.deleteDraftOrder(product.draftOrderId).collect{
+                            fetchFavoriteItems()
+                        }
                     }
-                    fetchFavoriteItems()
                 } else {
-                    val updatedList = currentList.filterNot { it.id == product.id }
                     _favoriteItemsState.value = State.Loading
                     withContext(Dispatchers.IO) {
-                        repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList)
+                        repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList).collect{
+                            fetchFavoriteItems()
+                        }
                     }
-                    _favoriteItemsState.value = State.Success(updatedList)
                 }
             }
         }
@@ -119,11 +129,12 @@ class SharedViewModel @Inject constructor(
                 }
 
                 val updatedList = currentList + product
-                _favoriteItemsState.value = State.Loading
+
                 withContext(Dispatchers.IO) {
-                    repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList)
+                    repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList).collect{
+                        fetchFavoriteItems()
+                    }
                 }
-                _favoriteItemsState.value = State.Success(updatedList)
             }
         }
     }
