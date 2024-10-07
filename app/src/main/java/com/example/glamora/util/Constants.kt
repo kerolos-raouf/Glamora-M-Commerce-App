@@ -37,7 +37,6 @@ object Constants {
     const val CART_DRAFT_ORDER_KEY = "CART_DRAFT_ORDER"
 
 
-    // Customer Login State
-    const val IS_LOGIN_KEY = "IS_LOGIN"
-
+    // Customer Email
+    const val  CUSTOMER_EMAIL = "CUSTOMER_EMAIL"
 }
