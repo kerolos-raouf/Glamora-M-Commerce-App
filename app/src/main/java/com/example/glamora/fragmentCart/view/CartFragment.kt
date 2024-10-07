@@ -84,7 +84,6 @@ class CartFragment : Fragment(),CartItemInterface {
         //fetch cart items
         if(sharedViewModel.currentCustomerInfo.value.userId != Constants.UNKNOWN)
         {
-            Log.d("Kerolos", "initViews: ${sharedViewModel.currentCustomerInfo.value.userIdAsNumber}")
             cartViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
         }
 
@@ -97,7 +96,10 @@ class CartFragment : Fragment(),CartItemInterface {
 
         //refresh layout
         binding.cartSwipeRefreshLayout.setOnRefreshListener {
-            cartViewModel.fetchCartItems()
+            if(sharedViewModel.currentCustomerInfo.value.userId != Constants.UNKNOWN)
+            {
+                cartViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
+            }
             binding.cartSwipeRefreshLayout.isRefreshing = false
         }
 
@@ -215,6 +217,8 @@ class CartFragment : Fragment(),CartItemInterface {
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
             bottomSheet.dismiss()
             cartViewModel.createFinalDraftOrder(
+                customerId = sharedViewModel.currentCustomerInfo.value.userId,
+                customerEmail = sharedViewModel.currentCustomerInfo.value.email,
                 discountAmount = discountValue * 100
             )
             if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
@@ -247,7 +251,7 @@ class CartFragment : Fragment(),CartItemInterface {
             message = "Are about deleting this item?",
             actionText = "Delete"
         ){
-            cartViewModel.deleteCartItemFromDraftOrder(item)
+            cartViewModel.deleteCartItemFromDraftOrder(item,sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
             applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
         }
     }
