@@ -72,7 +72,6 @@ class CartViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _message.value = "Draft order was deleted successfully"
                         fetchCartItems(userId)
                     }
                 }
@@ -84,7 +83,7 @@ class CartViewModel @Inject constructor(
         draftOrderId: String,
         newCartItems: List<CartItemDTO>,
         userId: String = "7552199491722",
-        fetchAgain : Boolean = false
+        fetchAgain : Boolean = true
         ){
         viewModelScope.launch {
             repository.updateCartDraftOrder(draftOrderId,newCartItems).collect{state->
@@ -114,7 +113,7 @@ class CartViewModel @Inject constructor(
                 it
             }
         } ?: emptyList()
-        updateDraftOrder(draftOrderId,newCartItems,userId,true)
+        updateDraftOrder(draftOrderId,newCartItems,userId,false)
     }
 
 
@@ -125,30 +124,37 @@ class CartViewModel @Inject constructor(
         customerEmail : String = "kerolos.raouf5600@gmail.com",
         discountAmount : Double
     ){
-        viewModelScope.launch {
-            if(!cartItems.value.isNullOrEmpty()){
-                repository.createFinalDraftOrder(customerId,customerEmail, cartItems.value ?: emptyList(),discountAmount).collect{
-                    when(it){
-                        is State.Error -> {
-                            _message.value = it.message
-                            _loading.value = false
+        if(!cartItems.value.isNullOrEmpty()){
+            viewModelScope.launch {
+                if(!cartItems.value.isNullOrEmpty()){
+                    repository.createFinalDraftOrder(customerId,customerEmail, cartItems.value ?: emptyList(),discountAmount)
+                        .collect{state->
+                            when(state){
+                                is State.Error -> {
+                                    _message.value = state.message
+                                    _loading.value = false
+                                }
+                                State.Loading -> {
+                                    _loading.value = true
+                                }
+                                is State.Success -> {
+                                    createOrderFromDraftOrder(state.data,cartItems.value!![0].draftOrderId)
+                                }
+                            }
                         }
-                        State.Loading -> {
-                            _loading.value = true
-                        }
-                        is State.Success -> {
-                            createOrderFromDraftOrder(it.data)
-                        }
-                    }
                 }
             }
+        }else
+        {
+            _message.value = "Your cart is empty"
         }
+
     }
 
     //2 - create order from draft order
-    private fun createOrderFromDraftOrder(draftOrderId: String){
+    private fun createOrderFromDraftOrder(finalDraftOrderId: String,oldDraftOrderId: String){
         viewModelScope.launch {
-            repository.createOrderFromDraftOrder(draftOrderId).collect{state ->
+            repository.createOrderFromDraftOrder(finalDraftOrderId).collect{ state ->
                 when(state){
                     is State.Error -> {
                         _message.value = state.message
@@ -157,7 +163,8 @@ class CartViewModel @Inject constructor(
                     State.Loading -> {
                     }
                     is State.Success -> {
-
+                        deleteDraftOrder(oldDraftOrderId)
+                        deleteDraftOrder(finalDraftOrderId)
                     }
                 }
             }
