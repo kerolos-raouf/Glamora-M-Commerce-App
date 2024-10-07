@@ -15,7 +15,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
-import com.example.glamora.data.model.customerModels.CustomerInfo
 import com.example.glamora.databinding.FragmentLoginBinding
 import com.example.glamora.fragmentLogin.viewModel.LoginViewModel
 import com.example.glamora.mainActivity.view.Communicator
@@ -30,7 +29,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -51,7 +49,7 @@ class LoginFragment : Fragment() {
         super.onStart()
         communicator.hideBottomNav()
 
-        if(sharedViewModel.getSharedPrefBoolean(Constants.IS_LOGIN_KEY,false)){
+        if (sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN) {
             findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
         }
     }
@@ -238,23 +236,13 @@ class LoginFragment : Fragment() {
                             val email = loginViewModel.customerEmail.firstOrNull()
 
                             if (email != null) {
-                                loginViewModel.fetchUserByEmail(email)
+                                sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,email)
+                                loginBinding.progressBar.visibility = View.GONE
 
-                                loginViewModel.customerResult.collect { result ->
-                                    result?.onSuccess { customerInfo ->
-                                        if (customerInfo != null) {
-                                            sharedViewModel.setCustomerInfo(customerInfo)
-                                        } else {
-                                            sharedViewModel.setCustomerInfo(CustomerInfo(displayName = email.split("@")[0]))
-                                        }
+                                Toast.makeText(requireContext(),"Login successful!",Toast.LENGTH_SHORT).show()
 
-                                        loginBinding.progressBar.visibility = View.GONE
-                                        sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGIN_KEY,true)
+                                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
 
-                                        Toast.makeText(requireContext(), "Login successful!", Toast.LENGTH_SHORT).show()
-                                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                                    }
-                                }
                             }
                         }
                     }
@@ -266,15 +254,20 @@ class LoginFragment : Fragment() {
                                 showErrorEmail()
                                 "Please verify your email before logging in."
                             }
+
                             "The password is invalid" -> {
                                 showErrorPassword()
                                 "Incorrect password. Please try again."
                             }
+
                             "There is no user record corresponding to this email." -> {
                                 showErrorEmail()
                                 "No account found with this email. Please sign up first."
                             }
+
                             else -> {
+                                showErrorEmail()
+                                showErrorPassword()
                                 "Login failed: ${state.message}"
                             }
                         }
