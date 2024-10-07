@@ -30,6 +30,12 @@ interface Repository {
 
     fun deleteDraftOrder(draftOrderId: String) : Flow<State<String>>
 
+    fun updateCartDraftOrder(draftOrderId: String, newCartItemsList: List<CartItemDTO>) : Flow<State<String>>
+
+    fun createFinalDraftOrder(customerId: String,customerEmail : String, cartItems : List<CartItemDTO>,discountAmount: Double) : Flow<State<String>>
+
+    fun createOrderFromDraftOrder(draftOrderId: String) : Flow<State<String>>
+
     fun createShopifyUser(
         email: String,
         firstName: String,
@@ -39,11 +45,6 @@ interface Repository {
 
     fun getShopifyUserByEmail(email: String): Flow<Result<CustomerInfo?>>
 
-    fun updateDraftOrder(draftOrderId: String,variantId : String,quantity : Int) : Flow<State<String>>
-
-    fun createFinalDraftOrder(customerId: String,customerEmail : String, cartItems : List<CartItemDTO>,discountAmount: Double) : Flow<State<String>>
-
-    fun createOrderFromDraftOrder(draftOrderId: String) : Flow<State<String>>
 
 
     //retrofit
@@ -64,6 +65,7 @@ interface Repository {
     fun setSharedPrefBoolean(key: String, value: Boolean)
 
     fun getSharedPrefBoolean(key: String, defaultValue: Boolean) : Boolean
+
 
 
     // Firebase Functions

@@ -17,17 +17,18 @@ import com.example.glamora.R
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.databinding.CartBottomSheetBinding
 import com.example.glamora.databinding.FragmentCartBinding
+import com.example.glamora.databinding.OperationDoneBottomSheetBinding
 import com.example.glamora.fragmentCart.viewModel.CartViewModel
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
-import com.example.glamora.util.customAlertDialog.ICustomAlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.paypal.android.cardpayments.CardClient
 import com.paypal.android.corepayments.CoreConfig
 import com.paypal.android.corepayments.Environment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlin.math.truncate
 
 
 @AndroidEntryPoint
@@ -73,13 +74,19 @@ class CartFragment : Fragment(),CartItemInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        cartViewModel.fetchCartItems()
 
         initViews()
         initObservers()
     }
 
     private fun initViews() {
+
+        //fetch cart items
+        if(sharedViewModel.currentCustomerInfo.value.userId != Constants.UNKNOWN)
+        {
+            Log.d("Kerolos", "initViews: ${sharedViewModel.currentCustomerInfo.value.userIdAsNumber}")
+            cartViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
+        }
 
         //alert dialog
         customAlertDialog = CustomAlertDialog(requireActivity())
@@ -145,6 +152,24 @@ class CartFragment : Fragment(),CartItemInterface {
             }
         }
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                cartViewModel.showDoneBottomSheet.collect{
+                    if (it){
+                        showDoneBottomSheet()
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun showDoneBottomSheet() {
+        val doneBottomSheet = BottomSheetDialog(requireContext())
+        val doneBottomSheetBinding = OperationDoneBottomSheetBinding.inflate(layoutInflater)
+        doneBottomSheet.setContentView(doneBottomSheetBinding.root)
+        doneBottomSheet.show()
+        doneBottomSheet.setCancelable(true)
     }
 
     private fun calculateTotalPrice(cartItems: List<CartItemDTO>)
@@ -208,12 +233,12 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {
-        cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
+        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
         applyPriceChangeOnUI(-item.price.toDouble())
     }
 
     override fun onItemMinusClicked(item: CartItemDTO) {
-        cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
+        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
         applyPriceChangeOnUI(item.price.toDouble())
     }
 
@@ -222,7 +247,7 @@ class CartFragment : Fragment(),CartItemInterface {
             message = "Are about deleting this item?",
             actionText = "Delete"
         ){
-            cartViewModel.deleteDraftOrder(item.draftOrderId)
+            cartViewModel.deleteCartItemFromDraftOrder(item)
             applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
         }
     }

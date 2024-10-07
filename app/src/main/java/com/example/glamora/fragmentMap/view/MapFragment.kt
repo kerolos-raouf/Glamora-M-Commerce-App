@@ -265,11 +265,18 @@ class MapFragment : Fragment() {
         }
     }
 
-    fun fillCountryAndCityNames(coordinates : Coordinates) {
-        val geoCoder = Geocoder(requireContext().applicationContext)
-        val address = geoCoder.getFromLocation(coordinates.latitude,coordinates.longitude,1)
-        currentAddress.country = address?.get(0)?.countryName ?: Constants.UNKNOWN
-        currentAddress.city = address?.get(0)?.locality ?: Constants.UNKNOWN
+    private fun fillCountryAndCityNames(coordinates : Coordinates) {
+        try {
+            val geoCoder = Geocoder(requireContext().applicationContext)
+            val address = geoCoder.getFromLocation(coordinates.latitude,coordinates.longitude,1)
+            currentAddress.country = address?.get(0)?.countryName ?: Constants.UNKNOWN
+            currentAddress.city = address?.get(0)?.locality ?: Constants.UNKNOWN
+        }catch (e : Exception)
+        {
+            currentAddress.country = "Egypt"
+            currentAddress.city = "Alexandria"
+            Log.d("Kerolos", "fillCountryAndCityNames: ${e.message}")
+        }
     }
 
 
