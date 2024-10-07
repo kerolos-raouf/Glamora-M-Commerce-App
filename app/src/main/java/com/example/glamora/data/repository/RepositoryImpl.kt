@@ -9,6 +9,7 @@ import com.example.CreateDrafterOrderMutation
 import com.example.CreateOrderFromDraftOrderMutation
 import com.example.DeleteDraftOrderMutation
 import com.example.DiscountCodesQuery
+import com.example.GetCustomerByEmailQuery
 import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
@@ -495,7 +496,8 @@ class RepositoryImpl @Inject constructor(
                     val customerInfo = CustomerInfo(
                         displayName = "${customer.firstName} ${customer.lastName}",
                         email = customer.email.toString(),
-                        userId = customer.id
+                        userId = customer.id,
+                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1]
                     )
                     emit(Result.success(customerInfo))
                 } else {

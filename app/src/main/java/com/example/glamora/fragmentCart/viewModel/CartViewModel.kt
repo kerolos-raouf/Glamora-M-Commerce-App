@@ -29,6 +29,9 @@ class CartViewModel @Inject constructor(
     private val _loading = MutableStateFlow(false)
     val loading : StateFlow<Boolean> = _loading
 
+    private val _showDoneBottomSheet = MutableStateFlow(false)
+    val showDoneBottomSheet : StateFlow<Boolean> = _showDoneBottomSheet
+
     fun fetchCartItems(userId: String = "7552199491722"){
         viewModelScope.launch {
             repository.getCartItemsForCustomer(userId).collect{state ->
@@ -164,6 +167,7 @@ class CartViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         deleteDraftOrder(oldDraftOrderId)
+                        _showDoneBottomSheet.value = true
                         deleteDraftOrder(finalDraftOrderId)
                     }
                 }
