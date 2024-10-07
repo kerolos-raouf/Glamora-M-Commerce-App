@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.DiscountCodeDTO
+import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.customerModels.CustomerInfo
 import com.example.glamora.util.Constants
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -63,6 +65,69 @@ class SharedViewModel @Inject constructor(
             }
         }
     }
+
+    // Favorites
+    private val _favoriteItemsState = MutableStateFlow<State<List<FavoriteItemDTO>>>(State.Loading)
+    val favoriteItemsState: StateFlow<State<List<FavoriteItemDTO>>> = _favoriteItemsState
+
+    fun fetchFavoriteItems() {
+        if(_currentCustomerInfo.value.userId != Constants.UNKNOWN)
+        {
+            viewModelScope.launch {
+                repository.getFavoriteItemsForCustomer(_currentCustomerInfo.value.userId)
+                    .collect { state ->
+                        _favoriteItemsState.value = state
+                    }
+            }
+        }
+    }
+
+    // Delete item from favorites
+    fun deleteFromFavorites(product: FavoriteItemDTO) {
+        viewModelScope.launch {
+            val currentState = _favoriteItemsState.value
+            if (currentState is State.Success) {
+                val currentList = currentState.data
+
+                if (currentList.size == 1) {
+                    _favoriteItemsState.value = State.Loading
+                    withContext(Dispatchers.IO) {
+                        repository.deleteDraftOrder(product.draftOrderId)
+                    }
+                    fetchFavoriteItems()
+                } else {
+                    val updatedList = currentList.filterNot { it.id == product.id }
+                    _favoriteItemsState.value = State.Loading
+                    withContext(Dispatchers.IO) {
+                        repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList)
+                    }
+                    _favoriteItemsState.value = State.Success(updatedList)
+                }
+            }
+        }
+    }
+
+    // Add item to favorites
+    fun addToFavorites(product: FavoriteItemDTO) {
+        viewModelScope.launch {
+            val currentState = _favoriteItemsState.value
+            if (currentState is State.Success) {
+                val currentList = currentState.data
+
+                if (currentList.any { it.id == product.id }) {
+                    return@launch
+                }
+
+                val updatedList = currentList + product
+                _favoriteItemsState.value = State.Loading
+                withContext(Dispatchers.IO) {
+                    repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList)
+                }
+                _favoriteItemsState.value = State.Success(updatedList)
+            }
+        }
+    }
+
 
     fun fetchProducts()
     {

@@ -19,6 +19,9 @@
 <!--                android:name="imageUrl"-->
 <!--                app:argType="string" />-->
         </action>
+        <action
+            android:id="@+id/action_homeFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
