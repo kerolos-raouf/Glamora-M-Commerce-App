@@ -2,7 +2,6 @@ package com.example.glamora.fragmentLogin.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +45,10 @@ class LoginFragment : Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
 
+    override fun onStart() {
+        super.onStart()
+        communicator.hideBottomNav()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,25 +69,6 @@ class LoginFragment : Fragment() {
             loginBinding.editPassword.setText(userPassword)
         }
 
-
-//        loginViewModel.fetchUserByEmail("kerolos.raouf5600@gmail.com")
-//
-//        lifecycleScope.launch {
-//            loginViewModel.customerResult.collect { result ->
-//                result?.onSuccess { customerInfo ->
-//                    if (customerInfo != null) {
-//                        Log.d("Abanob", "onViewCreated: ${customerInfo.userId}")
-//                        Log.d("Abanob", "onViewCreated: ${customerInfo.email}")
-//                        Log.d("Abanob", "onViewCreated: ${customerInfo.displayName}")
-//                    } else {
-//                        Log.d("Abanob", "onViewCreated: Null")
-//                    }
-//
-//                }?.onFailure { exception ->
-//                    Log.d("Abanob", "onViewCreated: ${exception.message}")
-//                }
-//            }
-//        }
 
         setupGoogleSignIn()
 
@@ -145,6 +129,7 @@ class LoginFragment : Fragment() {
             lifecycleScope.launch {
                 loginViewModel.toastMessage.collect { message ->
                     message?.let {
+                        loginBinding.progressBar.visibility = View.GONE
                         Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                         loginViewModel.clearToastMessage()
                     }
@@ -283,9 +268,4 @@ class LoginFragment : Fragment() {
         }
     }
 
-
-    override fun onStart() {
-        super.onStart()
-        communicator.hideBottomNav()
-    }
 }

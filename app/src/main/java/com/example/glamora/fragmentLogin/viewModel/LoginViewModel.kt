@@ -3,9 +3,7 @@ package com.example.glamora.fragmentLogin.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
-import com.example.glamora.data.firebase.FirebaseHandler
 import com.example.glamora.data.model.customerModels.CustomerInfo
-import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
