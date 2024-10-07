@@ -1,7 +1,6 @@
 package com.example.glamora.fragmentCart.view
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +20,6 @@ import com.example.glamora.fragmentCart.viewModel.CartViewModel
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
-import com.example.glamora.util.customAlertDialog.ICustomAlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.paypal.android.cardpayments.CardClient
 import com.paypal.android.corepayments.CoreConfig
@@ -208,12 +206,12 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {
-        cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
+        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
         applyPriceChangeOnUI(-item.price.toDouble())
     }
 
     override fun onItemMinusClicked(item: CartItemDTO) {
-        cartViewModel.updateDraftOrder(item.draftOrderId, item.id, item.quantity)
+        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
         applyPriceChangeOnUI(item.price.toDouble())
     }
 

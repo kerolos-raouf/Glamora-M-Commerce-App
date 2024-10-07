@@ -1,6 +1,5 @@
 package com.example.glamora.fragmentCart.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -42,7 +41,7 @@ class CartViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _cartItems.value = state.data.reversed()
+                        _cartItems.value = state.data
                         _loading.value = false
                     }
                 }
@@ -57,7 +56,7 @@ class CartViewModel @Inject constructor(
             deleteDraftOrder(cartItemDTO.draftOrderId,userId)
         }else
         {
-            deleteDraftOrderItem(cartItemDTO.draftOrderId,newCartItems,userId)
+            updateDraftOrder(cartItemDTO.draftOrderId,newCartItems,userId)
         }
     }
 
@@ -81,7 +80,12 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun deleteDraftOrderItem(draftOrderId: String, newCartItems: List<CartItemDTO>,userId: String = "7552199491722"){
+    private fun updateDraftOrder(
+        draftOrderId: String,
+        newCartItems: List<CartItemDTO>,
+        userId: String = "7552199491722",
+        fetchAgain : Boolean = false
+        ){
         viewModelScope.launch {
             repository.updateCartDraftOrder(draftOrderId,newCartItems).collect{state->
                 when(state){
@@ -93,34 +97,24 @@ class CartViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _message.value = "Cart item was deleted successfully"
                         _loading.value = false
-                        fetchCartItems()
+                        if(fetchAgain)
+                            fetchCartItems()
                     }
                 }
             }
         }
     }
 
-    fun updateDraftOrder(draftOrderId: String,variantId : String,quantity : Int,userId: String = "7552199491722"){
-//        viewModelScope.launch {
-//            repository.updateCartDraftOrder(draftOrderId,variantId,quantity).collect{
-//                when(it){
-//                    is State.Error -> {
-//                        _message.value = it.message
-//                        _loading.value = false
-//                    }
-//                    State.Loading -> {
-//                        _loading.value = true
-//                    }
-//                    is State.Success -> {
-//                        _message.value = "Draft order was updated successfully"
-//                        //fetchCartItems(userId)
-//                        _loading.value = false
-//                    }
-//                }
-//            }
-//        }
+    fun updateCartItemQuantity(draftOrderId: String, variantId : String, quantity : Int, userId: String = "7552199491722"){
+        val newCartItems = _cartItems.value?.map {
+            if(it.id == variantId){
+                it.copy(quantity = quantity)
+            }else{
+                it
+            }
+        } ?: emptyList()
+        updateDraftOrder(draftOrderId,newCartItems,userId,true)
     }
 
 
