@@ -46,6 +46,9 @@ class SharedViewModel @Inject constructor(
     private val _internetState = MutableStateFlow(ConnectivityObserver.InternetState.AVAILABLE)
     val internetState : StateFlow<ConnectivityObserver.InternetState> = _internetState
 
+    ///operation Done with pay pal
+    val operationDoneWithPayPal = MutableStateFlow(false)
+
 
     init {
         observeOnInternetState()

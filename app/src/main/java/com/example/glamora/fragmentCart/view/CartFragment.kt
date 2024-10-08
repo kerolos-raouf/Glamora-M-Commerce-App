@@ -1,5 +1,7 @@
 package com.example.glamora.fragmentCart.view
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -26,7 +28,6 @@ import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.paypal.android.cardpayments.CardClient
 import com.paypal.android.corepayments.CoreConfig
 import com.paypal.android.corepayments.Environment
 import dagger.hilt.android.AndroidEntryPoint
@@ -181,7 +182,33 @@ class CartFragment : Fragment(),CartItemInterface {
             }
         }
 
+        //paypal
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                cartViewModel.openApprovalUrlState.collect{url->
+                    if (url.isNotEmpty()){
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                sharedViewModel.operationDoneWithPayPal.collect{state->
+                    if (state){
+                        Log.d("Kerolos", "initObservers: it's done bro don't worry.")
+                        sharedViewModel.operationDoneWithPayPal.value = false
+                    }
+                }
+            }
+        }
+
     }
+
+
 
     private fun showDoneBottomSheet() {
         val doneBottomSheet = BottomSheetDialog(requireContext())
@@ -221,8 +248,6 @@ class CartFragment : Fragment(),CartItemInterface {
 
     private fun initPayPal(){
         val config = CoreConfig(clientId, environment = Environment.SANDBOX)
-        val cardClient = CardClient(requireActivity(),config)
-
 
     }
 
@@ -296,7 +321,7 @@ class CartFragment : Fragment(),CartItemInterface {
 
 
     private fun payWithCard(){
-
+        cartViewModel.startOrder()
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {
