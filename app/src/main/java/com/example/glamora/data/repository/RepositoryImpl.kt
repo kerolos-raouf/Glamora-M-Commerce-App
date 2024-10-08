@@ -11,6 +11,7 @@ import com.example.DeleteDraftOrderMutation
 import com.example.DiscountCodesQuery
 import com.example.GetCustomerByEmailQuery
 import com.example.GetDraftOrdersByCustomerQuery
+import com.example.GetOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
@@ -37,7 +38,9 @@ import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
+import com.example.glamora.data.model.ordersModel.LineItemDTO
 import com.example.glamora.data.model.ordersModel.OrderDTO
+import com.example.glamora.util.toAddressMode
 import com.example.glamora.util.toCartItemsDTO
 import com.example.glamora.util.toFavoriteItemsDTO
 import com.example.type.CustomerInput
@@ -609,36 +612,46 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getOrdersByCustomer(email: String): Flow<State<OrderDTO>> = flow {
-//        val query = GetOrdersByCustomerQuery(email)
-//
-//        try {
-//            val response = apolloClient.query(query).execute()
-//
-//            if (response.hasErrors()) {
-//                emit(State.Error("Error fetching user: ${response.errors}"))
-//            } else {
-//                val customerEdges = response.data?.customers?.edges
-//
-//                if (!customerEdges.isNullOrEmpty()) {
-//                    val customer = customerEdges[0].node
-//
-//                    val customerInfo = CustomerInfo(
-//                        displayName = "${customer.firstName} ${customer.lastName}",
-//                        email = customer.email.toString(),
-//                        userId = customer.id,
-//                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1]
-//                    )
-//                    //emit(State.Success(customerInfo))
-//                } else {
-//                    emit(State.Error("User not found"))
-//                }
-//            }
-//        } catch (e: Exception) {
-//            emit(State.Error(e.message.toString()))
-//        }
-    }
+    @OptIn(FlowPreview::class)
+    override fun getOrdersByCustomer(customerEmail: String): Flow<State<List<OrderDTO>>> = flow {
+        emit(State.Loading)
+        try {
+            val ordersResponse = apolloClient.query(GetOrdersByCustomerQuery(customerEmail)).execute()
 
+            if (ordersResponse.data != null) {
+                val orders = ordersResponse.data!!.orders
+
+                if (orders != null && orders.edges.isNotEmpty()) {
+                    val orderDTOList = orders.edges.map { edge ->
+                        OrderDTO(
+                            id = edge.node.id,
+                            name = edge.node.name,
+                            createdAt = edge.node.createdAt.toString(),
+                            totalPrice = edge.node.totalPriceSet.shopMoney.amount.toString(),
+                            currencyCode = edge.node.totalPriceSet.shopMoney.currencyCode.name,
+                            lineItems = edge.node.lineItems.edges.map { itemEdge ->
+                                LineItemDTO(
+                                    name = itemEdge.node.name,
+                                    quantity = itemEdge.node.quantity,
+                                    unitPrice = itemEdge.node.originalUnitPriceSet.shopMoney.amount.toString(),
+                                    currencyCode = itemEdge.node.originalUnitPriceSet.shopMoney.currencyCode.name,
+                                    image =itemEdge.node.image?.url.toString()
+                                )
+                            }
+                        )
+                    }
+
+                    emit(State.Success(orderDTOList))
+                } else {
+                    emit(State.Success(emptyList()))
+                }
+            } else {
+                emit(State.Error("No orders found"))
+            }
+        } catch (e: Exception) {
+            emit(State.Error("An error occurred: ${e.message}"))
+        }
+    }
 
     override fun loginWithEmail(email: String, password: String): Flow<Result<CustomerInfo>> =
         flow {

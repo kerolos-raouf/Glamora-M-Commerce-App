@@ -2,6 +2,7 @@ package com.example.glamora.util
 
 import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
+import com.example.GetCustomerByEmailQuery
 import com.example.GetDraftOrdersByCustomerQuery
 import com.example.GetOrdersByCustomerQuery
 import com.example.PriceRulesQuery
@@ -155,37 +156,49 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<Favori
     return favoritesItems
 }
 
+fun GetCustomerByEmailQuery.Address.toAddressMode(): AddressModel {
+    return AddressModel(
+        city = city ?: Constants.UNKNOWN,
+        country = country ?: Constants.UNKNOWN,
+        firstName = firstName ?: Constants.UNKNOWN,
+        lastName = lastName ?: Constants.UNKNOWN,
+        phone = phone ?: Constants.UNKNOWN,
+        street = address1 ?: Constants.UNKNOWN
+    )
+}
 
 
-//fun GetOrdersByCustomerQuery.Orders.toOrderDTO(): List<OrderDTO> {
-//    val orders = mutableListOf<OrderDTO>()
-//
-//    this.edges.forEach { orderEdge ->
-//        val orderNode = orderEdge.node
-//        val lineItems = orderNode.lineItems.edges.map { lineItemEdge ->
-//            val lineItemNode = lineItemEdge.node
-//            LineItemDTO(
-//                name = lineItemNode.name,
-//                quantity = lineItemNode.quantity,
-//                unitPrice = lineItemNode.originalUnitPriceSet.shopMoney.amount.toString(),
-//                currencyCode = lineItemNode.originalUnitPriceSet.shopMoney.currencyCode
-//            )
-//        }
-//
-//        val orderDTO = OrderDTO(
-//            id = orderNode.id,
-//            name = orderNode.name,
-//            createdAt = orderNode.createdAt,
-//            totalPrice = orderNode.totalPriceSet.shopMoney.amount.toString(),
-//            currencyCode = orderNode.totalPriceSet.shopMoney.currencyCode,
-//            lineItems = lineItems
-//        )
-//
-//        orders.add(orderDTO)
-//    }
-//
-//    return orders
-//}
+
+fun GetOrdersByCustomerQuery.Orders.toOrderDTO(): List<OrderDTO> {
+    val orders = mutableListOf<OrderDTO>()
+
+    this.edges.forEach { orderEdge ->
+        val orderNode = orderEdge.node
+        val lineItems = orderNode.lineItems.edges.map { lineItemEdge ->
+            val lineItemNode = lineItemEdge.node
+            LineItemDTO(
+                name = lineItemNode.name,
+                quantity = lineItemNode.quantity,
+                unitPrice = lineItemNode.originalUnitPriceSet.shopMoney.amount.toString(),
+                currencyCode = lineItemNode.originalUnitPriceSet.shopMoney.currencyCode.toString(),
+                image= lineItemEdge.node.image?.url.toString()
+            )
+        }
+
+        val orderDTO = OrderDTO(
+            id = orderNode.id,
+            name = orderNode.name,
+            createdAt = orderNode.createdAt.toString(),
+            totalPrice = orderNode.totalPriceSet.shopMoney.amount.toString(),
+            currencyCode = orderNode.totalPriceSet.shopMoney.currencyCode.toString(),
+            lineItems = lineItems
+        )
+
+        orders.add(orderDTO)
+    }
+
+    return orders
+}
 
 
 

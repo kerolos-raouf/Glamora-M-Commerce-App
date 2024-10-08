@@ -9,7 +9,7 @@ import com.example.glamora.R
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.databinding.ItemListBinding
 
-class ProductListAdapterr(private var productList: List<ProductDTO>) : RecyclerView.Adapter<ProductListAdapterr.ProductListViewHolder>() {
+class ProductListAdapter(private var productList: List<ProductDTO>) : RecyclerView.Adapter<ProductListAdapter.ProductListViewHolder>() {
     inner class ProductListViewHolder(val binding: ItemListBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductListViewHolder {

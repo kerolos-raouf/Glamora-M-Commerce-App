@@ -14,8 +14,12 @@ query GetOrdersByCustomer($email: String!) {
                 lineItems(first: 5) {
                     edges {
                         node {
+
                             name
                             quantity
+                            image{
+                                url
+                            }
                             originalUnitPriceSet {
                                 shopMoney {
                                     amount

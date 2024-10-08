@@ -53,7 +53,7 @@ interface Repository {
 
     fun getShopifyUserByEmail(email: String): Flow<State<CustomerInfo>>
 
-    fun getOrdersByCustomer (email: String): Flow<State<OrderDTO>>
+    fun getOrdersByCustomer (email: String):  Flow<State<List<OrderDTO>>>
 
 
 
