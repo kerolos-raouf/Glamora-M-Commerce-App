@@ -372,7 +372,8 @@ class RepositoryImpl @Inject constructor(
         customerId: String,
         customerEmail: String,
         cartItems: List<CartItemDTO>,
-        discountAmount: Double
+        discountAmount: Double,
+        address: AddressModel
     ): Flow<State<String>> = flow {
         emit(State.Loading)
         try {
@@ -397,6 +398,16 @@ class RepositoryImpl @Inject constructor(
                         value = discountAmount,
                         valueType = DraftOrderAppliedDiscountType.PERCENTAGE
                       )
+                    ),
+                    billingAddress = Optional.Present(
+                        MailingAddressInput(
+                            address1 = Optional.Present(address.street),
+                            city = Optional.Present(address.city),
+                            country = Optional.Present(address.country),
+                            firstName = Optional.Present(address.firstName),
+                            lastName = Optional.Present(address.lastName),
+                            phone = Optional.Present(address.phone)
+                        )
                     )
                 )
             )).execute()

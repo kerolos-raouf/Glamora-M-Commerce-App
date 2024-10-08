@@ -37,7 +37,13 @@ interface Repository {
 
     fun updateFavoritesDraftOrder(draftOrderId: String,newFavoriteItemsList: List<FavoriteItemDTO>,): Flow<State<String>>
 
-    fun createFinalDraftOrder(customerId: String,customerEmail : String, cartItems : List<CartItemDTO>,discountAmount: Double) : Flow<State<String>>
+    fun createFinalDraftOrder(
+        customerId: String,
+        customerEmail : String,
+        cartItems : List<CartItemDTO>,
+        discountAmount: Double,
+        address: AddressModel
+        ) : Flow<State<String>>
 
     fun createOrderFromDraftOrder(draftOrderId: String) : Flow<State<String>>
 

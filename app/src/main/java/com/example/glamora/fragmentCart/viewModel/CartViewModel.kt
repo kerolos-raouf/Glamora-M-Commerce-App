@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -125,12 +126,17 @@ class CartViewModel @Inject constructor(
     fun createFinalDraftOrder(
         customerId: String,
         customerEmail : String,
-        discountAmount : Double
+        discountAmount : Double,
+        address: AddressModel
     ){
         if(!cartItems.value.isNullOrEmpty()){
             viewModelScope.launch {
                 if(!cartItems.value.isNullOrEmpty()){
-                    repository.createFinalDraftOrder(customerId,customerEmail, cartItems.value ?: emptyList(),discountAmount)
+                    repository.createFinalDraftOrder(
+                        customerId,customerEmail,
+                        cartItems.value ?: emptyList(),
+                        discountAmount,
+                        address)
                         .collect{state->
                             when(state){
                                 is State.Error -> {

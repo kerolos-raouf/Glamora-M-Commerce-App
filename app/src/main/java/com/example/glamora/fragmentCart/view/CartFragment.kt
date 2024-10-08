@@ -272,7 +272,7 @@ class CartFragment : Fragment(),CartItemInterface {
             }
         }else
         {
-            popupMenu.menu.add(0,0,0,"<There is no address>")
+            popupMenu.menu.add(0,0,0,"<There is no addresses>")
         }
         popupMenu.show()
     }
@@ -283,7 +283,8 @@ class CartFragment : Fragment(),CartItemInterface {
         cartViewModel.createFinalDraftOrder(
             customerId = sharedViewModel.currentCustomerInfo.value.userId,
             customerEmail = sharedViewModel.currentCustomerInfo.value.email,
-            discountAmount = discountValue * 100
+            discountAmount = discountValue * 100,
+            address = address
         )
         discountValue = 0.0
         if(discountCode != Constants.UNKNOWN)
