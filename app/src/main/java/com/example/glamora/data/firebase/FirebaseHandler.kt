@@ -3,58 +3,113 @@ package com.example.glamora.data.firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
-class FirebaseHandler : IFirebaseHandler {
+class FirebaseHandler @Inject constructor(
+
+) : IFirebaseHandler {
 
     private val auth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
     }
 
+    override suspend fun signInWithEmail(email: String, password: String): Result<Unit> =
+        suspendCoroutine { continuation ->
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val user = auth.currentUser
+                        if (user?.isEmailVerified == true) {
+                            continuation.resume(Result.success(Unit))
+                        } else {
+                            auth.signOut()
+                            continuation.resume(Result.failure(Exception("Email is not verified. Please verify your email before logging in.")))
+                        }
+                    } else {
+                        continuation.resume(
+                            Result.failure(
+                                task.exception ?: Exception("Login failed")
+                            )
+                        )
+                    }
+                }
+        }
 
+    override suspend fun signInWithGoogle(idToken: String): Result<Unit> =
+        suspendCoroutine { continuation ->
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            auth.signInWithCredential(credential)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Result.success(Unit)) // Google sign-in successful
+                    } else {
+                        continuation.resume(
+                            Result.failure(
+                                task.exception ?: Exception("Google login failed")
+                            )
+                        )
+                    }
+                }
+        }
 
-    override fun signUp(email: String, password: String, callback: (Boolean, String?) -> Unit) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // User account created successfully
-                    val user = auth.currentUser
-                    user?.sendEmailVerification()
-                        ?.addOnCompleteListener { verificationTask ->
+    override suspend fun resetPassword(email: String): Result<Unit> =
+        suspendCoroutine { continuation ->
+            auth.sendPasswordResetEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Result.success(Unit)) // Reset email sent
+                    } else {
+                        continuation.resume(
+                            Result.failure(
+                                task.exception ?: Exception("Failed to send reset email")
+                            )
+                        )
+                    }
+                }
+        }
+
+    override suspend fun signUp(email: String, password: String): Result<Unit> =
+        suspendCoroutine { continuation ->
+            // Use a flag to prevent multiple resume calls
+            var isResumed = false
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val user = auth.currentUser
+                        user?.sendEmailVerification()?.addOnCompleteListener { verificationTask ->
                             if (verificationTask.isSuccessful) {
-                                callback(true, null) // Sign-up and verification email sent successfully
+                                if (!isResumed) {
+                                    isResumed = true
+                                    continuation.resume(Result.success(Unit))
+                                }
                             } else {
-                                callback(false, verificationTask.exception?.message) // Error sending verification email
+                                if (!isResumed) {
+                                    isResumed = true
+                                    continuation.resume(
+                                        Result.failure(
+                                            verificationTask.exception
+                                                ?: Exception("Verification failed")
+                                        )
+                                    )
+                                }
                             }
                         }
-                } else {
-                    callback(false, task.exception?.message) // Sign-up failed
+                    } else {
+                        if (!isResumed) {
+                            isResumed = true
+                            continuation.resume(
+                                Result.failure(
+                                    task.exception ?: Exception("Sign-up failed")
+                                )
+                            )
+                        }
+                    }
                 }
-            }
-    }
+        }
 
-
-    override fun signIn(email: String, password: String, callback: (Boolean, String?) -> Unit) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    callback(true, null) // Sign-in successful
-                } else {
-                    callback(false, task.exception?.message) // Sign-in failed
-                }
-            }
-    }
-
-    override fun signInWithGoogle(idToken: String, callback: (Boolean, String?) -> Unit) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    callback(true, null) // Google sign-in successful
-                } else {
-                    callback(false, task.exception?.message) // Google sign-in failed
-                }
-            }
-    }
 
     override fun signOut() {
         auth.signOut()
@@ -69,14 +124,5 @@ class FirebaseHandler : IFirebaseHandler {
         return auth.currentUser
     }
 
-    override fun resetPassword(email: String, callback: (Boolean, String?) -> Unit) {
-        auth.sendPasswordResetEmail(email)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    callback(true, null) // Reset email sent
-                } else {
-                    callback(false, task.exception?.message) // Error occurred
-                }
-            }
-    }
+
 }

@@ -7,6 +7,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.ProductDTO
+import com.example.glamora.data.model.customerModels.CustomerInfo
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,8 +36,9 @@ class SharedViewModel @Inject constructor(
     val filteredResults = _filteredResults.asSharedFlow()
 
 
-    private val _currencyChangedFlag = MutableStateFlow(false)
-    val currencyChangedFlag: StateFlow<Boolean> get() = _currencyChangedFlag
+    //current user info
+    private val _currentCustomerInfo = MutableStateFlow(CustomerInfo())
+    val currentCustomerInfo: StateFlow<CustomerInfo> = _currentCustomerInfo
 
 
 
@@ -47,6 +49,10 @@ class SharedViewModel @Inject constructor(
 
     init {
         observeOnInternetState()
+    }
+
+    fun setCustomerInfo(customerInfo: CustomerInfo){
+        _currentCustomerInfo.value = customerInfo
     }
 
     private fun observeOnInternetState()
@@ -148,6 +154,16 @@ class SharedViewModel @Inject constructor(
         return repository.getSharedPrefString(key, defaultValue)
     }
 
+    fun setSharedPrefBoolean(key: String,value: Boolean)
+    {
+        repository.setSharedPrefBoolean(key, value)
+    }
+
+    fun getSharedPrefBoolean(key: String, defaultValue: Boolean) : Boolean
+    {
+        return repository.getSharedPrefBoolean(key, defaultValue)
+    }
+
     fun convertCurrency()
     {
         viewModelScope.launch {
@@ -177,6 +193,27 @@ class SharedViewModel @Inject constructor(
                 _productList.value.filter { it.title.contains(query, ignoreCase = true) }
             }
             _filteredResults.emit(results)
+        }
+    }
+
+
+    fun getCustomerInfo(userEmail : String)
+    {
+        viewModelScope.launch {
+            repository.getShopifyUserByEmail(userEmail).collect{state->
+                when(state)
+                {
+                    is State.Error -> {
+
+                    }
+                    State.Loading -> {
+
+                    }
+                    is State.Success -> {
+                        _currentCustomerInfo.value = state.data
+                    }
+                }
+            }
         }
     }
 

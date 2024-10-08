@@ -43,6 +43,7 @@ class AddressDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_address_details, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = addressViewModel
         return binding.root
     }

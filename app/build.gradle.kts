@@ -171,4 +171,11 @@ dependencies {
 
     //paypal
     implementation (libs.card.payments)
+
+    //Shopify Checkout Sheet Kit
+    implementation (libs.checkout.sheet.kit)
+
+    //swiperefreshlayout
+    implementation(libs.androidx.swiperefreshlayout)
+
 }

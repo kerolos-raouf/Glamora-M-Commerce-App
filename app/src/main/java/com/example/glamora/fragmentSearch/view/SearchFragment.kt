@@ -5,10 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.SearchView
-import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -22,20 +19,15 @@ import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
 
-
     private val sharedViewModel: SharedViewModel by activityViewModels()
-
     private lateinit var searchBinding: FragmentSearchBinding
-
     private lateinit var searchAdapter: SearchAdapter
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        searchBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_search,container,false)
+        searchBinding = FragmentSearchBinding.inflate(inflater, container, false)
         return searchBinding.root
     }
 
@@ -62,7 +54,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun updateSearchViewAppearance(query: String?) {
-
         if (!query.isNullOrEmpty()) {
             searchBinding.searchView.setBackgroundResource(R.drawable.button_background_focused)
         } else {
@@ -73,7 +64,7 @@ class SearchFragment : Fragment() {
     private fun setupRecyclerView() {
         searchAdapter = SearchAdapter(object : SearchClickListener {
             override fun onItemClick(product: ProductDTO) {
-                Log.d("SearchFragment", "Clicked on: ${product.title}")
+                Log.d("SearchFragment", "Clicked on: ${product.id} == ${product.title}")
             }
         })
 

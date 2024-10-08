@@ -2,53 +2,62 @@ package com.example.glamora.fragmentLogin.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
-import com.example.glamora.data.firebase.LoginState
 import com.example.glamora.databinding.FragmentLoginBinding
 import com.example.glamora.fragmentLogin.viewModel.LoginViewModel
 import com.example.glamora.mainActivity.view.Communicator
+import com.example.glamora.mainActivity.viewModel.SharedViewModel
+import com.example.glamora.util.Constants
+import com.example.glamora.util.State
 import com.example.glamora.util.isNotShort
 import com.example.glamora.util.isValidEmail
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private lateinit var loginBinding: FragmentLoginBinding
-    private lateinit var loginViewModel: LoginViewModel
+    private val loginViewModel: LoginViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
-    private val communicator : Communicator by lazy {
+    private val communicator: Communicator by lazy {
         (requireActivity() as Communicator)
     }
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // Initialize ViewModel
-        loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+    override fun onStart() {
+        super.onStart()
+        communicator.hideBottomNav()
+
+        if (sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN) {
+            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout using Data Binding
         loginBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
         return loginBinding.root
     }
@@ -56,9 +65,19 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val userEmail = arguments?.getString("userEmail")
+        val userPassword = arguments?.getString("userPassword")
+
+        if (userEmail != null && userPassword != null) {
+            loginBinding.editEmail.setText(userEmail)
+            loginBinding.editPassword.setText(userPassword)
+        }
+
+
         setupGoogleSignIn()
 
         loginBinding.loginBtn.setOnClickListener {
+            resetErrors()
             validateAndLogin()
         }
 
@@ -70,18 +89,56 @@ class LoginFragment : Fragment() {
             signInWithGoogle()
         }
 
-        loginBinding.guestBtn.setOnClickListener{
-            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+        loginBinding.guestBtn.setOnClickListener {
+
+            val builder = AlertDialog.Builder(requireContext())
+
+            builder.setTitle("Guest User")
+            builder.setMessage("Are you sure you want to proceed as a guest?")
+
+            builder.setPositiveButton("OK") { dialog, _ ->
+                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                dialog.dismiss()
+
+            }
+
+            builder.setNegativeButton("Close") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            val alertDialog = builder.create()
+
+            alertDialog.setOnShowListener {
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.light_blue)
+                )
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.light_blue)
+                )
+            }
+
+            alertDialog.show()
         }
 
-        loginBinding.resetBtn.setOnClickListener{
+        loginBinding.resetBtn.setOnClickListener {
             val email = loginBinding.editEmail.text.toString()
             val isEmailValid = isValidEmail(email)
 
-            if(isEmailValid){
+            if (isEmailValid) {
                 loginViewModel.resetUserPass(email)
+            } else {
+                showErrorEmail()
             }
 
+            lifecycleScope.launch {
+                loginViewModel.toastMessage.collect { message ->
+                    message?.let {
+                        loginBinding.progressBar.visibility = View.GONE
+                        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                        loginViewModel.clearToastMessage()
+                    }
+                }
+            }
         }
 
         observeLoginState()
@@ -91,14 +148,10 @@ class LoginFragment : Fragment() {
         val email = loginBinding.editEmail.text.toString()
         val password = loginBinding.editPassword.text.toString()
 
-        // Reset error messages
-        resetErrors()
-
         val isEmailValid = isValidEmail(email)
         val isPasswordValid = isNotShort(password)
 
         if (isEmailValid && isPasswordValid) {
-            // Perform login
             loginViewModel.loginWithEmail(email, password)
         } else {
             if (!isEmailValid) showErrorEmail()
@@ -109,29 +162,43 @@ class LoginFragment : Fragment() {
     private fun resetErrors() {
         loginBinding.errEmailTxt.visibility = View.GONE
         loginBinding.errPassTxt.visibility = View.GONE
-        loginBinding.editEmail.background = ContextCompat.getDrawable(requireContext(), R.drawable.button_background)
-        loginBinding.editPassword.background = ContextCompat.getDrawable(requireContext(), R.drawable.button_background)
+        loginBinding.editEmail.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.button_background)
+        loginBinding.editPassword.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.button_background)
         loginBinding.editEmail.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
         loginBinding.editPassword.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
     }
 
     private fun showErrorEmail() {
         loginBinding.errEmailTxt.visibility = View.VISIBLE
-        loginBinding.editEmail.background = ContextCompat.getDrawable(requireContext(), R.drawable.button_background_err)
+        loginBinding.editEmail.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.button_background_err)
         val drawableIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_email_err)
-        loginBinding.editEmail.setCompoundDrawablesWithIntrinsicBounds(drawableIcon, null, null, null)
+        loginBinding.editEmail.setCompoundDrawablesWithIntrinsicBounds(
+            drawableIcon,
+            null,
+            null,
+            null
+        )
     }
 
     private fun showErrorPassword() {
         loginBinding.errPassTxt.visibility = View.VISIBLE
-        loginBinding.editPassword.background = ContextCompat.getDrawable(requireContext(), R.drawable.button_background_err)
+        loginBinding.editPassword.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.button_background_err)
         val drawableIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_pass_err)
-        loginBinding.editPassword.setCompoundDrawablesWithIntrinsicBounds(drawableIcon, null, null, null)
+        loginBinding.editPassword.setCompoundDrawablesWithIntrinsicBounds(
+            drawableIcon,
+            null,
+            null,
+            null
+        )
     }
 
     private fun setupGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)) // Replace with your actual client ID
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
@@ -148,12 +215,9 @@ class LoginFragment : Fragment() {
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                // Google Sign-In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-                loginViewModel.loginWithGoogle(account.idToken!!) // Pass token to ViewModel
+                loginViewModel.loginWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
-                // Google Sign-In failed
-                Log.w("LoginFragment", "Google sign-in failed", e)
                 Toast.makeText(requireContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show()
             }
         }
@@ -163,23 +227,58 @@ class LoginFragment : Fragment() {
         lifecycleScope.launch {
             loginViewModel.loginState.collect { state ->
                 when (state) {
-                    is LoginState.Success -> {
-                        Toast.makeText(requireContext(), "Login successful!", Toast.LENGTH_SHORT).show()
-                        // Navigate to the main screen or next fragment
+                    is State.Loading -> {
+                        loginBinding.progressBar.visibility = View.VISIBLE
                     }
-                    is LoginState.Error -> {
-                        Toast.makeText(requireContext(), "Error: ${state.message}", Toast.LENGTH_SHORT).show()
+
+                    is State.Success -> {
+                        lifecycleScope.launch {
+                            val email = loginViewModel.customerEmail.firstOrNull()
+
+                            if (email != null) {
+                                sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,email)
+                                loginBinding.progressBar.visibility = View.GONE
+
+                                Toast.makeText(requireContext(),"Login successful!",Toast.LENGTH_SHORT).show()
+
+                                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+
+                            }
+                        }
                     }
-                    else -> {
-                        // Handle any other state if necessary
+
+                    is State.Error -> {
+                        loginBinding.progressBar.visibility = View.GONE
+                        val errorMessage = when (state.message) {
+                            "Email is not verified. Please verify your email before logging in." -> {
+                                showErrorEmail()
+                                "Please verify your email before logging in."
+                            }
+
+                            "The password is invalid" -> {
+                                showErrorPassword()
+                                "Incorrect password. Please try again."
+                            }
+
+                            "There is no user record corresponding to this email." -> {
+                                showErrorEmail()
+                                "No account found with this email. Please sign up first."
+                            }
+
+                            else -> {
+                                showErrorEmail()
+                                showErrorPassword()
+                                "Login failed: ${state.message}"
+                            }
+                        }
+
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                     }
+
+                    null -> {}
                 }
             }
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        communicator.hideBottomNav()
-    }
 }

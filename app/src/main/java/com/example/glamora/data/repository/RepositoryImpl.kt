@@ -5,18 +5,25 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.example.BrandsQuery
 import com.example.CreateCustomerMutation
+import com.example.CreateDrafterOrderMutation
+import com.example.CreateOrderFromDraftOrderMutation
+import com.example.DeleteDraftOrderMutation
 import com.example.DiscountCodesQuery
+import com.example.GetCustomerByEmailQuery
 import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
+import com.example.UpdateDraftOrderMutation
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.firebase.IFirebaseHandler
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.customerModels.Customer
 import com.example.glamora.data.model.DiscountCodeDTO
+import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
@@ -29,7 +36,15 @@ import com.example.glamora.util.toDiscountCodesDTO
 import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
+import com.example.glamora.data.model.customerModels.CustomerInfo
+import com.example.glamora.util.toCartItemsDTO
+import com.example.glamora.util.toFavoriteItemsDTO
 import com.example.type.CustomerInput
+import com.example.type.DraftOrderAppliedDiscountInput
+import com.example.type.DraftOrderAppliedDiscountType
+import com.example.type.DraftOrderDeleteInput
+import com.example.type.DraftOrderInput
+import com.example.type.DraftOrderLineItemInput
 import com.example.type.MailingAddressInput
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
@@ -44,10 +59,12 @@ class RepositoryImpl @Inject constructor(
     private val apolloClient: ApolloClient,
     private val remoteDataSource: RemoteDataSource,
     private val sharedPrefHandler: SharedPrefHandler,
-    private val connectivityObserver: ConnectivityObserver
+    private val connectivityObserver: ConnectivityObserver,
+    private val firebaseHandler: IFirebaseHandler
 ) : Repository {
 
 
+    //graph queries
     @OptIn(FlowPreview::class)
     override fun getProducts(): Flow<State<List<ProductDTO>>> = flow {
         emit(State.Loading)
@@ -155,6 +172,7 @@ class RepositoryImpl @Inject constructor(
             emit(State.Error(it.message.toString()))
     }
 
+    @OptIn(FlowPreview::class)
     override fun getCartItemsForCustomer(customerId: String) : Flow<State<List<CartItemDTO>>> = flow {
         emit(State.Loading)
         try {
@@ -165,9 +183,8 @@ class RepositoryImpl @Inject constructor(
             if (cartItemsResponse.data != null) {
 
                 val draftOrdersResponse = cartItemsResponse.data?.draftOrders
-                Log.d("Kerolos", "getCartItemsForCustomer: ${draftOrdersResponse?.nodes?.size}")
                 if (draftOrdersResponse != null) {
-                    //emit(State.Success(discountCodesList))
+                    emit(State.Success(draftOrdersResponse.toCartItemsDTO()))
                 }else
                 {
                     emit(State.Error("No products found"))
@@ -175,6 +192,35 @@ class RepositoryImpl @Inject constructor(
             }else
             {
                 emit(State.Error(cartItemsResponse.errors.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }.timeout(15.seconds).catch {
+        emit(State.Error(it.message.toString()))
+    }
+
+    @OptIn(FlowPreview::class)
+    override fun getFavoriteItemsForCustomer(customerId: String) : Flow<State<List<FavoriteItemDTO>>> = flow {
+        emit(State.Loading)
+        try {
+
+            val favoriteItemsResponse = apolloClient.query(GetDraftOrdersByCustomerQuery(
+                query = "customer_id:$customerId"
+            )).execute()
+            if (favoriteItemsResponse.data != null) {
+
+                val draftOrdersResponse = favoriteItemsResponse.data?.draftOrders
+                if (draftOrdersResponse != null) {
+                    emit(State.Success(draftOrdersResponse.toFavoriteItemsDTO()))
+                }else
+                {
+                    emit(State.Error("No products found"))
+                }
+            }else
+            {
+                emit(State.Error(favoriteItemsResponse.errors.toString() ?: "Unknown Error"))
             }
         }catch (e : Exception)
         {
@@ -224,27 +270,181 @@ class RepositoryImpl @Inject constructor(
         emit(State.Error(it.message.toString()))
     }
 
+    override fun deleteDraftOrder(draftOrderId: String): Flow<State<String>>  = flow {
+        emit(State.Loading)
+        try {
+            val draftOrderDeletingResponse = apolloClient.mutation(DeleteDraftOrderMutation(
+                DraftOrderDeleteInput(
+                    id = draftOrderId
+                )
+            )).execute()
+
+            if (!draftOrderDeletingResponse.hasErrors())
+            {
+                emit(State.Success(draftOrderDeletingResponse.data?.draftOrderDelete?.deletedId.toString()))
+            }else
+            {
+                emit(State.Error(draftOrderDeletingResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun updateCartDraftOrder(
+        draftOrderId: String,
+        newCartItemsList: List<CartItemDTO>,
+    ): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+            val draftOrderLineItemInputList = mutableListOf<DraftOrderLineItemInput>()//create list of line items from cart items
+            newCartItemsList.forEach {
+                draftOrderLineItemInputList.add(
+                    DraftOrderLineItemInput(
+                        variantId = Optional.Present(it.id),
+                        quantity = it.quantity
+                    )
+                )
+            }
+            val updateDraftOrderResponse = apolloClient.mutation(UpdateDraftOrderMutation(
+                DraftOrderInput(
+                    lineItems = Optional.Present(draftOrderLineItemInputList)
+                ),
+                ownerId = draftOrderId
+            )).execute()
+
+            if (!updateDraftOrderResponse.hasErrors())
+            {
+                emit(State.Success(updateDraftOrderResponse.data?.draftOrderUpdate?.draftOrder?.id.toString()))
+            }else
+            {
+                emit(State.Error(updateDraftOrderResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun updateFavoritesDraftOrder(
+        draftOrderId: String,
+        newFavoriteItemsList: List<FavoriteItemDTO>,
+    ): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+            val draftOrderLineItemInputList = mutableListOf<DraftOrderLineItemInput>()
+            newFavoriteItemsList.forEach {
+                draftOrderLineItemInputList.add(
+                    DraftOrderLineItemInput(
+                        variantId = Optional.Present(it.id),
+                        quantity = 1
+                    )
+                )
+            }
+            val updateDraftOrderResponse = apolloClient.mutation(UpdateDraftOrderMutation(
+                DraftOrderInput(
+                    lineItems = Optional.Present(draftOrderLineItemInputList)
+                ),
+                ownerId = draftOrderId
+            )).execute()
+
+            if (!updateDraftOrderResponse.hasErrors())
+            {
+                emit(State.Success(updateDraftOrderResponse.data?.draftOrderUpdate?.draftOrder?.id.toString()))
+            }else
+            {
+                emit(State.Error(updateDraftOrderResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun createFinalDraftOrder(
+        customerId: String,
+        customerEmail: String,
+        cartItems: List<CartItemDTO>,
+        discountAmount: Double
+    ): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+
+            val draftOrderItemList = mutableListOf<DraftOrderLineItemInput>()
+
+            cartItems.forEach {
+                draftOrderItemList.add(
+                    DraftOrderLineItemInput(
+                        variantId = Optional.Present(it.id),
+                        quantity = it.quantity
+                    )
+                )
+            }
+
+            val createDraftOrder = apolloClient.mutation(CreateDrafterOrderMutation(
+                DraftOrderInput(
+                    customerId = Optional.Present(customerId),
+                    email = Optional.Present(customerEmail),
+                    lineItems = Optional.Present(draftOrderItemList),
+                    appliedDiscount = Optional.Present(DraftOrderAppliedDiscountInput(
+                        value = discountAmount,
+                        valueType = DraftOrderAppliedDiscountType.PERCENTAGE
+                      )
+                    )
+                )
+            )).execute()
+
+            if (!createDraftOrder.hasErrors())
+            {
+                emit(State.Success(createDraftOrder.data?.draftOrderCreate?.draftOrder?.id.toString()))
+            }else
+            {
+                emit(State.Error(createDraftOrder.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun createOrderFromDraftOrder(draftOrderId: String): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+            val orderResponse = apolloClient.mutation(CreateOrderFromDraftOrderMutation(
+                id = draftOrderId
+            )).execute()
+
+            if (!orderResponse.hasErrors())
+            {
+                emit(State.Success(orderResponse.data?.draftOrderComplete?.draftOrder?.id.toString()))
+            }else
+            {
+                emit(State.Error(orderResponse.errors?.get(0)?.message.toString() ?: "Unknown Error"))
+            }
+        }catch (e : Exception)
+        {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
     override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {
         emit(State.Loading)
         try {
             val customerResponse = remoteDataSource.getCustomersUsingEmail(email)
-            if (customerResponse.isSuccessful)
-            {
+            if (customerResponse.isSuccessful) {
                 if (customerResponse.body()?.customers != null
                     && customerResponse.body()?.customers?.size!! > 0
-                    && customerResponse.body()?.customers?.get(0) != null)
-                {
+                    && customerResponse.body()?.customers?.get(0) != null
+                ) {
                     emit(State.Success(customerResponse.body()?.customers?.get(0)!!))
-                }else
-                {
+                } else {
                     emit(State.Error(Constants.CUSTOMER_NOT_FOUND))
                 }
-            }else
-            {
+            } else {
                 emit(State.Error(customerResponse.message()))
             }
-        }catch (e : Exception)
-        {
+        } catch (e: Exception) {
             emit(State.Error(e.message.toString()))
         }
     }
@@ -298,45 +498,124 @@ class RepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun createShopifyUser(email: String, firstName: String, lastName: String, phone: String) {
-
+    override fun createShopifyUser(
+        email: String,
+        firstName: String,
+        lastName: String,
+        phone: String?
+    ): Flow<Result<CustomerInfo>> = flow {
         val client = apolloClient
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "unknown"
 
-        Log.d("Abanob", "createShopifyUser: $userId")
-
-        // Create mutation to add the customer to Shopify
         val customerInput = CustomerInput(
             email = Optional.Present(email),
             firstName = Optional.Present(firstName),
             lastName = Optional.Present(lastName),
-            tags = Optional.Present(listOf(userId))
+            phone = Optional.Present(phone)
         )
 
-        // Create mutation with the CustomerInput
         val mutation = CreateCustomerMutation(customerInput)
 
         try {
             val response = client.mutation(mutation).execute()
 
-            Log.d("Abanob", "createShopifyUser: ${response.data}")
-
             if (response.hasErrors()) {
-                Log.e("Abanob", "Error creating user: ${response.errors}")
+                emit(Result.failure(Throwable("Error creating user: ${response.errors}")))
             } else {
                 val shopifyUserId = response.data?.customerCreate?.customer?.id
+                if (shopifyUserId != null) {
+                    emit(Result.success(CustomerInfo()))
+                } else {
+                    if (response.data.toString().contains("Phone has already been taken")) {
+                        emit(Result.failure(Throwable("Phone has already been taken")))
+                    } else if (response.data.toString().contains("Email has already been taken")) {
+                        emit(Result.failure(Throwable("Email has already been taken")))
+                    }
+                    else if (response.data.toString().contains("Enter a valid phone number")) {
+                        emit(Result.failure(Throwable("InValid phone number")))
+                    }
+                    else {
+                        emit(Result.failure(Throwable("User creation failed without errors.")))
+                    }
 
-                Log.d("Abanob", "User created successfully in Shopify: $shopifyUserId")
-                Log.d("Abanob", "Firebase User ID: $userId, Shopify User ID: $shopifyUserId")
-
-                // Ensure both User IDs are logged properly
-                Log.d("Abanob", "Firebase ID: $userId")
-                Log.d("Abanob", "Shopify ID: $shopifyUserId")
-
-                // Optionally, you can return the Shopify user ID or handle it as needed
+                }
             }
         } catch (e: Exception) {
-            Log.e("Abanob", "Mutation failed: ${e.message}")
+            emit(Result.failure(Throwable("Mutation failed: ${e.message}")))
+        }
+    }
+
+    override fun getShopifyUserByEmail(email: String): Flow<State<CustomerInfo>> = flow {
+        val query = GetCustomerByEmailQuery(email)
+
+        try {
+            val response = apolloClient.query(query).execute()
+
+            if (response.hasErrors()) {
+                emit(State.Error("Error fetching user: ${response.errors}"))
+            } else {
+                val customerEdges = response.data?.customers?.edges
+
+                if (!customerEdges.isNullOrEmpty()) {
+                    val customer = customerEdges[0].node
+
+                    val customerInfo = CustomerInfo(
+                        displayName = "${customer.firstName} ${customer.lastName}",
+                        email = customer.email.toString(),
+                        userId = customer.id,
+                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1]
+                    )
+                    emit(State.Success(customerInfo))
+                } else {
+                    emit(State.Error("User not found"))
+                }
+            }
+        } catch (e: Exception) {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+
+    override fun loginWithEmail(email: String, password: String): Flow<Result<CustomerInfo>> =
+        flow {
+            val result = firebaseHandler.signInWithEmail(email, password)
+            if (result.isSuccess) {
+                val currentUser = firebaseHandler.getCurrentUser()
+                emit(Result.success(CustomerInfo(email = currentUser?.email ?: Constants.UNKNOWN)))
+            } else {
+                emit(Result.failure(result.exceptionOrNull() ?: Throwable("Login failed")))
+            }
+        }
+
+    override fun loginWithGoogle(idToken: String): Flow<Result<CustomerInfo>> = flow {
+        val result = firebaseHandler.signInWithGoogle(idToken)
+        if (result.isSuccess) {
+            val currentUser = firebaseHandler.getCurrentUser()
+            emit(Result.success(CustomerInfo(email = currentUser?.email ?: Constants.UNKNOWN)))
+        } else {
+            emit(Result.failure(result.exceptionOrNull() ?: Throwable("Google login failed")))
+        }
+    }
+
+    override fun resetUserPassword(email: String): Flow<Result<CustomerInfo>> = flow {
+        val result = firebaseHandler.resetPassword(email)
+        if (result.isSuccess) {
+            emit(Result.success(CustomerInfo(email = email)))
+        } else {
+            emit(
+                Result.failure(
+                    result.exceptionOrNull() ?: Throwable("Failed to send reset email")
+                )
+            )
+        }
+    }
+
+    override fun signUp(email: String, password: String): Flow<Result<CustomerInfo>> = flow {
+        val result = firebaseHandler.signUp(email, password)
+        if (result.isSuccess) {
+            val currentUser = firebaseHandler.getCurrentUser()
+            emit(Result.success(CustomerInfo(email = currentUser?.email ?: Constants.UNKNOWN)))
+        } else {
+            emit(Result.failure(result.exceptionOrNull() ?: Throwable("Sign-up failed")))
         }
     }
 

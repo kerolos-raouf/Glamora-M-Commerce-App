@@ -30,6 +30,7 @@
     <string name="enter_coupon_code">Enter Coupon Code</string>
     <string name="nike_air_zoom_pegasus_36_miami">Nike Air Zoom Pegasus 36 Miami</string>
     <string name="favorite_button">Favourites</string>
+
     <string name="brands">Brands</string>
     <string name="price">2000 EGP</string>
     <string name="itemName">Nike Air Max 270 React ENG</string>
@@ -80,4 +81,6 @@
     <string name="date">Order Date</string>
     <string name="payment_details">Payment Details</string>
     <string name="itemPrice">Item price</string>
+    <string name="_900_00">$900.00</string>
+    <string name="_24">24%</string>
 </resources>
