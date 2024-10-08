@@ -30,7 +30,7 @@ interface Repository {
 
     fun getFavoriteItemsForCustomer(customerId: String) : Flow<State<List<FavoriteItemDTO>>>
 
-    fun updateCustomerAddress(customerId: String,address : AddressModel) : Flow<State<AddressModel>>
+    fun updateCustomerAddress(customerId: String,address : List<AddressModel>) : Flow<State<AddressModel>>
 
     fun deleteDraftOrder(draftOrderId: String) : Flow<State<String>>
 
@@ -42,6 +42,8 @@ interface Repository {
 
     fun createOrderFromDraftOrder(draftOrderId: String) : Flow<State<String>>
 
+    fun getCustomerAddressesByEmail(email: String): Flow<State<List<AddressModel>>>
+
     fun createShopifyUser(
         email: String,
         firstName: String,
@@ -52,6 +54,7 @@ interface Repository {
     fun getShopifyUserByEmail(email: String): Flow<State<CustomerInfo>>
 
     fun getOrdersByCustomer (email: String): Flow<State<OrderDTO>>
+
 
 
     //retrofit
@@ -80,6 +83,7 @@ interface Repository {
     fun loginWithGoogle(idToken: String): Flow<Result<CustomerInfo>>
     fun resetUserPassword(email: String): Flow<Result<CustomerInfo>>
     fun signUp(email: String, password: String): Flow<Result<CustomerInfo>>
+    fun signOut()
 
 
 

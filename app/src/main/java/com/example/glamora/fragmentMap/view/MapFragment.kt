@@ -84,6 +84,12 @@ class MapFragment : Fragment() {
 
     private fun initView()
     {
+        //location permission
+         if(!communicator.isLocationPermissionGranted())
+         {
+             communicator.requestLocationPermission()
+             Toast.makeText(requireContext(), "Please allow location permission", Toast.LENGTH_SHORT).show()
+         }
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         //fab

@@ -11,7 +11,6 @@ import com.example.DeleteDraftOrderMutation
 import com.example.DiscountCodesQuery
 import com.example.GetCustomerByEmailQuery
 import com.example.GetDraftOrdersByCustomerQuery
-import com.example.GetOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
@@ -235,21 +234,28 @@ class RepositoryImpl @Inject constructor(
     @OptIn(FlowPreview::class)
     override fun updateCustomerAddress(
         customerId: String,
-        address: AddressModel
+        address: List<AddressModel>
     ): Flow<State<AddressModel>> = flow {
         emit(State.Loading)
         try {
-            val address = MailingAddressInput(
-                firstName = Optional.Present(address.firstName),
-                lastName = Optional.Present(address.lastName),
-                phone = Optional.Present(address.phone),
-                address1 = Optional.Present(address.street),
-                city = Optional.Present(address.city),
-                country = Optional.Present(address.country),
-            )
+            val mailingAddressInputList = mutableListOf<MailingAddressInput>()
+
+            address.forEach {
+                mailingAddressInputList.add(
+                    MailingAddressInput(
+                        firstName = Optional.Present(it.firstName),
+                        lastName = Optional.Present(it.lastName),
+                        phone = Optional.Present(it.phone),
+                        address1 = Optional.Present(it.street),
+                        city = Optional.Present(it.city),
+                        country = Optional.Present(it.country),
+                    )
+                )
+            }
+
             val customerInput = CustomerInput(
                 id = Optional.Present(customerId),
-                addresses = Optional.Present(listOf(address))
+                addresses = Optional.Present(mailingAddressInputList)
             )
             val customerResponse = apolloClient.mutation(UpdateCustomerAddressMutation(customerInput)).execute()
             if (!customerResponse.hasErrors() && customerResponse.data?.customerUpdate?.customer != null)
@@ -429,6 +435,33 @@ class RepositoryImpl @Inject constructor(
             emit(State.Error(e.message.toString()))
         }
     }
+    override fun getCustomerAddressesByEmail(email: String): Flow<State<List<AddressModel>>> = flow {
+        val query = GetCustomerByEmailQuery(email)
+
+        try {
+            val response = apolloClient.query(query).execute()
+
+            if (response.hasErrors()) {
+                emit(State.Error("Error fetching user: ${response.errors}"))
+            } else {
+                val customerEdges = response.data?.customers?.edges
+
+                if (!customerEdges.isNullOrEmpty()) {
+                    val addresses = customerEdges[0].node.addresses
+                    val addressModelList = mutableListOf<AddressModel>()
+                    addresses.forEach {
+                        addressModelList.add(it.toAddressMode())
+                    }
+                    emit(State.Success(addressModelList))
+                } else {
+                    emit(State.Error("User not found"))
+                }
+            }
+        } catch (e: Exception) {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
 
     override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {
         emit(State.Loading)
@@ -651,4 +684,7 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
+    override fun signOut() {
+        firebaseHandler.signOut()
+    }
 }

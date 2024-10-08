@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.glamora.R
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
@@ -76,7 +77,8 @@ class MainActivity : AppCompatActivity(), Communicator {
         binding.lifecycleOwner = this
         navController = findNavController(R.id.fragmentContainer)
 
-        binding.bottomNavigationView.setupWithNavController(navController)
+        //binding.bottomNavigationView.setupWithNavController(navController)
+        NavigationUI.setupWithNavController(binding.bottomNavigationView,navController)
     }
 
     override fun hideBottomNav() {
