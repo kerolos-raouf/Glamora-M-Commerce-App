@@ -140,6 +140,12 @@ class SharedViewModel @Inject constructor(
     }
 
 
+    // ProductByID
+    fun getProductByID(productID: String): ProductDTO? {
+        return productList.value?.find { it.id.contains(productID) }
+    }
+
+
     fun fetchProducts()
     {
         viewModelScope.launch {

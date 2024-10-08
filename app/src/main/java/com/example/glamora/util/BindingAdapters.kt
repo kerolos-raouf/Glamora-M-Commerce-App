@@ -1,10 +1,12 @@
 package com.example.glamora.util
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.example.glamora.R
@@ -44,5 +46,17 @@ fun showProgressBar(view: View, show : Boolean)
     }else
     {
         view.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("cardBackgroundColor")
+fun setCardBackgroundColor(cardView: CardView, colorString: String?) {
+    try {
+        colorString?.let {
+            val color = Color.parseColor(it)
+            cardView.setCardBackgroundColor(color)
+        }
+    } catch (e: IllegalArgumentException) {
+        cardView.setCardBackgroundColor(Color.GRAY)
     }
 }
