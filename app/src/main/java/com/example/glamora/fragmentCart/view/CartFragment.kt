@@ -230,19 +230,8 @@ class CartFragment : Fragment(),CartItemInterface {
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
             bottomSheet.dismiss()
 
-            //create order from drat order
-            cartViewModel.createFinalDraftOrder(
-                customerId = sharedViewModel.currentCustomerInfo.value.userId,
-                customerEmail = sharedViewModel.currentCustomerInfo.value.email,
-                discountAmount = discountValue * 100
-            )
-            discountValue = 0.0
-            if(discountCode != Constants.UNKNOWN)
-            {
-                sharedViewModel.setSharedPrefBoolean(discountCode,true)
-                discountCode = Constants.UNKNOWN
-            }
 
+            finishDraftOrder()
 
             if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
                 payWithCard()
@@ -252,6 +241,22 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
         bottomSheet.show()
+    }
+
+
+    private fun finishDraftOrder(){
+        //create order from drat order
+        cartViewModel.createFinalDraftOrder(
+            customerId = sharedViewModel.currentCustomerInfo.value.userId,
+            customerEmail = sharedViewModel.currentCustomerInfo.value.email,
+            discountAmount = discountValue * 100
+        )
+        discountValue = 0.0
+        if(discountCode != Constants.UNKNOWN)
+        {
+            sharedViewModel.setSharedPrefBoolean(discountCode,true)
+            discountCode = Constants.UNKNOWN
+        }
     }
 
 

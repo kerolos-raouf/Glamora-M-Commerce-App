@@ -37,7 +37,6 @@ import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
-import com.example.glamora.util.toAddressMode
 import com.example.glamora.util.toCartItemsDTO
 import com.example.glamora.util.toFavoriteItemsDTO
 import com.example.type.CustomerInput
@@ -450,7 +449,7 @@ class RepositoryImpl @Inject constructor(
                     val addresses = customerEdges[0].node.addresses
                     val addressModelList = mutableListOf<AddressModel>()
                     addresses.forEach {
-                        addressModelList.add(it.toAddressMode())
+                        addressModelList.add(it.toAddressModel())
                     }
                     emit(State.Success(addressModelList))
                 } else {
@@ -596,7 +595,8 @@ class RepositoryImpl @Inject constructor(
                         displayName = "${customer.firstName} ${customer.lastName}",
                         email = customer.email.toString(),
                         userId = customer.id,
-                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1]
+                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1],
+                        addresses = customer.addresses.map { it.toAddressModel() }
                     )
                     emit(State.Success(customerInfo))
                 } else {
