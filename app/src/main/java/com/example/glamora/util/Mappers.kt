@@ -3,6 +3,7 @@ package com.example.glamora.util
 import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
 import com.example.GetDraftOrdersByCustomerQuery
+import com.example.GetOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
@@ -15,6 +16,7 @@ import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.data.model.brandModel.Image
+import com.example.glamora.data.model.ordersModel.LineItemDTO
 import com.example.glamora.data.model.ordersModel.OrderDTO
 
 
@@ -155,7 +157,7 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<Favori
 
 
 
-//fun getOrdersByCustomer.Orders.toOrderDTO(): List<OrderDTO> {
+//fun GetOrdersByCustomerQuery.Orders.toOrderDTO(): List<OrderDTO> {
 //    val orders = mutableListOf<OrderDTO>()
 //
 //    this.edges.forEach { orderEdge ->

@@ -11,6 +11,7 @@ import com.example.DeleteDraftOrderMutation
 import com.example.DiscountCodesQuery
 import com.example.GetCustomerByEmailQuery
 import com.example.GetDraftOrdersByCustomerQuery
+import com.example.GetOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
@@ -37,6 +38,7 @@ import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
+import com.example.glamora.data.model.ordersModel.OrderDTO
 import com.example.glamora.util.toCartItemsDTO
 import com.example.glamora.util.toFavoriteItemsDTO
 import com.example.type.CustomerInput
@@ -572,6 +574,36 @@ class RepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(State.Error(e.message.toString()))
         }
+    }
+
+    override fun getOrdersByCustomer(email: String): Flow<State<OrderDTO>> = flow {
+//        val query = GetOrdersByCustomerQuery(email)
+//
+//        try {
+//            val response = apolloClient.query(query).execute()
+//
+//            if (response.hasErrors()) {
+//                emit(State.Error("Error fetching user: ${response.errors}"))
+//            } else {
+//                val customerEdges = response.data?.customers?.edges
+//
+//                if (!customerEdges.isNullOrEmpty()) {
+//                    val customer = customerEdges[0].node
+//
+//                    val customerInfo = CustomerInfo(
+//                        displayName = "${customer.firstName} ${customer.lastName}",
+//                        email = customer.email.toString(),
+//                        userId = customer.id,
+//                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1]
+//                    )
+//                    //emit(State.Success(customerInfo))
+//                } else {
+//                    emit(State.Error("User not found"))
+//                }
+//            }
+//        } catch (e: Exception) {
+//            emit(State.Error(e.message.toString()))
+//        }
     }
 
 

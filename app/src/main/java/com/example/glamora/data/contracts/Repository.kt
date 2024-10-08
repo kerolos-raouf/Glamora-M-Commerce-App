@@ -12,6 +12,7 @@ import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.util.State
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
+import com.example.glamora.data.model.ordersModel.OrderDTO
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
@@ -50,6 +51,7 @@ interface Repository {
 
     fun getShopifyUserByEmail(email: String): Flow<State<CustomerInfo>>
 
+    fun getOrdersByCustomer (email: String): Flow<State<OrderDTO>>
 
 
     //retrofit

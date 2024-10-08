@@ -1,4 +1,4 @@
-query getOrdersByCustomer($email: String!) {
+query GetOrdersByCustomer($email: String!) {
     orders(first: 10, query: $email) {
         edges {
             node {
