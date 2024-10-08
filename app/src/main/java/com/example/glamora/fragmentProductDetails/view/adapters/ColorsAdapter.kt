@@ -1,4 +1,4 @@
-package com.example.glamora.fragmentProductDetails
+package com.example.glamora.fragmentProductDetails.view.adapters
 
 import android.view.LayoutInflater
 import android.view.View

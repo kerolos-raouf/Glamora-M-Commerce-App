@@ -1,4 +1,4 @@
-package com.example.glamora.fragmentProductDetails
+package com.example.glamora.fragmentProductDetails.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import com.example.glamora.R
 import com.example.glamora.data.model.Reviewer
 import com.example.glamora.databinding.FragmentReviewsBinding
+import com.example.glamora.fragmentProductDetails.view.adapters.ReviewsAdapter
 
 class ReviewsFragment : Fragment() {
 

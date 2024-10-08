@@ -1,7 +1,6 @@
-package com.example.glamora.fragmentProductDetails
+package com.example.glamora.fragmentProductDetails.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,10 @@ import com.example.glamora.R
 import com.example.glamora.data.model.AvailableProductsModel
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.databinding.FragmentProductDetailsBinding
+import com.example.glamora.fragmentProductDetails.view.adapters.ColorsAdapter
+import com.example.glamora.fragmentProductDetails.view.adapters.SizesAdapter
+import com.example.glamora.fragmentProductDetails.view.adapters.ViewPagerAdapter
+import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +36,14 @@ class ProductDetailsFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
     private lateinit var dotsIndicator: DotsIndicator
 
+    private val communicator: Communicator by lazy {
+        (requireActivity() as Communicator)
+    }
 
+    override fun onStart() {
+        super.onStart()
+        communicator.hideBottomNav()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,7 +66,7 @@ class ProductDetailsFragment : Fragment() {
                 if(productDTO != null)
                 {
                     val productDetails = getProductDetails(productDTO)
-                    UpdateUI(productDetails)
+                    updateUI(productDetails)
                 }
             }
         }
@@ -98,7 +108,7 @@ class ProductDetailsFragment : Fragment() {
 
     }
 
-    private fun UpdateUI(productDetails: Map<String, Any> ){
+    private fun updateUI(productDetails: Map<String, Any> ){
 
         val imagesList = productDetails["images"] as List<String>
 
