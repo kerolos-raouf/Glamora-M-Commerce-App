@@ -12,6 +12,9 @@ import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.data.model.brandModel.Image
+import com.example.glamora.data.model.orders.OrderDTO
+import com.example.glamora.data.model.orders.LineItemDTO
+
 
 
 fun ProductQuery.Products.toProductDTO() : List<ProductDTO>
@@ -105,26 +108,36 @@ fun UpdateCustomerAddressMutation.Address.toAddressModel(): AddressModel {
     return addressModel
 }
 
-
-//fun CategoriesQuery.CollectionByHandle.toProductDTO(): List<ProductDTO> {
-//    val products = mutableListOf<ProductDTO>()
+//fun OrdersQuery.Orders.toOrderDTO(): List<OrderDTO> {
+//    val orders = mutableListOf<OrderDTO>()
 //
-//    this.products.edges.forEach { product ->
-//        products.add(ProductDTO(
-//            id = product.node.id,
-//            title = product.node.title,
-//            brand = "",
-//            category = "",
-//            description = "",
-//            mainImage = "",
-//            images = emptyList(),
-//            availableColors = emptyList(),
-//            availableSizes = emptyList(),
-//            availableProducts = emptyList()
-//        ))
+//    this.edges.forEach { orderEdge ->
+//        val orderNode = orderEdge.node
+//        val lineItems = orderNode.lineItems.edges.map { lineItemEdge ->
+//            val lineItemNode = lineItemEdge.node
+//            LineItemDTO(
+//                name = lineItemNode.name,
+//                quantity = lineItemNode.quantity,
+//                unitPrice = lineItemNode.originalUnitPriceSet.shopMoney.amount.toString(),
+//                currencyCode = lineItemNode.originalUnitPriceSet.shopMoney.currencyCode
+//            )
+//        }
+//
+//        val orderDTO = OrderDTO(
+//            id = orderNode.id,
+//            name = orderNode.name,
+//            createdAt = orderNode.createdAt,
+//            totalPrice = orderNode.totalPriceSet.shopMoney.amount.toString(),
+//            currencyCode = orderNode.totalPriceSet.shopMoney.currencyCode,
+//            lineItems = lineItems
+//        )
+//
+//        orders.add(orderDTO)
 //    }
-//    return products
+//
+//    return orders
 //}
+
 
 
 
