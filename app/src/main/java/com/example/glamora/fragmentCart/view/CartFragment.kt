@@ -28,6 +28,11 @@ import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.paypal.android.cardpayments.Card
+import com.paypal.android.cardpayments.CardClient
+import com.paypal.android.cardpayments.CardRequest
+import com.paypal.android.cardpayments.threedsecure.SCA
+import com.paypal.android.corepayments.Address
 import com.paypal.android.corepayments.CoreConfig
 import com.paypal.android.corepayments.Environment
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,11 +64,6 @@ class CartFragment : Fragment(),CartItemInterface {
     private var discountCode = Constants.UNKNOWN
     private var address : AddressModel = AddressModel()
 
-
-    //paypal
-    private val clientId = "AQto284OoB8DVcUW4pE4CBMOAQ-LnVV-P88g00FpO7nSCF3ruUWb0KMWe64diUwMWFzDYT3_qdanNCG6"
-    private val secretId = "ECGkdlpIhYXe0rPYNZ4tvMcrNInFrM4J636j7H5n-M_DXiC2x6gykyjDm7XOIrC4PcNZ0dmqbsQRTa2I"
-    private val returnUrl = "com.example.glamora://demo"
 
 
 
@@ -158,6 +158,13 @@ class CartFragment : Fragment(),CartItemInterface {
 
     private fun initObservers(){
         cartViewModel.cartItems.observe(viewLifecycleOwner){
+            if(it.isEmpty())
+            {
+                binding.cartEmptyImageView.visibility = View.VISIBLE
+            }else
+            {
+                binding.cartEmptyImageView.visibility = View.GONE
+            }
             mAdapter.submitList(it)
             calculateTotalPrice(it)
         }
@@ -247,7 +254,11 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     private fun initPayPal(){
-        val config = CoreConfig(clientId, environment = Environment.SANDBOX)
+
+        val config = CoreConfig(Constants.CLIENT_ID, environment = Environment.SANDBOX)
+
+        val cardClient = CardClient(requireActivity(),config)
+
 
     }
 
@@ -255,6 +266,24 @@ class CartFragment : Fragment(),CartItemInterface {
     private fun showBottomSheet() {
         bottomSheet.setCancelable(true)
         bottomSheet.setContentView(bottomSheetBinding.root)
+
+        bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked)
+            {
+                bottomSheetBinding.bottomSheetPaypalButton.visibility = View.VISIBLE
+                bottomSheetBinding.bottomSheetPayNowButton.visibility = View.GONE
+            }
+        }
+
+        bottomSheetBinding.bottomSheetPaymentMethodsCashOnDeliveryRadio.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked)
+            {
+                bottomSheetBinding.bottomSheetPaypalButton.visibility = View.GONE
+                bottomSheetBinding.bottomSheetPayNowButton.visibility = View.VISIBLE
+            }
+        }
+
+
 
 
         bottomSheetBinding.bottomSheetDetailsLinearLayout.setOnClickListener {
@@ -265,17 +294,25 @@ class CartFragment : Fragment(),CartItemInterface {
 
             if(address.city != Constants.UNKNOWN)
             {
-                if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
-                    payWithCard()
-                }else{
-                    finishDraftOrder()
-                }
+                finishDraftOrder()
                 bottomSheet.dismiss()
             }else
             {
                 Toast.makeText(requireContext(), "Please add your address", Toast.LENGTH_SHORT).show()
             }
         }
+
+        bottomSheetBinding.bottomSheetPaypalButton.setOnClickListener {
+            if(address.city != Constants.UNKNOWN)
+            {
+                payWithCard()
+                bottomSheet.dismiss()
+            }else
+            {
+                Toast.makeText(requireContext(), "Please add your address", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         bottomSheet.show()
     }
 

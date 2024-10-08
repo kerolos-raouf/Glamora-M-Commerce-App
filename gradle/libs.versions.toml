@@ -43,6 +43,7 @@ androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefre
 checkout-sheet-kit = { module = "com.shopify:checkout-sheet-kit", version.ref = "checkoutSheetKit" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
+payment-buttons = { module = "com.paypal.android:payment-buttons", version.ref = "cardPayments" }
 paypal-web-payments = { module = "com.paypal.android:paypal-web-payments", version.ref = "cardPayments" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 
