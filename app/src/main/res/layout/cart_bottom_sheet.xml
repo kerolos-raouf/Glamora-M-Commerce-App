@@ -52,7 +52,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/bottomSheetCountryName">
                 <TextView
-                    android:id="@+id/cartItemsText"
+                    android:id="@+id/bottomSheetUserName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -62,7 +62,7 @@
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/cartShippingText"
+                    android:id="@+id/bottomSheetUserAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"

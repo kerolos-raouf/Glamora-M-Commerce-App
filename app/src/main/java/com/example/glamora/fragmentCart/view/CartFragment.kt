@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -14,6 +15,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.glamora.R
+import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.databinding.CartBottomSheetBinding
@@ -51,9 +53,10 @@ class CartFragment : Fragment(),CartItemInterface {
     //custom alert dialog
     private lateinit var customAlertDialog : CustomAlertDialog
 
-    //discount value
+    //cart order values
     private var discountValue = 0.0
     private var discountCode = Constants.UNKNOWN
+    private var address : AddressModel = AddressModel()
 
 
     //paypal
@@ -104,6 +107,7 @@ class CartFragment : Fragment(),CartItemInterface {
             }
             binding.cartSwipeRefreshLayout.isRefreshing = false
         }
+
 
         //apply discount code
         binding.cartApplyButton.setOnClickListener {
@@ -227,20 +231,50 @@ class CartFragment : Fragment(),CartItemInterface {
         bottomSheet.setCancelable(true)
         bottomSheet.setContentView(bottomSheetBinding.root)
 
-        bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
-            bottomSheet.dismiss()
 
-
-            finishDraftOrder()
-
-            if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
-                payWithCard()
-            }else{
-
-            }
+        bottomSheetBinding.bottomSheetDetailsLinearLayout.setOnClickListener {
+            showPopUpMessage(it)
         }
 
+        bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
+
+            if(address.city != Constants.UNKNOWN)
+            {
+                if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
+                    payWithCard()
+                }else{
+                    finishDraftOrder()
+                }
+                bottomSheet.dismiss()
+            }else
+            {
+                Toast.makeText(requireContext(), "Please add your address", Toast.LENGTH_SHORT).show()
+            }
+        }
         bottomSheet.show()
+    }
+
+
+    private fun showPopUpMessage(view : View) {
+        val popupMenu = PopupMenu(requireContext(),view)
+        val addresses = sharedViewModel.currentCustomerInfo.value.addresses
+        if(addresses.isNotEmpty())
+        {
+            addresses.forEachIndexed { index, addressModel ->
+                popupMenu.menu.add(0,index,0,"${addressModel.country}-${addressModel.city}-${addressModel.street}")
+            }
+
+            popupMenu.setOnMenuItemClickListener {menuItem ->
+                address = sharedViewModel.currentCustomerInfo.value.addresses[menuItem.itemId]
+                bottomSheetBinding.bottomSheetUserName.text = "Name : ${address.firstName}"
+                bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}-${address.city}-${address.street}"
+                true
+            }
+        }else
+        {
+            popupMenu.menu.add(0,0,0,"<There is no address>")
+        }
+        popupMenu.show()
     }
 
 
