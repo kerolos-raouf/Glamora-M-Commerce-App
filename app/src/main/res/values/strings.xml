@@ -65,7 +65,7 @@
     <string name="type">Type</string>
     <string name="from">From</string>
     <string name="to">To</string>
-    <string name="remove_filter">REMOVE</string>
+    <string name="remove_filter">CLEAR</string>
     <string name="shipping">Shipping</string>
     <string name="_0">0 EGP</string>
     <string name="identity">Identity</string>

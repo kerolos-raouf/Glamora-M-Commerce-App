@@ -8,47 +8,57 @@
             type="com.example.glamora.data.model.brandModel.Brands" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container_brand_item"
+    <com.google.android.material.carousel.MaskableFrameLayout
+        android:id="@+id/carousel_item_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:layout_margin="4dp"
+        android:foreground="?attr/selectableItemBackground"
+        app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/brand_cardview"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:cardCornerRadius="50dp"
-            android:foreground="@drawable/down_foreground"
-            android:background="@android:color/transparent"
-            app:cardBackgroundColor="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_margin="4dp"
+            android:id="@+id/cvBrand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="25dp"
+            android:background="@color/white"
+            app:cardElevation="2dp">
 
-
-            <ImageView
-                android:id="@+id/image_brand_cardview"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scaleType="fitXY"
-                android:background="@android:color/transparent"
-                android:src="@drawable/brand"
-                app:srcCompat="@{brands.image.url}" />
+                android:background="@drawable/card_border">
+
+                <ImageView
+                    android:id="@+id/ivBrand"
+                    android:layout_width="120dp"
+                    android:layout_height="140dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/views_rounded_background_white"
+                    android:padding="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:src="@drawable/brand"
+                    app:srcCompat="@{brands.image.url}" />
+
+                <TextView
+                    android:id="@+id/tvBrand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@{brands.title}"
+                    android:textSize="20sp"
+                    android:textColor="@color/dark_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ivBrand" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/textview_brandName_cardview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@{brands.title}"
-            android:textSize="16sp"
-            android:textColor="@color/dark_blue"
-            app:layout_constraintEnd_toEndOf="@+id/brand_cardview"
-            app:layout_constraintStart_toStartOf="@+id/brand_cardview"
-            app:layout_constraintTop_toBottomOf="@+id/brand_cardview" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.carousel.MaskableFrameLayout>
 </layout>
