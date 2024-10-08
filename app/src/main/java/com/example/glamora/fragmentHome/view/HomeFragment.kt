@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apollographql.apollo.ApolloClient
@@ -71,7 +72,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         return binding.root
     }
@@ -79,18 +80,11 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navController = Navigation.findNavController(view)
-
-        lifecycleScope.launch{
-            sharedViewModel.currentCustomerInfo.collect{ customerInfo ->
-                customerInfo?.let{
-                    Log.d("Abanob", "onViewCreated: ${customerInfo.email}")
-                    Log.d("Abanob", "onViewCreated: ${customerInfo.displayName}")
-                    Log.d("Abanob", "onViewCreated: ${customerInfo.userId}")
-                }
-
-            }
+        binding.homeFavoriteButton.setOnClickListener{
+            findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
         }
+
+        navController = Navigation.findNavController(view)
 
 
         initHome()

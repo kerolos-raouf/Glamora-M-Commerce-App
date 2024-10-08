@@ -1,7 +1,9 @@
 package com.example.glamora.fragmentFavorites.view
-import com.example.glamora.data.model.ProductDTO
+
+import com.example.glamora.data.model.FavoriteItemDTO
+
 
 interface FavoritesClickListener {
-    fun onDeleteClick(product: ProductDTO)
-    fun onItemClick(product: ProductDTO)
+    fun onDeleteClick(product: FavoriteItemDTO)
+    fun onItemClick(product: FavoriteItemDTO)
 }
