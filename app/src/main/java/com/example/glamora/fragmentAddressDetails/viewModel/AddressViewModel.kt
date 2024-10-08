@@ -1,5 +1,7 @@
 package com.example.glamora.fragmentAddressDetails.viewModel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
@@ -22,8 +24,8 @@ class AddressViewModel @Inject constructor(
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
-    private val _message = MutableStateFlow("")
-    val message: StateFlow<String> = _message
+    private val _message = MutableLiveData("")
+    val message: LiveData<String> = _message
 
 
 
