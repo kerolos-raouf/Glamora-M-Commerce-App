@@ -83,4 +83,6 @@
     <string name="itemPrice">Item price</string>
     <string name="_900_00">$900.00</string>
     <string name="_24">24%</string>
+    <string name="err_phone_msg2">Oops! Phone has already been taken</string>
+    <string name="err_email_msg2">Oops! Email has already been taken</string>
 </resources>
