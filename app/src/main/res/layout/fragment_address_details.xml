@@ -23,6 +23,7 @@
             app:lottie_loop="true"
             android:visibility="gone"
             app:showProgressBar="@{viewModel.loading}"
+            android:translationZ="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

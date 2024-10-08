@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +19,8 @@ import com.example.glamora.data.model.AddressModel
 import com.example.glamora.databinding.FragmentAddressDetailsBinding
 import com.example.glamora.fragmentAddressDetails.viewModel.AddressViewModel
 import com.example.glamora.mainActivity.view.Communicator
+import com.example.glamora.mainActivity.viewModel.SharedViewModel
+import com.example.glamora.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -27,6 +30,7 @@ class AddressDetailsFragment : Fragment() {
 
 
     private val addressViewModel: AddressViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var binding : FragmentAddressDetailsBinding
 
@@ -57,7 +61,12 @@ class AddressDetailsFragment : Fragment() {
     private fun initView() {
         currentAddress = AddressDetailsFragmentArgs.fromBundle(requireArguments()).addressModel
 
-        Log.d("Kerolos", "initView: $currentAddress")
+        if(sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN)
+        {
+            addressViewModel.getCustomerAddressesByEmail(sharedViewModel.currentCustomerInfo.value.email)
+        }
+
+
         binding.apply {
             addressAddButton.setOnClickListener {
                 if(addressFirstName.text.isNotEmpty()
@@ -108,7 +117,23 @@ class AddressDetailsFragment : Fragment() {
     }
 
     private fun updateCustomerAddress() {
-        addressViewModel.updateCustomerAddress(address = currentAddress)
+        if (sharedViewModel.currentCustomerInfo.value.userId != Constants.UNKNOWN)
+        {
+            addressViewModel.updateCustomerAddress(
+                sharedViewModel.currentCustomerInfo.value.userId,
+                sharedViewModel.currentCustomerInfo.value.email,
+                currentAddress)
+            clearFields()
+        }
+    }
+
+    private fun clearFields() {
+        binding.apply {
+            addressFirstName.text.clear()
+            addressLastName.text.clear()
+            addressPhone.text.clear()
+            addressStreet.text.clear()
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.glamora.util
 
 import com.example.BrandsQuery
 import com.example.DiscountCodesQuery
+import com.example.GetCustomerByEmailQuery
 import com.example.GetDraftOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
@@ -151,6 +152,17 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<Favori
     }
 
     return favoritesItems
+}
+
+fun GetCustomerByEmailQuery.Address.toAddressMode(): AddressModel {
+    return AddressModel(
+        city = city ?: Constants.UNKNOWN,
+        country = country ?: Constants.UNKNOWN,
+        firstName = firstName ?: Constants.UNKNOWN,
+        lastName = lastName ?: Constants.UNKNOWN,
+        phone = phone ?: Constants.UNKNOWN,
+        street = address1 ?: Constants.UNKNOWN
+    )
 }
 
 //fun CategoriesQuery.CollectionByHandle.toProductDTO(): List<ProductDTO> {

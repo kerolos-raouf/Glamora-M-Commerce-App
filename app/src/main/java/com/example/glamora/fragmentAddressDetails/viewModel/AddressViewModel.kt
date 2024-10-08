@@ -16,19 +16,31 @@ class AddressViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
+    private val _address = MutableStateFlow<List<AddressModel>>(emptyList())
+    val address: StateFlow<List<AddressModel>> = _address
+
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
     private val _message = MutableStateFlow("")
     val message: StateFlow<String> = _message
 
-    fun updateCustomerAddress(customerId: String = "gid://shopify/Customer/7555870916746", address: AddressModel) {
+
+
+    fun updateCustomerAddress(
+        customerId: String,
+        email: String,
+        address: AddressModel) {
+
+        val newAddressList = _address.value.toMutableList()
+        newAddressList.add(address)
+
         viewModelScope.launch {
-            repository.updateCustomerAddress(customerId,address).collect{
-                when(it)
+            repository.updateCustomerAddress(customerId,newAddressList).collect{state->
+                when(state)
                 {
                     is State.Error -> {
-                        _message.value = it.message.toString()
+                        _message.value = state.message
                         _loading.value = false
                     }
                     State.Loading -> {
@@ -36,6 +48,28 @@ class AddressViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         _message.value = "Address updated successfully"
+                        getCustomerAddressesByEmail(email)
+                    }
+                }
+            }
+        }
+    }
+
+
+    fun getCustomerAddressesByEmail(email : String) {
+        viewModelScope.launch {
+            repository.getCustomerAddressesByEmail(email).collect{state->
+                when(state)
+                {
+                    is State.Error -> {
+                        _message.value = state.message
+                        _loading.value = false
+                    }
+                    State.Loading -> {
+                        _loading.value = true
+                    }
+                    is State.Success -> {
+                        _address.value = state.data
                         _loading.value = false
                     }
                 }
