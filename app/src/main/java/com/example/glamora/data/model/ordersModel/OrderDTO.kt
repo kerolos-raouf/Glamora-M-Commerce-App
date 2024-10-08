@@ -1,4 +1,4 @@
-package com.example.glamora.data.model.orders
+package com.example.glamora.data.model.ordersModel
 
 data class OrderDTO(
     val id: String,

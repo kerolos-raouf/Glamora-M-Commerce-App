@@ -7,14 +7,13 @@ import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.AvailableProductsModel
+import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.DiscountCodeDTO
+import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.data.model.brandModel.Image
-import com.example.glamora.data.model.orders.OrderDTO
-import com.example.glamora.data.model.orders.LineItemDTO
-
 
 
 fun ProductQuery.Products.toProductDTO() : List<ProductDTO>
@@ -107,6 +106,52 @@ fun UpdateCustomerAddressMutation.Address.toAddressModel(): AddressModel {
 
     return addressModel
 }
+
+fun GetDraftOrdersByCustomerQuery.DraftOrders.toCartItemsDTO() : List<CartItemDTO> {
+    val cartItems = mutableListOf<CartItemDTO>()
+
+    nodes.forEach {draftOrder->
+        if(draftOrder.tags[0] == Constants.CART_DRAFT_ORDER_KEY)
+        {
+            draftOrder.lineItems.nodes.forEach { lineItem ->
+                cartItems.add(CartItemDTO(
+                    id = lineItem.variant?.id ?: Constants.UNKNOWN,
+                    draftOrderId = draftOrder.id ?: Constants.UNKNOWN,
+                    title = lineItem.title ?: Constants.UNKNOWN,
+                    quantity = lineItem.quantity ?: 0,
+                    inventoryQuantity = lineItem.variant?.inventoryQuantity ?: 0,
+                    price = lineItem.variant?.price.toString() ?: "0",
+                    image = lineItem.variant?.product?.media?.nodes?.get(0)?.onMediaImage?.image?.url?.toString() ?: Constants.UNKNOWN,
+                ))
+            }
+        }
+    }
+
+    return cartItems
+}
+
+fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<FavoriteItemDTO> {
+    val favoritesItems = mutableListOf<FavoriteItemDTO>()
+
+    nodes.forEach {draftOrder->
+        if(draftOrder.tags[0] == Constants.FAVORITES_DRAFT_ORDER_KEY)
+        {
+            draftOrder.lineItems.nodes.forEach { lineItem ->
+                favoritesItems.add(FavoriteItemDTO(
+                    id = lineItem.variant?.id ?: Constants.UNKNOWN,
+                    draftOrderId = draftOrder.id ?: Constants.UNKNOWN,
+                    title = lineItem.title ?: Constants.UNKNOWN,
+                    price = lineItem.variant?.price.toString() ?: "0",
+                    image = lineItem.variant?.product?.media?.nodes?.get(0)?.onMediaImage?.image?.url?.toString() ?: Constants.UNKNOWN,
+                ))
+            }
+        }
+    }
+
+    return favoritesItems
+}
+
+
 
 //fun OrdersQuery.Orders.toOrderDTO(): List<OrderDTO> {
 //    val orders = mutableListOf<OrderDTO>()
