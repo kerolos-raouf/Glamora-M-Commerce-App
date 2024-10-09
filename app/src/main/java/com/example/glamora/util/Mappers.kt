@@ -156,7 +156,7 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<Favori
     return favoritesItems
 }
 
-fun GetCustomerByEmailQuery.Address.toAddressMode(): AddressModel {
+fun GetCustomerByEmailQuery.Address.toAddressModel(): AddressModel {
     return AddressModel(
         city = city ?: Constants.UNKNOWN,
         country = country ?: Constants.UNKNOWN,

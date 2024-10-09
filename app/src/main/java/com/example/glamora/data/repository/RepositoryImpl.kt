@@ -38,6 +38,7 @@ import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
+import com.example.glamora.util.toAddressMode
 import com.example.glamora.data.model.ordersModel.LineItemDTO
 import com.example.glamora.data.model.ordersModel.OrderDTO
 import com.example.glamora.util.toAddressMode
@@ -377,7 +378,8 @@ class RepositoryImpl @Inject constructor(
         customerId: String,
         customerEmail: String,
         cartItems: List<CartItemDTO>,
-        discountAmount: Double
+        discountAmount: Double,
+        address: AddressModel
     ): Flow<State<String>> = flow {
         emit(State.Loading)
         try {
@@ -401,7 +403,17 @@ class RepositoryImpl @Inject constructor(
                     appliedDiscount = Optional.Present(DraftOrderAppliedDiscountInput(
                         value = discountAmount,
                         valueType = DraftOrderAppliedDiscountType.PERCENTAGE
-                      )
+                    )
+                    ),
+                    billingAddress = Optional.Present(
+                        MailingAddressInput(
+                            address1 = Optional.Present(address.street),
+                            city = Optional.Present(address.city),
+                            country = Optional.Present(address.country),
+                            firstName = Optional.Present(address.firstName),
+                            lastName = Optional.Present(address.lastName),
+                            phone = Optional.Present(address.phone)
+                        )
                     )
                 )
             )).execute()
@@ -438,6 +450,7 @@ class RepositoryImpl @Inject constructor(
             emit(State.Error(e.message.toString()))
         }
     }
+
     override fun getCustomerAddressesByEmail(email: String): Flow<State<List<AddressModel>>> = flow {
         val query = GetCustomerByEmailQuery(email)
 
@@ -453,7 +466,7 @@ class RepositoryImpl @Inject constructor(
                     val addresses = customerEdges[0].node.addresses
                     val addressModelList = mutableListOf<AddressModel>()
                     addresses.forEach {
-                        addressModelList.add(it.toAddressMode())
+                        addressModelList.add(it.toAddressModel())
                     }
                     emit(State.Success(addressModelList))
                 } else {
@@ -464,7 +477,6 @@ class RepositoryImpl @Inject constructor(
             emit(State.Error(e.message.toString()))
         }
     }
-
 
     override fun getCustomerUsingEmail(email: String): Flow<State<Customer>> = flow {
         emit(State.Loading)
@@ -600,7 +612,8 @@ class RepositoryImpl @Inject constructor(
                         displayName = "${customer.firstName} ${customer.lastName}",
                         email = customer.email.toString(),
                         userId = customer.id,
-                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1]
+                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1],
+                        addresses = customer.addresses.map { it.toAddressModel() }
                     )
                     emit(State.Success(customerInfo))
                 } else {
@@ -653,6 +666,7 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
+
     override fun loginWithEmail(email: String, password: String): Flow<Result<CustomerInfo>> =
         flow {
             val result = firebaseHandler.signInWithEmail(email, password)
@@ -698,6 +712,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     override fun signOut() {
-        firebaseHandler.signOut()
+         firebaseHandler.signOut()
     }
+
 }

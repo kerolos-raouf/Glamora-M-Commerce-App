@@ -1,11 +1,14 @@
 package com.example.glamora.fragmentCart.view
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -14,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.glamora.R
+import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.databinding.CartBottomSheetBinding
@@ -24,7 +28,11 @@ import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.paypal.android.cardpayments.Card
 import com.paypal.android.cardpayments.CardClient
+import com.paypal.android.cardpayments.CardRequest
+import com.paypal.android.cardpayments.threedsecure.SCA
+import com.paypal.android.corepayments.Address
 import com.paypal.android.corepayments.CoreConfig
 import com.paypal.android.corepayments.Environment
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,15 +59,11 @@ class CartFragment : Fragment(),CartItemInterface {
     //custom alert dialog
     private lateinit var customAlertDialog : CustomAlertDialog
 
-    //discount value
+    //cart order values
     private var discountValue = 0.0
     private var discountCode = Constants.UNKNOWN
+    private var address : AddressModel = AddressModel()
 
-
-    //paypal
-    private val clientId = "AQto284OoB8DVcUW4pE4CBMOAQ-LnVV-P88g00FpO7nSCF3ruUWb0KMWe64diUwMWFzDYT3_qdanNCG6"
-    private val secretId = "ECGkdlpIhYXe0rPYNZ4tvMcrNInFrM4J636j7H5n-M_DXiC2x6gykyjDm7XOIrC4PcNZ0dmqbsQRTa2I"
-    private val returnUrl = "com.example.glamora://demo"
 
 
 
@@ -104,6 +108,7 @@ class CartFragment : Fragment(),CartItemInterface {
             }
             binding.cartSwipeRefreshLayout.isRefreshing = false
         }
+
 
         //apply discount code
         binding.cartApplyButton.setOnClickListener {
@@ -153,6 +158,13 @@ class CartFragment : Fragment(),CartItemInterface {
 
     private fun initObservers(){
         cartViewModel.cartItems.observe(viewLifecycleOwner){
+            if(it.isEmpty())
+            {
+                binding.cartEmptyImageView.visibility = View.VISIBLE
+            }else
+            {
+                binding.cartEmptyImageView.visibility = View.GONE
+            }
             mAdapter.submitList(it)
             calculateTotalPrice(it)
         }
@@ -177,7 +189,33 @@ class CartFragment : Fragment(),CartItemInterface {
             }
         }
 
+        //paypal
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                cartViewModel.openApprovalUrlState.collect{url->
+                    if (url.isNotEmpty()){
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                sharedViewModel.operationDoneWithPayPal.collect{state->
+                    if (state){
+                        Log.d("Kerolos", "initObservers: it's done bro don't worry.")
+                        sharedViewModel.operationDoneWithPayPal.value = false
+                    }
+                }
+            }
+        }
+
     }
+
+
 
     private fun showDoneBottomSheet() {
         val doneBottomSheet = BottomSheetDialog(requireContext())
@@ -216,7 +254,9 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     private fun initPayPal(){
-        val config = CoreConfig(clientId, environment = Environment.SANDBOX)
+
+        val config = CoreConfig(Constants.CLIENT_ID, environment = Environment.SANDBOX)
+
         val cardClient = CardClient(requireActivity(),config)
 
 
@@ -227,27 +267,49 @@ class CartFragment : Fragment(),CartItemInterface {
         bottomSheet.setCancelable(true)
         bottomSheet.setContentView(bottomSheetBinding.root)
 
-        bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
-            bottomSheet.dismiss()
-
-            //create order from drat order
-            cartViewModel.createFinalDraftOrder(
-                customerId = sharedViewModel.currentCustomerInfo.value.userId,
-                customerEmail = sharedViewModel.currentCustomerInfo.value.email,
-                discountAmount = discountValue * 100
-            )
-            discountValue = 0.0
-            if(discountCode != Constants.UNKNOWN)
+        bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked)
             {
-                sharedViewModel.setSharedPrefBoolean(discountCode,true)
-                discountCode = Constants.UNKNOWN
+                bottomSheetBinding.bottomSheetPaypalButton.visibility = View.VISIBLE
+                bottomSheetBinding.bottomSheetPayNowButton.visibility = View.GONE
             }
+        }
+
+        bottomSheetBinding.bottomSheetPaymentMethodsCashOnDeliveryRadio.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked)
+            {
+                bottomSheetBinding.bottomSheetPaypalButton.visibility = View.GONE
+                bottomSheetBinding.bottomSheetPayNowButton.visibility = View.VISIBLE
+            }
+        }
 
 
-            if(bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.isChecked){
+
+
+        bottomSheetBinding.bottomSheetDetailsLinearLayout.setOnClickListener {
+            showPopUpMessage(it)
+        }
+
+        bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
+
+            if(address.city != Constants.UNKNOWN)
+            {
+                finishDraftOrder()
+                bottomSheet.dismiss()
+            }else
+            {
+                Toast.makeText(requireContext(), "Please add your address", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        bottomSheetBinding.bottomSheetPaypalButton.setOnClickListener {
+            if(address.city != Constants.UNKNOWN)
+            {
                 payWithCard()
-            }else{
-
+                bottomSheet.dismiss()
+            }else
+            {
+                Toast.makeText(requireContext(), "Please add your address", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -255,8 +317,48 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
 
-    private fun payWithCard(){
+    private fun showPopUpMessage(view : View) {
+        val popupMenu = PopupMenu(requireContext(),view)
+        val addresses = sharedViewModel.currentCustomerInfo.value.addresses
+        if(addresses.isNotEmpty())
+        {
+            addresses.forEachIndexed { index, addressModel ->
+                popupMenu.menu.add(0,index,0,"${addressModel.country}-${addressModel.city}-${addressModel.street}")
+            }
 
+            popupMenu.setOnMenuItemClickListener {menuItem ->
+                address = sharedViewModel.currentCustomerInfo.value.addresses[menuItem.itemId]
+                bottomSheetBinding.bottomSheetUserName.text = "Name : ${address.firstName}"
+                bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}-${address.city}-${address.street}"
+                true
+            }
+        }else
+        {
+            popupMenu.menu.add(0,0,0,"<There is no addresses>")
+        }
+        popupMenu.show()
+    }
+
+
+    private fun finishDraftOrder(){
+        //create order from drat order
+        cartViewModel.createFinalDraftOrder(
+            customerId = sharedViewModel.currentCustomerInfo.value.userId,
+            customerEmail = sharedViewModel.currentCustomerInfo.value.email,
+            discountAmount = discountValue * 100,
+            address = address
+        )
+        discountValue = 0.0
+        if(discountCode != Constants.UNKNOWN)
+        {
+            sharedViewModel.setSharedPrefBoolean(discountCode,true)
+            discountCode = Constants.UNKNOWN
+        }
+    }
+
+
+    private fun payWithCard(){
+        cartViewModel.startOrder()
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {

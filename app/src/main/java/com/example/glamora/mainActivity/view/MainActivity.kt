@@ -1,10 +1,12 @@
 package com.example.glamora.mainActivity.view
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 
@@ -107,5 +109,36 @@ class MainActivity : AppCompatActivity(), Communicator {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER)
     }
+
+
+    ///pay pal
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        Log.d("Kerolos", "onNewIntent: $intent")
+
+        intent.data?.let { uri ->
+            val opType = uri.getQueryParameter("opType")
+            val token = uri.getQueryParameter("token")
+            val payerId = uri.getQueryParameter("PayerID")
+
+            Log.d("Kerolos", "Operation Type: $opType, Token: $token, PayerID: $payerId")
+            sharedViewModel.operationDoneWithPayPal.value = true
+
+            when (opType) {
+                "payment" -> {
+                    if (token != null && payerId != null) {
+                        //captureOrder(token, payerId)
+                    } else {
+                        Log.e("Kerolos", "Token or PayerID is null.")
+                    }
+                }
+                "cancel" -> Toast.makeText(this, "Payment Cancelled", Toast.LENGTH_SHORT).show()
+                else -> Log.e("Kerolos", "Unknown operation type: $opType")
+            }
+        } ?: run {
+            Log.e("Kerolos", "Intent data is null.")
+        }
+    }
+
 
 }
