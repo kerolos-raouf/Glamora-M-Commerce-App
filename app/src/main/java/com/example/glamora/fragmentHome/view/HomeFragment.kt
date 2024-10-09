@@ -90,26 +90,30 @@ class HomeFragment : Fragment() {
         navController = Navigation.findNavController(view)
 
         initHome()
+        setUpRecyclerViews()
+        callObservables()
+
+    }
+
+    private fun callObservables(){
+        observeRandomProducts()
+        observeBrands()
+        observeFavoriteItemsCount()
+    }
+
+    private fun setUpRecyclerViews(){
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()
         setupDiscountCodesRecyclerView()
         setupCardViews()
-
-        observeRandomProducts()
-        observeBrands()
-        observeFavoriteItemsCount()
-
     }
 
     private fun initHome() {
         val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
-        if(userEmail != Constants.UNKNOWN)
-        {
+        if (userEmail != Constants.UNKNOWN) {
             sharedViewModel.getCustomerInfo(userEmail)
             sharedViewModel.fetchFavoriteItems()
-
         }
-
     }
 
     private fun setupRandomItemsRecyclerView() {
