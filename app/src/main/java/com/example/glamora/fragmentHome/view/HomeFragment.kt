@@ -117,12 +117,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRandomItemsRecyclerView() {
-        productsAdapter = ProductsAdapter(emptyList())
+        productsAdapter = ProductsAdapter(emptyList()) { productId ->
+            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
+            navController.navigate(action)
+        }
+
         binding.homeRvItem.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = productsAdapter
         }
     }
+
 
     private fun setupBrandsRecyclerView() {
         brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
@@ -139,14 +144,16 @@ class HomeFragment : Fragment() {
 
     private fun observeRandomProducts() {
         lifecycleScope.launch {
-            sharedViewModel.productList.collect { randomProducts ->
-                val filteredProducts = randomProducts.shuffled().take(10)
-                productsAdapter.updateData(filteredProducts)
-                productsAdapter = ProductsAdapter(filteredProducts)
-                binding.homeRvItem.adapter = productsAdapter
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.productList.collect { randomProducts ->
+                    val filteredProducts = randomProducts.shuffled().take(10)
+                    productsAdapter.updateData(filteredProducts)
+                }
             }
         }
     }
+
+
 
 
     private fun observeBrands() {
