@@ -1,49 +1,52 @@
-package com.example.glamora.fragmentOrders.viewModel
+package com.example.glamora.fragmentManageLocations.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
-import com.example.glamora.data.model.ordersModel.OrderDTO
+import com.example.glamora.data.model.AddressModel
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OrderViewModel @Inject constructor(
+class ManageAddressesViewModel @Inject constructor(
     private val repository: Repository
-) : ViewModel() {
+) : ViewModel(){
 
-    private val _ordersList = MutableStateFlow<List<OrderDTO>>(emptyList())
-    val ordersList: StateFlow<List<OrderDTO>> get() = _ordersList
+    private val _customerAddresses = MutableStateFlow<List<AddressModel>?>(null)
+    val customerAddresses : StateFlow<List<AddressModel>?> = _customerAddresses
 
-    private val _message = MutableStateFlow("")
-    val message : StateFlow<String> = _message
+    private val _message = MutableSharedFlow<String>()
+    val message : SharedFlow<String> = _message
 
     private val _loading = MutableStateFlow(false)
     val loading : StateFlow<Boolean> = _loading
 
-    fun getOrdersByCustomer(email: String) {
+    fun deleteCustomerAddresses(customerID : String,addresses : List<AddressModel>)
+    {
         viewModelScope.launch {
-            repository.getOrdersByCustomer(email).collect { state ->
-                when (state) {
+            repository.updateCustomerAddress(customerID,addresses).collect { state ->
+                when(state)
+                {
                     is State.Error -> {
-                        _message.value = state.message
+                        _message.emit(state.message)
                         _loading.value = false
                     }
                     State.Loading -> {
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _ordersList.value = state.data
+                        _customerAddresses.value = addresses
                         _loading.value = false
-
                     }
                 }
             }
         }
     }
+
 }

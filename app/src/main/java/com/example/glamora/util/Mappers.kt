@@ -122,6 +122,7 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toCartItemsDTO() : List<CartItemDT
             draftOrder.lineItems.nodes.forEach { lineItem ->
                 cartItems.add(CartItemDTO(
                     id = lineItem.variant?.id ?: Constants.UNKNOWN,
+                    productId = lineItem.product?.id ?: Constants.UNKNOWN,
                     draftOrderId = draftOrder.id ?: Constants.UNKNOWN,
                     title = lineItem.title ?: Constants.UNKNOWN,
                     quantity = lineItem.quantity ?: 0,
@@ -136,6 +137,7 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toCartItemsDTO() : List<CartItemDT
     return cartItems
 }
 
+
 fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<FavoriteItemDTO> {
     val favoritesItems = mutableListOf<FavoriteItemDTO>()
 
@@ -145,6 +147,7 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<Favori
             draftOrder.lineItems.nodes.forEach { lineItem ->
                 favoritesItems.add(FavoriteItemDTO(
                     id = lineItem.variant?.id ?: Constants.UNKNOWN,
+                    productId = lineItem.product?.id ?: Constants.UNKNOWN,
                     draftOrderId = draftOrder.id ?: Constants.UNKNOWN,
                     title = lineItem.title ?: Constants.UNKNOWN,
                     price = lineItem.variant?.price.toString() ?: "0",
@@ -178,6 +181,7 @@ fun GetOrdersByCustomerQuery.Orders.toOrderDTO(): List<OrderDTO> {
         val lineItems = orderNode.lineItems.edges.map { lineItemEdge ->
             val lineItemNode = lineItemEdge.node
             LineItemDTO(
+                id = lineItemNode.id,
                 name = lineItemNode.name,
                 quantity = lineItemNode.quantity,
                 unitPrice = lineItemNode.originalUnitPriceSet.shopMoney.amount.toString(),
@@ -190,6 +194,9 @@ fun GetOrdersByCustomerQuery.Orders.toOrderDTO(): List<OrderDTO> {
             id = orderNode.id,
             name = orderNode.name,
             createdAt = orderNode.createdAt.toString(),
+            address = orderNode.billingAddress?.address1.toString(),
+            country =orderNode.billingAddress?.country.toString(),
+            city = orderNode.billingAddress?.city.toString(),
             totalPrice = orderNode.totalPriceSet.shopMoney.amount.toString(),
             currencyCode = orderNode.totalPriceSet.shopMoney.currencyCode.toString(),
             lineItems = lineItems

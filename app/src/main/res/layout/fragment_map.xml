@@ -15,10 +15,10 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/mapFabGetCurrentLocation"
-            style="@style/CustomFloatingActionButton"
             android:layout_width="wrap_content"
-
             android:layout_height="wrap_content"
+            style="@style/CustomFloatingActionButton"
+            app:tint="@color/white"
             android:layout_margin="16dp"
             android:contentDescription="Mian FAB"
 

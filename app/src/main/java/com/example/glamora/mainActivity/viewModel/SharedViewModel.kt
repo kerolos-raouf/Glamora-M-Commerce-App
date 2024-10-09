@@ -28,6 +28,8 @@ class SharedViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
+
+
     private val _discountCodes = MutableStateFlow<List<DiscountCodeDTO>>(emptyList())
     val discountCodes: StateFlow<List<DiscountCodeDTO>> = _discountCodes
 
@@ -54,6 +56,13 @@ class SharedViewModel @Inject constructor(
 
     init {
         observeOnInternetState()
+        viewModelScope.launch {
+            _currentCustomerInfo.collect { customerInfo ->
+                if (customerInfo.userId != Constants.UNKNOWN) {
+                    fetchFavoriteItems()
+                }
+            }
+        }
     }
 
     fun setCustomerInfo(customerInfo: CustomerInfo){
@@ -319,10 +328,8 @@ class SharedViewModel @Inject constructor(
                 when(state)
                 {
                     is State.Error -> {
-
                     }
                     State.Loading -> {
-
                     }
                     is State.Success -> {
                         _currentCustomerInfo.value = state.data

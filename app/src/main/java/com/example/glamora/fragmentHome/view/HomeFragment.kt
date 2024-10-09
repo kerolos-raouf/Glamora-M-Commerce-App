@@ -34,6 +34,7 @@ import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
+import com.example.glamora.util.State
 import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
@@ -75,6 +76,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -87,35 +89,45 @@ class HomeFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-
         initHome()
+        setUpRecyclerViews()
+        callObservables()
+
+    }
+
+    private fun callObservables(){
+        observeRandomProducts()
+        observeBrands()
+        observeFavoriteItemsCount()
+    }
+
+    private fun setUpRecyclerViews(){
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()
         setupDiscountCodesRecyclerView()
         setupCardViews()
-
-        observeRandomProducts()
-        observeBrands()
-
-
     }
 
     private fun initHome() {
-        ///fetch user date
         val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
-        if(userEmail != Constants.UNKNOWN)
-        {
+        if (userEmail != Constants.UNKNOWN) {
             sharedViewModel.getCustomerInfo(userEmail)
+            sharedViewModel.fetchFavoriteItems()
         }
     }
 
     private fun setupRandomItemsRecyclerView() {
-        productsAdapter = ProductsAdapter(emptyList())
+        productsAdapter = ProductsAdapter(emptyList()) { productId ->
+            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
+            navController.navigate(action)
+        }
+
         binding.homeRvItem.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = productsAdapter
         }
     }
+
 
     private fun setupBrandsRecyclerView() {
         brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
@@ -132,14 +144,16 @@ class HomeFragment : Fragment() {
 
     private fun observeRandomProducts() {
         lifecycleScope.launch {
-            sharedViewModel.productList.collect { randomProducts ->
-                val filteredProducts = randomProducts.shuffled().take(10)
-                productsAdapter.updateData(filteredProducts)
-                productsAdapter = ProductsAdapter(filteredProducts)
-                binding.homeRvItem.adapter = productsAdapter
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.productList.collect { randomProducts ->
+                    val filteredProducts = randomProducts.shuffled().take(10)
+                    productsAdapter.updateData(filteredProducts)
+                }
             }
         }
     }
+
+
 
 
     private fun observeBrands() {
@@ -176,9 +190,6 @@ class HomeFragment : Fragment() {
 
 
     private fun setupDiscountCodesRecyclerView() {
-
-
-
 
         val imagesList = listOf(
             R.drawable.promotion,
@@ -227,6 +238,34 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+
+    private fun observeFavoriteItemsCount() {
+        lifecycleScope.launch {
+            sharedViewModel.favoriteItemsState.collect { state ->
+                when (state) {
+                    is State.Success -> {
+                        val favoriteItemsCount = state.data.size
+                        binding.favoriteCounter.text = favoriteItemsCount.toString()
+                        if (favoriteItemsCount == 0) {
+                            binding.favoriteCounter.visibility = View.GONE
+                        } else {
+                            binding.favoriteCounter.visibility = View.VISIBLE
+                        }
+                    }
+                    is State.Error -> {
+                        binding.favoriteCounter.visibility = View.GONE
+                    }
+                    is State.Loading -> {
+                        binding.favoriteCounter.visibility = View.GONE
+                    }
+                }
+            }
+        }
+    }
+
+
+
 
     override fun onStart() {
         super.onStart()

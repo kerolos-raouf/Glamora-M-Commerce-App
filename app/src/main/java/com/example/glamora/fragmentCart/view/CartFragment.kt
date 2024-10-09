@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
@@ -24,20 +25,16 @@ import com.example.glamora.databinding.CartBottomSheetBinding
 import com.example.glamora.databinding.FragmentCartBinding
 import com.example.glamora.databinding.OperationDoneBottomSheetBinding
 import com.example.glamora.fragmentCart.viewModel.CartViewModel
+import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.paypal.android.cardpayments.Card
 import com.paypal.android.cardpayments.CardClient
-import com.paypal.android.cardpayments.CardRequest
-import com.paypal.android.cardpayments.threedsecure.SCA
-import com.paypal.android.corepayments.Address
 import com.paypal.android.corepayments.CoreConfig
 import com.paypal.android.corepayments.Environment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlin.math.truncate
 
 
 @AndroidEntryPoint
@@ -65,6 +62,10 @@ class CartFragment : Fragment(),CartItemInterface {
     private var address : AddressModel = AddressModel()
 
 
+
+    private val communicator: Communicator by lazy {
+        requireActivity() as Communicator
+    }
 
 
     override fun onCreateView(
@@ -129,7 +130,6 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
 
-        initPayPal()
 
         bottomSheet = BottomSheetDialog(requireContext())
         bottomSheetBinding = CartBottomSheetBinding.inflate(layoutInflater)
@@ -196,6 +196,7 @@ class CartFragment : Fragment(),CartItemInterface {
                     if (url.isNotEmpty()){
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                         startActivity(intent)
+                        cartViewModel.openApprovalUrlState.value = ""
                     }
                 }
             }
@@ -206,7 +207,7 @@ class CartFragment : Fragment(),CartItemInterface {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 sharedViewModel.operationDoneWithPayPal.collect{state->
                     if (state){
-                        Log.d("Kerolos", "initObservers: it's done bro don't worry.")
+                        finishDraftOrder()
                         sharedViewModel.operationDoneWithPayPal.value = false
                     }
                 }
@@ -253,14 +254,6 @@ class CartFragment : Fragment(),CartItemInterface {
         }
     }
 
-    private fun initPayPal(){
-
-        val config = CoreConfig(Constants.CLIENT_ID, environment = Environment.SANDBOX)
-
-        val cardClient = CardClient(requireActivity(),config)
-
-
-    }
 
 
     private fun showBottomSheet() {
@@ -282,12 +275,20 @@ class CartFragment : Fragment(),CartItemInterface {
                 bottomSheetBinding.bottomSheetPayNowButton.visibility = View.VISIBLE
             }
         }
+        if(sharedViewModel.currentCustomerInfo.value.displayName != Constants.UNKNOWN)
+        {
+            bottomSheetBinding.bottomSheetUserName.text = "Name : ${sharedViewModel.currentCustomerInfo.value.displayName}"
+        }
+
+        if(sharedViewModel.currentCustomerInfo.value.addresses.isNotEmpty())
+        {
+            bottomSheetBinding.bottomSheetUserAddress.text =
+                "Address : ${sharedViewModel.currentCustomerInfo.value.addresses[0].country}, ${sharedViewModel.currentCustomerInfo.value.addresses[0].city}, ${sharedViewModel.currentCustomerInfo.value.addresses[0].street}"
+        }
 
 
-
-
-        bottomSheetBinding.bottomSheetDetailsLinearLayout.setOnClickListener {
-            showPopUpMessage(it)
+        bottomSheetBinding.bottomSheetSetNewAddressButton.setOnClickListener {
+            showPopUpAddresses(bottomSheetBinding.bottomSheetDetailsLinearLayout)
         }
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
@@ -303,7 +304,11 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
         bottomSheetBinding.bottomSheetPaypalButton.setOnClickListener {
-            if(address.city != Constants.UNKNOWN)
+            if(cartViewModel.cartItems.value?.isEmpty() == true)
+            {
+                Toast.makeText(requireContext(), "Your cart is empty", Toast.LENGTH_SHORT).show()
+            }
+            else if(address.city != Constants.UNKNOWN)
             {
                 payWithCard()
                 bottomSheet.dismiss()
@@ -317,19 +322,28 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
 
-    private fun showPopUpMessage(view : View) {
+    private fun showPopUpAddresses(view : View) {
         val popupMenu = PopupMenu(requireContext(),view)
         val addresses = sharedViewModel.currentCustomerInfo.value.addresses
         if(addresses.isNotEmpty())
         {
+            popupMenu.menu.add(0,0,0,"+Add new address")
             addresses.forEachIndexed { index, addressModel ->
-                popupMenu.menu.add(0,index,0,"${addressModel.country}-${addressModel.city}-${addressModel.street}")
+                popupMenu.menu.add(0,index+1,0,"${addressModel.country}, ${addressModel.city}, ${addressModel.street}")
             }
 
             popupMenu.setOnMenuItemClickListener {menuItem ->
-                address = sharedViewModel.currentCustomerInfo.value.addresses[menuItem.itemId]
-                bottomSheetBinding.bottomSheetUserName.text = "Name : ${address.firstName}"
-                bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}-${address.city}-${address.street}"
+                if(menuItem.itemId == 0)
+                {
+                    findNavController().navigate(R.id.action_cartFragment_to_mapFragment)
+                    bottomSheet.dismiss()
+                }else
+                {
+                    address = sharedViewModel.currentCustomerInfo.value.addresses[menuItem.itemId-1]
+                    bottomSheetBinding.bottomSheetUserName.text = "Name : ${address.firstName}"
+                    bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}-${address.city}-${address.street}"
+                }
+
                 true
             }
         }else
@@ -386,7 +400,11 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     override fun onItemClicked(item: CartItemDTO) {
-
+        if (communicator.isInternetAvailable())
+        {
+            val action = CartFragmentDirections.actionCartFragmentToProductDetailsFragment(item.productId)
+            findNavController().navigate(action)
+        }
     }
 
     override fun onReachedMaxQuantity(item: CartItemDTO) {
@@ -401,6 +419,11 @@ class CartFragment : Fragment(),CartItemInterface {
         binding.cartItemsNumber.text = "${String.format("%.2f", oldItemsPrice - newItemsPrice)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
         binding.cartTotalPriceNumber.text = "${String.format("%.2f", aftersDiscount)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
         binding.cartDiscountNumber.text = "${String.format("%.2f", newDiscount)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
+    }
+
+    override fun onStart() {
+        super.onStart()
+        communicator.showBottomNav()
     }
 
 }
