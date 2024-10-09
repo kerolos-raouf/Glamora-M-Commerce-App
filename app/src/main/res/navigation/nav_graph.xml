@@ -115,13 +115,16 @@
             android:id="@+id/action_ordersFragment_to_orderDetailsFragment"
             app:destination="@id/orderDetailsFragment" >
         <argument
-            android:name="orderID"
+            android:name="orderId"
             app:argType="string"/>
         </action>
     </fragment>
     <fragment
         android:id="@+id/orderDetailsFragment"
         android:name="com.example.glamora.fragmentOrderDetails.view.OrderDetailsFragment"
-        android:label="OrderDetailsFragment" />
-
+        android:label="OrderDetailsFragment" >
+    <argument
+        android:name="orderId"
+        app:argType="string" />
+    </fragment>
 </navigation>
