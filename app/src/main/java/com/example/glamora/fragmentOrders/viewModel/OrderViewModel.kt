@@ -25,10 +25,10 @@ class OrderViewModel @Inject constructor(
             repository.getOrdersByCustomer(email).collect { state ->
                 when (state) {
                     is State.Error -> {
-                        // Handle error state
+                        Log.d("OrderViewModel", "fetchOrder: ${state.message}")
                     }
                     State.Loading -> {
-                        // Show loading indicator
+                        Log.d("OrderViewModel", "Loading Order data...")
                     }
                     is State.Success -> {
                         _ordersList.value = state.data

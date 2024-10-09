@@ -11,7 +11,8 @@ import com.example.glamora.data.model.ordersModel.LineItemDTO
 import com.example.glamora.data.model.ordersModel.OrderDTO
 import com.example.glamora.databinding.OrderListItemBinding
 
-class OrdersAdapter(private var orders: List<OrderDTO>) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
+class OrdersAdapter(private var orders: List<OrderDTO>,
+                    private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
 
     class OrderViewHolder(private val binding: OrderListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(lineItem: LineItemDTO) {
@@ -32,6 +33,9 @@ class OrdersAdapter(private var orders: List<OrderDTO>) : RecyclerView.Adapter<O
         for (lineItem in order.lineItems) {
             holder.bind(lineItem)
         }
+        holder.itemView.setOnClickListener {
+            onItemClick(order.id)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -42,4 +46,5 @@ class OrdersAdapter(private var orders: List<OrderDTO>) : RecyclerView.Adapter<O
         orders = newOrders
         notifyDataSetChanged()
     }
+
 }

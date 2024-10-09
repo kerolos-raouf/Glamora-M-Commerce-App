@@ -1,6 +1,7 @@
 package com.example.glamora.fragmentOrders.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -52,28 +53,17 @@ class OrdersFragment : Fragment() {
         }
 
         setupOrderRecyclerView()
-
-        val email = sharedViewModel.currentCustomerInfo.value.email
-
-        orderViewModel.getOrdersByCustomer(email)
-
-        lifecycleScope.launchWhenStarted {
-            orderViewModel.ordersList.collect { orders ->
-                ordersAdapter.updateData(orders)            }
-        }
-
-
-
-        //observeOnOrder()
+        observeOnOrder()
     }
 
-    private fun setupOrderRecyclerView(){
-        ordersAdapter = OrdersAdapter(emptyList())
+    private fun setupOrderRecyclerView() {
+        ordersAdapter = OrdersAdapter(emptyList()) { orderId ->
+            navigateToOrderDetails(orderId)
+        }
         ordersFragmentBinding.ordersRecyclerview.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = ordersAdapter
         }
-
     }
 
     private fun observeOnOrder(){
@@ -86,4 +76,8 @@ class OrdersFragment : Fragment() {
         }
     }
 
+    private fun navigateToOrderDetails(orderId: String) {
+        val action = OrdersFragmentDirections.actionOrdersFragmentToOrderDetailsFragment(orderId)
+        navController.navigate(action)
+    }
 }
