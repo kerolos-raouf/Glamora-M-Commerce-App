@@ -82,3 +82,12 @@ fun setCreatedAt(view: TextView, createdAt: String?) {
         "Order Date:         $createdAt"
     }
 }
+
+@BindingAdapter("app:setOrderLocation")
+fun setOrderLocation(view: TextView, location: String?) {
+    view.text = if (location.isNullOrEmpty()) {
+        ""
+    } else {
+        "Address Details:         $location"
+    }
+}
