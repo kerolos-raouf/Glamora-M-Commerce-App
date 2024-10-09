@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/productDetailsFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -127,4 +127,18 @@
         android:name="orderId"
         app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/productDetailsFragment"
+        android:name="com.example.glamora.fragmentProductDetails.view.ProductDetailsFragment"
+        android:label="Product Details"
+        tools:layout="@layout/fragment_product_details">
+        <action
+            android:id="@+id/action_productDetailsFragment_to_reviewsFragment"
+            app:destination="@id/reviewsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviewsFragment"
+        android:name="com.example.glamora.fragmentProductDetails.view.ReviewsFragment"
+        android:label="Product Reviews"
+        tools:layout="@layout/fragment_reviews" />
 </navigation>
