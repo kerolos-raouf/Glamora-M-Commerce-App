@@ -231,28 +231,32 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+
     private fun observeFavoriteItemsCount() {
         lifecycleScope.launch {
-                sharedViewModel.favoriteItemsState.collect { state ->
-                    when (state) {
-                        is State.Success -> {
-                            Log.d("FAV","${state.data.size}")
-                            val favoriteItemsCount = state.data.size
-                            binding.favoriteCounter.text = favoriteItemsCount.toString()
+            sharedViewModel.favoriteItemsState.collect { state ->
+                when (state) {
+                    is State.Success -> {
+                        val favoriteItemsCount = state.data.size
+                        binding.favoriteCounter.text = favoriteItemsCount.toString()
+                        if (favoriteItemsCount == 0) {
+                            binding.favoriteCounter.visibility = View.GONE
+                        } else {
                             binding.favoriteCounter.visibility = View.VISIBLE
                         }
-                        is State.Error -> {
-                            Log.d("FAV","error")
-                            binding.favoriteCounter.visibility = View.GONE
-                        }
-                        is State.Loading -> {
-                            Log.d("FAV","loading")
-                            binding.favoriteCounter.visibility = View.GONE
-                        }
+                    }
+                    is State.Error -> {
+                        binding.favoriteCounter.visibility = View.GONE
+                    }
+                    is State.Loading -> {
+                        binding.favoriteCounter.visibility = View.GONE
                     }
                 }
+            }
         }
     }
+
 
 
 
