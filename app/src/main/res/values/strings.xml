@@ -101,6 +101,7 @@
     <string name="date">Order Date</string>
     <string name="payment_details">Payment Details</string>
     <string name="itemPrice">Item price</string>
+    <string name="manage_locations">Manage Locations</string>
 
 
 </resources>

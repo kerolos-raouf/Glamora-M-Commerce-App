@@ -63,6 +63,7 @@ class ProfileFragment : Fragment() {
             sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN)
             profileViewModel.signOut()
             findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+            findNavController().popBackStack()
         }
     }
 

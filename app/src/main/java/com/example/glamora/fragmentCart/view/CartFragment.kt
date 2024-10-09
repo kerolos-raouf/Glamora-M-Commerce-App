@@ -178,7 +178,6 @@ class CartFragment : Fragment(),CartItemInterface {
                 cartViewModel.showDoneBottomSheet.collect{
                     if (it){
                         showDoneBottomSheet()
-                        cartViewModel.showDoneBottomSheet.value = false
                     }
                 }
             }
@@ -272,10 +271,8 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
 
-
-
-        bottomSheetBinding.bottomSheetDetailsLinearLayout.setOnClickListener {
-            showPopUpAddresses(it)
+        bottomSheetBinding.bottomSheetSetNewAddressButton.setOnClickListener {
+            showPopUpAddresses(bottomSheetBinding.bottomSheetDetailsLinearLayout)
         }
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {

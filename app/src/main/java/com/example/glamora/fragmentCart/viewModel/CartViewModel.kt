@@ -24,7 +24,9 @@ import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -42,13 +44,13 @@ class CartViewModel @Inject constructor(
 
 
 
-    private val _message = MutableStateFlow("")
-    val message : StateFlow<String> = _message
+    private val _message = MutableSharedFlow<String>()
+    val message : SharedFlow<String> = _message
 
     private val _loading = MutableStateFlow(false)
     val loading : StateFlow<Boolean> = _loading
 
-     val showDoneBottomSheet = MutableStateFlow(false)
+     val showDoneBottomSheet = MutableSharedFlow<Boolean>()
 
 
     fun fetchCartItems(userId: String){
@@ -56,7 +58,7 @@ class CartViewModel @Inject constructor(
             repository.getCartItemsForCustomer(userId).collect{state ->
                 when(state){
                     is State.Error -> {
-                        _message.value = state.message
+                        _message.emit(state.message)
                         _loading.value = false
                     }
                     State.Loading -> {
@@ -87,7 +89,7 @@ class CartViewModel @Inject constructor(
             repository.deleteDraftOrder(draftOrderId).collect{
                 when(it){
                     is State.Error -> {
-                        _message.value = it.message
+                        _message.emit(it.message)
                         _loading.value = false
                     }
                     State.Loading -> {
@@ -111,7 +113,7 @@ class CartViewModel @Inject constructor(
             repository.updateCartDraftOrder(draftOrderId,newCartItems).collect{state->
                 when(state){
                     is State.Error -> {
-                        _message.value = state.message
+                        _message.emit(state.message)
                         _loading.value = false
                     }
                     State.Loading -> {
@@ -158,7 +160,7 @@ class CartViewModel @Inject constructor(
                         .collect{state->
                             when(state){
                                 is State.Error -> {
-                                    _message.value = state.message
+                                    _message.emit(state.message)
                                     _loading.value = false
                                 }
                                 State.Loading -> {
@@ -173,7 +175,9 @@ class CartViewModel @Inject constructor(
             }
         }else
         {
-            _message.value = "Your cart is empty"
+            viewModelScope.launch {
+                _message.emit("Your cart is empty")
+            }
         }
 
     }
@@ -184,15 +188,15 @@ class CartViewModel @Inject constructor(
             repository.createOrderFromDraftOrder(finalDraftOrderId).collect{ state ->
                 when(state){
                     is State.Error -> {
-                        _message.value = state.message
+                        _message.emit(state.message)
                         _loading.value = false
                     }
                     State.Loading -> {
                     }
                     is State.Success -> {
                         deleteDraftOrder(oldDraftOrderId,userId)
-                        showDoneBottomSheet.value = true
                         deleteDraftOrder(finalDraftOrderId,userId)
+                        showDoneBottomSheet.emit(true)
                     }
                 }
             }

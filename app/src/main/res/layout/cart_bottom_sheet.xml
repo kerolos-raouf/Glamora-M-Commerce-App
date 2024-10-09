@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:text="Name : Unknown"
+                    android:text="Name : No respient was selected"
                     android:textColor="@color/dark_blue"
                     android:textSize="20sp" />
 
@@ -67,9 +67,21 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:text="Address : Unknown"
+                    android:text="Address : No address was selected"
                     android:textColor="@color/dark_blue"
                     android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/bottomSheetSetNewAddressButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="Set Address"
+                    app:backgroundTint="@null"
+                    android:background="@drawable/check_out_button_background"
+                    />
 
             </LinearLayout>
 
