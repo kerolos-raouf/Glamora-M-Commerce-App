@@ -75,6 +75,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_manageLocationsFragment"
+            app:destination="@id/manageLocationsFragment" />
     </fragment>
     <fragment
         android:id="@+id/productListFragment"
@@ -142,4 +145,9 @@
         android:name="com.example.glamora.fragmentProductDetails.view.ReviewsFragment"
         android:label="Product Reviews"
         tools:layout="@layout/fragment_reviews" />
+    <fragment
+        android:id="@+id/manageLocationsFragment"
+        android:name="com.example.glamora.fragmentManageLocations.view.ManageLocationsFragment"
+        android:label="fragment_manage_locations"
+        tools:layout="@layout/fragment_manage_locations" />
 </navigation>

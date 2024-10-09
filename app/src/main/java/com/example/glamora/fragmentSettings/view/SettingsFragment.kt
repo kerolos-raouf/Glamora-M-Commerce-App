@@ -50,6 +50,9 @@ class SettingsFragment : Fragment() {
         binding.settingsDeliveryLocationLayout.setOnClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_mapFragment)
         }
+        binding.settingsManageLocationLayout.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_manageLocationsFragment)
+        }
 
 
         //currency spinner

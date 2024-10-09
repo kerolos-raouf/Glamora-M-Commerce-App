@@ -102,6 +102,7 @@
     <string name="payment_details">Payment Details</string>
     <string name="itemPrice">Item price</string>
     <string name="manage_locations">Manage Locations</string>
+    <string name="my_locations">My Locations</string>
 
 
 </resources>
