@@ -112,6 +112,7 @@ fun UpdateCustomerAddressMutation.Address.toAddressModel(): AddressModel {
     return addressModel
 }
 
+
 fun GetDraftOrdersByCustomerQuery.DraftOrders.toCartItemsDTO() : List<CartItemDTO> {
     val cartItems = mutableListOf<CartItemDTO>()
 

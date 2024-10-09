@@ -38,10 +38,8 @@ import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
-import com.example.glamora.util.toAddressMode
 import com.example.glamora.data.model.ordersModel.LineItemDTO
 import com.example.glamora.data.model.ordersModel.OrderDTO
-import com.example.glamora.util.toAddressMode
 import com.example.glamora.util.toCartItemsDTO
 import com.example.glamora.util.toFavoriteItemsDTO
 import com.example.type.CustomerInput
