@@ -8,10 +8,12 @@
     <string name="login">Log In</string>
     <string name="or">OR</string>
     <string name="err_email_msg">Oops! Your Email Is Not Correct</string>
+    <string name="err_email_msg2">Oops! Email has already been taken</string>
     <string name="err_pass_msg">Oops! Your Password Is Not Correct</string>
     <string name="err_pass_msg2">Oops! Your Password Is Too Small</string>
     <string name="enter_phone">Enter Phone Number</string>
     <string name="err_phone_msg">Oops! Phone Number is Incorrect</string>
+    <string name="err_phone_msg2">Oops! Phone has already been taken</string>
     <string name="sign_up_google">Login with Google</string>
     <string name="log_in_guest">Login As Guest</string>
     <string name="dont_have_account">"Don’t have a account? "</string>
@@ -67,16 +69,31 @@
     <string name="type">Type</string>
     <string name="from">From</string>
     <string name="to">To</string>
-    <string name="remove_filter">CLEAR</string>
+    <string name="remove_filter">REMOVE</string>
     <string name="shipping">Shipping</string>
     <string name="_0">0 EGP</string>
+    <string name="reset">Forgot Password?</string>
+    <string name="_900_00">$900.00</string>
+    <string name="_24">24%</string>
+    <string name="address_details">Address Details</string>
+    <string name="orders">Orders</string>
     <string name="identity">Identity</string>
     <string name="cash_on_delivery">Cash On Delivery</string>
     <string name="pay_now">Pay Now</string>
+    <string name="change_image">Changed Image</string>
+    <string name="sizes">Select Size</string>
+    <string name="colors">Select Color</string>
+    <string name="description">Description</string>
+    <string name="demy_des">The Nike Air Max 270 React ENG combines a full-length React foam midsole with a 270 Max Air unit for unrivaled comfort and a striking visual experience.</string>
+    <string name="review">Review Product</string>
+    <string name="see_reviews">More Reviews</string>
+    <string name="reviewer_one">James Lawson\n</string>
+    <string name="review_one">air max are always very comfortable fit, clean and just perfect in every way. just the box was too small and scrunched the sneakers up a little bit, not sure if the box was always this small but the 90s are and will always be one of my favorites.</string>
+    <string name="review_two">This is really amazing product, i like the design of product, I hope can buy it again!</string>
+    <string name="review_three">air max are always very comfortable fit, clean and just perfect in every way. just the box was too small and scrunched the sneakers up a little bit</string>
+    <string name="review_four">air max are always very comfortable fit, clean and just perfect in every way. just the box was too small  </string>
+    <string name="add_to_card">Add To Card</string>
     <string name="pay_with_card">Pay With Card</string>
-    <string name="reset">Forgot Password?</string>
-    <string name="address_details">Address Details</string>
-    <string name="orders">Orders</string>
     <string name="item">Item</string>
     <string name="product">Product</string>
     <string name="payment">Payment</string>
@@ -84,9 +101,6 @@
     <string name="date">Order Date</string>
     <string name="payment_details">Payment Details</string>
     <string name="itemPrice">Item price</string>
-    <string name="_900_00">$900.00</string>
-    <string name="_24">24%</string>
-    <string name="err_phone_msg2">Oops! Phone has already been taken</string>
-    <string name="err_email_msg2">Oops! Email has already been taken</string>
+
 
 </resources>
