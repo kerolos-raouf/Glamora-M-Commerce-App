@@ -104,7 +104,7 @@ class ProductDetailsFragment : Fragment() {
                 productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite_border)
 
                 if(productDTO != null){
-                    sharedViewModel.deleteFromFavorites(FavoriteItemDTO(variante.id,"",
+                    sharedViewModel.deleteFromFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
                         productDTO!!.title,
                         variante.price,
                         productDTO!!.mainImage))
@@ -117,7 +117,7 @@ class ProductDetailsFragment : Fragment() {
                 productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
 
                 if (productDTO != null){
-                    sharedViewModel.addToFavorites(FavoriteItemDTO(variante.id,"",
+                    sharedViewModel.addToFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
                         productDTO!!.title,
                         variante.price,
                         productDTO!!.mainImage))
@@ -136,6 +136,7 @@ class ProductDetailsFragment : Fragment() {
 
             productDetailsViewModel.addToCard(CartItemDTO(
                 id = variante.id,
+                productId = productDTO!!.id,
                 draftOrderId = "",
                 title = "",
                 quantity = 1,
