@@ -66,6 +66,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="5dp"
 
+            android:visibility="gone"
             android:src="@drawable/icon_favorite"
 
             app:layout_constraintEnd_toStartOf="@+id/cartItemDeleteButton"

@@ -22,12 +22,22 @@
         <action
             android:id="@+id/action_homeFragment_to_favoritesFragment"
             app:destination="@id/favoritesFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
         android:name="com.example.glamora.fragmentCart.view.CartFragment"
         android:label="fragment_cart"
-        tools:layout="@layout/fragment_cart" />
+        tools:layout="@layout/fragment_cart" >
+        <action
+            android:id="@+id/action_cartFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
+        <action
+            android:id="@+id/action_cartFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.glamora.fragmentLogin.view.LoginFragment"
@@ -97,11 +107,19 @@
         android:id="@+id/searchFragment"
         android:name="com.example.glamora.fragmentSearch.view.SearchFragment"
         android:label="search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.glamora.fragmentFavorites.view.FavoritesFragment"
-        android:label="Favorites Products" />
+        android:label="Favorites Products" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addressDetailsFragment"
         android:name="com.example.glamora.fragmentAddressDetails.view.AddressDetailsFragment"
@@ -139,6 +157,9 @@
         <action
             android:id="@+id/action_productDetailsFragment_to_reviewsFragment"
             app:destination="@id/reviewsFragment" />
+        <argument
+            android:name="productId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/reviewsFragment"
@@ -149,5 +170,9 @@
         android:id="@+id/manageLocationsFragment"
         android:name="com.example.glamora.fragmentManageLocations.view.ManageLocationsFragment"
         android:label="fragment_manage_locations"
-        tools:layout="@layout/fragment_manage_locations" />
+        tools:layout="@layout/fragment_manage_locations" >
+        <action
+            android:id="@+id/action_manageLocationsFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
 </navigation>
