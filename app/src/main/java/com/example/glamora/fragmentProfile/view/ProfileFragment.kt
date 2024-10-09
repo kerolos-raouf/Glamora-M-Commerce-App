@@ -62,6 +62,7 @@ class ProfileFragment : Fragment() {
         binding.profileLogOutLayout.setOnClickListener {
             sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN)
             profileViewModel.signOut()
+            findNavController().popBackStack(R.id.action_profileFragment_to_loginFragment,true)
             findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
         }
     }
