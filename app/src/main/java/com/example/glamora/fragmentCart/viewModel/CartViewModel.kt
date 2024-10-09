@@ -48,8 +48,8 @@ class CartViewModel @Inject constructor(
     private val _loading = MutableStateFlow(false)
     val loading : StateFlow<Boolean> = _loading
 
-    private val _showDoneBottomSheet = MutableStateFlow(false)
-    val showDoneBottomSheet : StateFlow<Boolean> = _showDoneBottomSheet
+     val showDoneBottomSheet = MutableStateFlow(false)
+
 
     fun fetchCartItems(userId: String){
         viewModelScope.launch {
@@ -191,7 +191,7 @@ class CartViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         deleteDraftOrder(oldDraftOrderId,userId)
-                        _showDoneBottomSheet.value = true
+                        showDoneBottomSheet.value = true
                         deleteDraftOrder(finalDraftOrderId,userId)
                     }
                 }
@@ -201,8 +201,7 @@ class CartViewModel @Inject constructor(
 
 
     //////////////////pay pal
-    private val _openApprovalUrlState = MutableStateFlow("")
-    val openApprovalUrlState : StateFlow<String> = _openApprovalUrlState
+    val openApprovalUrlState = MutableStateFlow("")
 
     private var orderId = ""
 
@@ -243,7 +242,7 @@ class CartViewModel @Inject constructor(
                 if (approvalLink.isNotEmpty()) {
                     Log.i("Kerolos", "Approval Link: $approvalLink")
                     // Redirect the user to the approval link
-                    _openApprovalUrlState.value = approvalLink
+                    openApprovalUrlState.value = approvalLink
                 } else {
                     Log.e("Kerolos", "Approval link not found in the response.")
 
@@ -270,15 +269,5 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    // Function to capture an order
-    private fun captureOrder(token: String, payerId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val capturedOrderId = payPalRepository.captureOrder(orderId, "10.00", token, payerId)
-            } catch (e: Exception) {
-                Log.d("Kerolos", "captureOrder: ${e.localizedMessage}")
-            }
-        }
-    }
 
 }
