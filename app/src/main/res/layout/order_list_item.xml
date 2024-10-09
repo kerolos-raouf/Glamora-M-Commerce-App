@@ -74,9 +74,21 @@
                 android:textStyle="bold"
                 android:textColor="@color/light_blue"
                 android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/orderlist_cv"
                 app:layout_constraintStart_toStartOf="@id/orderlist_itemName"
                 app:layout_constraintTop_toBottomOf="@+id/orderlist_itemName" />
+
+            <TextView
+                android:id="@+id/orderlist_quantity"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                app:setText="@{String.valueOf(orderItem.quantity)}"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:background="@color/white"
+                android:textColor="@color/dark_blue"
+                app:layout_constraintTop_toBottomOf= "@id/orderlist_itemPrice"
+                app:layout_constraintStart_toStartOf="@id/orderlist_itemPrice"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

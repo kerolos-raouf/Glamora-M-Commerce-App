@@ -57,3 +57,28 @@ fun loadImage(view: ImageView, url: String?) {
             .into(view)
     }
 }
+
+@BindingAdapter("app:setItemPrice")
+fun setItemPrice(view: TextView, price: Double?) {
+    price?.let {
+        view.text = String.format("Item Price: $%.2f", it)
+    }
+}
+
+@BindingAdapter("app:setTotalPrice", "app:setCurrencyCode")
+fun setTotalPrice(view: TextView, totalPrice: String?, currencyCode: String?) {
+    if (totalPrice.isNullOrEmpty()) {
+        view.text = "Total Price: N/A"
+    } else {
+        view.text = "Total Price:       $totalPrice$currencyCode"
+    }
+}
+
+@BindingAdapter("app:setCreatedAt")
+fun setCreatedAt(view: TextView, createdAt: String?) {
+    view.text = if (createdAt.isNullOrEmpty()) {
+        ""
+    } else {
+        "Order Date:         $createdAt"
+    }
+}
