@@ -28,16 +28,11 @@ import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.paypal.android.cardpayments.Card
 import com.paypal.android.cardpayments.CardClient
-import com.paypal.android.cardpayments.CardRequest
-import com.paypal.android.cardpayments.threedsecure.SCA
-import com.paypal.android.corepayments.Address
 import com.paypal.android.corepayments.CoreConfig
 import com.paypal.android.corepayments.Environment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlin.math.truncate
 
 
 @AndroidEntryPoint
@@ -287,7 +282,7 @@ class CartFragment : Fragment(),CartItemInterface {
 
 
         bottomSheetBinding.bottomSheetDetailsLinearLayout.setOnClickListener {
-            showPopUpMessage(it)
+            showPopUpAddresses(it)
         }
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
@@ -317,7 +312,7 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
 
-    private fun showPopUpMessage(view : View) {
+    private fun showPopUpAddresses(view : View) {
         val popupMenu = PopupMenu(requireContext(),view)
         val addresses = sharedViewModel.currentCustomerInfo.value.addresses
         if(addresses.isNotEmpty())
