@@ -24,7 +24,9 @@ import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -42,21 +44,21 @@ class CartViewModel @Inject constructor(
 
 
 
-    private val _message = MutableStateFlow("")
-    val message : StateFlow<String> = _message
+    private val _message = MutableSharedFlow<String>()
+    val message : SharedFlow<String> = _message
 
     private val _loading = MutableStateFlow(false)
     val loading : StateFlow<Boolean> = _loading
 
-    private val _showDoneBottomSheet = MutableStateFlow(false)
-    val showDoneBottomSheet : StateFlow<Boolean> = _showDoneBottomSheet
+     val showDoneBottomSheet = MutableSharedFlow<Boolean>()
+
 
     fun fetchCartItems(userId: String){
         viewModelScope.launch {
             repository.getCartItemsForCustomer(userId).collect{state ->
                 when(state){
                     is State.Error -> {
-                        _message.value = state.message
+                        _message.emit(state.message)
                         _loading.value = false
                     }
                     State.Loading -> {
@@ -87,7 +89,7 @@ class CartViewModel @Inject constructor(
             repository.deleteDraftOrder(draftOrderId).collect{
                 when(it){
                     is State.Error -> {
-                        _message.value = it.message
+                        _message.emit(it.message)
                         _loading.value = false
                     }
                     State.Loading -> {
@@ -111,7 +113,7 @@ class CartViewModel @Inject constructor(
             repository.updateCartDraftOrder(draftOrderId,newCartItems).collect{state->
                 when(state){
                     is State.Error -> {
-                        _message.value = state.message
+                        _message.emit(state.message)
                         _loading.value = false
                     }
                     State.Loading -> {
@@ -158,7 +160,7 @@ class CartViewModel @Inject constructor(
                         .collect{state->
                             when(state){
                                 is State.Error -> {
-                                    _message.value = state.message
+                                    _message.emit(state.message)
                                     _loading.value = false
                                 }
                                 State.Loading -> {
@@ -173,7 +175,9 @@ class CartViewModel @Inject constructor(
             }
         }else
         {
-            _message.value = "Your cart is empty"
+            viewModelScope.launch {
+                _message.emit("Your cart is empty")
+            }
         }
 
     }
@@ -184,15 +188,15 @@ class CartViewModel @Inject constructor(
             repository.createOrderFromDraftOrder(finalDraftOrderId).collect{ state ->
                 when(state){
                     is State.Error -> {
-                        _message.value = state.message
+                        _message.emit(state.message)
                         _loading.value = false
                     }
                     State.Loading -> {
                     }
                     is State.Success -> {
                         deleteDraftOrder(oldDraftOrderId,userId)
-                        _showDoneBottomSheet.value = true
                         deleteDraftOrder(finalDraftOrderId,userId)
+                        showDoneBottomSheet.emit(true)
                     }
                 }
             }
@@ -201,8 +205,7 @@ class CartViewModel @Inject constructor(
 
 
     //////////////////pay pal
-    private val _openApprovalUrlState = MutableStateFlow("")
-    val openApprovalUrlState : StateFlow<String> = _openApprovalUrlState
+    val openApprovalUrlState = MutableStateFlow("")
 
     private var orderId = ""
 
@@ -243,7 +246,7 @@ class CartViewModel @Inject constructor(
                 if (approvalLink.isNotEmpty()) {
                     Log.i("Kerolos", "Approval Link: $approvalLink")
                     // Redirect the user to the approval link
-                    _openApprovalUrlState.value = approvalLink
+                    openApprovalUrlState.value = approvalLink
                 } else {
                     Log.e("Kerolos", "Approval link not found in the response.")
 
@@ -270,15 +273,5 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    // Function to capture an order
-    private fun captureOrder(token: String, payerId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val capturedOrderId = payPalRepository.captureOrder(orderId, "10.00", token, payerId)
-            } catch (e: Exception) {
-                Log.d("Kerolos", "captureOrder: ${e.localizedMessage}")
-            }
-        }
-    }
 
 }
