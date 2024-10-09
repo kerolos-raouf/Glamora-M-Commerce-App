@@ -19,9 +19,9 @@ class OrderLineItemsAdapter(private var lineItems: List<LineItemDTO>,
             binding.orderItem = lineItem
             binding.executePendingBindings()
 
-//            binding.root.setOnClickListener {
-//                onItemClick(lineItem.id) // Trigger navigation by passing the product ID
-//            }
+            binding.root.setOnClickListener {
+                onItemClick(lineItem.id) // Trigger navigation by passing the product ID
+            }
         }
     }
 

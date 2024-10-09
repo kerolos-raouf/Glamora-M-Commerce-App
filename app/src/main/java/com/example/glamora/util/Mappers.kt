@@ -178,7 +178,7 @@ fun GetOrdersByCustomerQuery.Orders.toOrderDTO(): List<OrderDTO> {
         val lineItems = orderNode.lineItems.edges.map { lineItemEdge ->
             val lineItemNode = lineItemEdge.node
             LineItemDTO(
-               // id = lineItemNode.,
+                id = lineItemNode.id,
                 name = lineItemNode.name,
                 quantity = lineItemNode.quantity,
                 unitPrice = lineItemNode.originalUnitPriceSet.shopMoney.amount.toString(),

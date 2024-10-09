@@ -79,7 +79,6 @@ class OrderDetailsFragment : Fragment() {
 
     private fun setupRecyclerView() {
         orderDetailsAdapter = OrderLineItemsAdapter(emptyList()) { productId ->
-            // Navigate to ProductFragment and pass the product ID
             val action = OrderDetailsFragmentDirections.actionOrderDetailsFragmentToProductDetailsFragment(productId)
             navController.navigate(action)
         }
