@@ -20,19 +20,26 @@ class OrderViewModel @Inject constructor(
     private val _ordersList = MutableStateFlow<List<OrderDTO>>(emptyList())
     val ordersList: StateFlow<List<OrderDTO>> get() = _ordersList
 
+    private val _message = MutableStateFlow("")
+    val message : StateFlow<String> = _message
+
+    private val _loading = MutableStateFlow(false)
+    val loading : StateFlow<Boolean> = _loading
+
     fun getOrdersByCustomer(email: String) {
         viewModelScope.launch {
             repository.getOrdersByCustomer(email).collect { state ->
                 when (state) {
                     is State.Error -> {
-                        Log.d("OrderViewModel", "fetchOrder: ${state.message}")
+                        _message.value = state.message
+                        _loading.value = false
                     }
                     State.Loading -> {
-                        Log.d("OrderViewModel", "Loading Order data...")
+                        _loading.value = true
                     }
                     is State.Success -> {
                         _ordersList.value = state.data
-                        Log.d("OrderViewModel", "Successfully fetched orders: ${state.data}")
+                        _loading.value = false
 
                     }
                 }

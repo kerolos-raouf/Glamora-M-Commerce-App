@@ -20,25 +20,33 @@ class OrderDetailsViewModel@Inject constructor(
     private val _orderDetailsList = MutableStateFlow<List<OrderDTO>>(emptyList())
     val orderDetailsList: StateFlow<List<OrderDTO>> get() = _orderDetailsList
 
+    private val _loading = MutableStateFlow(false)
+    val loading : StateFlow<Boolean> = _loading
+
+    private val _message = MutableStateFlow("")
+    val message : StateFlow<String> = _message
+
     fun fetchOrderDetailsById(email: String, orderId: String) {
-        Log.d("OrderDetailsViewModel", "Fetching order details for orderId: $orderId")
 
         viewModelScope.launch {
-            repository.getOrdersByCustomer(email).collect { result ->
-                Log.d("OrderDetailsViewModel", "Raw orders: $result")
+            repository.getOrdersByCustomer(email).collect { state ->
 
-                when (result) {
+                when (state) {
                     is State.Success -> {
-                        val orders = result.data
+                        val orders = state.data
                         val orderList = orders.filterIsInstance<OrderDTO>()
                             .filter { order -> order.id == orderId }
-
-                        Log.d("OrderDetailsViewModel", "Filtered orders: $orderList")
-
                         _orderDetailsList.value = orderList
+                        _loading.value = false
+
+                    } is State.Loading->{
+                    _loading.value = true
                     }
-                    else -> {
-                        Log.d("OrderDetailsViewModel", "No orders found or invalid type")
+
+                    is State.Error -> {
+                        _message.value = state.message
+                        _loading.value = false
+
                     }
                 }
             }

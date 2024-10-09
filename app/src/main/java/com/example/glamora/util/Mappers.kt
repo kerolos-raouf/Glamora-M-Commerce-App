@@ -190,6 +190,9 @@ fun GetOrdersByCustomerQuery.Orders.toOrderDTO(): List<OrderDTO> {
             id = orderNode.id,
             name = orderNode.name,
             createdAt = orderNode.createdAt.toString(),
+            address = orderNode.billingAddress?.address1.toString(),
+            country =orderNode.billingAddress?.country.toString(),
+            city = orderNode.billingAddress?.city.toString(),
             totalPrice = orderNode.totalPriceSet.shopMoney.amount.toString(),
             currencyCode = orderNode.totalPriceSet.shopMoney.currencyCode.toString(),
             lineItems = lineItems

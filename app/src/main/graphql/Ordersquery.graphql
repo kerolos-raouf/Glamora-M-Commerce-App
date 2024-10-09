@@ -5,6 +5,11 @@ query GetOrdersByCustomer($email: String!) {
                 id
                 name
                 createdAt
+                billingAddress{
+                    address1
+                    country
+                    city
+                }
                 totalPriceSet {
                     shopMoney {
                         amount

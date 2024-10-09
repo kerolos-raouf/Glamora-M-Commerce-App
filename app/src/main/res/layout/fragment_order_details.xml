@@ -10,6 +10,9 @@
         <variable
             name="orderItem"
             type="com.example.glamora.data.model.ordersModel.LineItemDTO" />
+        <variable
+            name="viewModel"
+            type="com.example.glamora.fragmentOrderDetails.viewModel.OrderDetailsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,6 +32,21 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/addressLoadingAnimation"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:translationZ="30dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/loading"
+                    app:showProgressBar="@{viewModel.loading}" />
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/ordersDetails_toolbar"
@@ -153,6 +171,8 @@
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
+<!--                            orderItem.unitPrice + ' ' + orderItem.currencyCode-->
+
                             <TextView
                                 android:id="@+id/orderDetails_addressDetals_tv"
                                 android:layout_width="match_parent"
@@ -160,7 +180,7 @@
                                 android:layout_marginStart="8dp"
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
-                                android:text="@string/address_details"
+                                app:setOrderLocation="@{order.address + ' ' + order.city + ' '+ order.country}"
                                 android:maxLines="2"
                                 android:ellipsize="end"
                                 android:textColor="@color/dark_blue"

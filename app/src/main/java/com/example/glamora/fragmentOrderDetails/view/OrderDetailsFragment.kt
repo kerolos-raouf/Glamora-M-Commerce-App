@@ -6,10 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -87,20 +90,21 @@ class OrderDetailsFragment : Fragment() {
     private fun observeOrderDetails() {
         viewLifecycleOwner.lifecycleScope.launch {
             orderDetailsViewModel.orderDetailsList.collect { orderDTOs ->
-                Log.d("OrderDetailsFragment", "Order details collected: $orderDTOs")
-
-                // Assuming you want to take the first order for simplicity
                 order = orderDTOs.firstOrNull()
-                orderDetailsBinding.order = order  // Bind the order after it is fetched
+                orderDetailsBinding.order = order
 
                 val lineItems = order?.lineItems ?: emptyList()
-                Log.d("OrderDetailsFragment", "Flattened line items: $lineItems")
-
-                if (lineItems.isEmpty()) {
-                    Log.d("OrderDetailsFragment", "No line items found")
-                }
-
                 orderDetailsAdapter.updateData(lineItems)
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                orderDetailsViewModel.message.collect{
+                    if (it.isNotEmpty()){
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
