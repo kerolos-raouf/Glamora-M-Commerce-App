@@ -34,6 +34,7 @@ import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
+import com.example.glamora.util.State
 import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
@@ -75,6 +76,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -87,25 +89,30 @@ class HomeFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-
         initHome()
+        setUpRecyclerViews()
+        callObservables()
+
+    }
+
+    private fun callObservables(){
+        observeRandomProducts()
+        observeBrands()
+        observeFavoriteItemsCount()
+    }
+
+    private fun setUpRecyclerViews(){
         setupRandomItemsRecyclerView()
         setupBrandsRecyclerView()
         setupDiscountCodesRecyclerView()
         setupCardViews()
-
-        observeRandomProducts()
-        observeBrands()
-
-
     }
 
     private fun initHome() {
-        ///fetch user date
         val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
-        if(userEmail != Constants.UNKNOWN)
-        {
+        if (userEmail != Constants.UNKNOWN) {
             sharedViewModel.getCustomerInfo(userEmail)
+            sharedViewModel.fetchFavoriteItems()
         }
     }
 
@@ -177,9 +184,6 @@ class HomeFragment : Fragment() {
 
     private fun setupDiscountCodesRecyclerView() {
 
-
-
-
         val imagesList = listOf(
             R.drawable.promotion,
             R.drawable.promotion2,
@@ -227,6 +231,30 @@ class HomeFragment : Fragment() {
             }
         }
     }
+    private fun observeFavoriteItemsCount() {
+        lifecycleScope.launch {
+                sharedViewModel.favoriteItemsState.collect { state ->
+                    when (state) {
+                        is State.Success -> {
+                            Log.d("FAV","${state.data.size}")
+                            val favoriteItemsCount = state.data.size
+                            binding.favoriteCounter.text = favoriteItemsCount.toString()
+                            binding.favoriteCounter.visibility = View.VISIBLE
+                        }
+                        is State.Error -> {
+                            Log.d("FAV","error")
+                            binding.favoriteCounter.visibility = View.GONE
+                        }
+                        is State.Loading -> {
+                            Log.d("FAV","loading")
+                            binding.favoriteCounter.visibility = View.GONE
+                        }
+                    }
+                }
+        }
+    }
+
+
 
     override fun onStart() {
         super.onStart()
