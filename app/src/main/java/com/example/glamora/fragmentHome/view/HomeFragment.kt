@@ -117,12 +117,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRandomItemsRecyclerView() {
-        productsAdapter = ProductsAdapter(emptyList())
+        productsAdapter = ProductsAdapter(emptyList()) { productId ->
+            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
+            navController.navigate(action)
+        }
+
         binding.homeRvItem.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = productsAdapter
         }
     }
+
 
     private fun setupBrandsRecyclerView() {
         brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
@@ -139,14 +144,16 @@ class HomeFragment : Fragment() {
 
     private fun observeRandomProducts() {
         lifecycleScope.launch {
-            sharedViewModel.productList.collect { randomProducts ->
-                val filteredProducts = randomProducts.shuffled().take(10)
-                productsAdapter.updateData(filteredProducts)
-                productsAdapter = ProductsAdapter(filteredProducts)
-                binding.homeRvItem.adapter = productsAdapter
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.productList.collect { randomProducts ->
+                    val filteredProducts = randomProducts.shuffled().take(10)
+                    productsAdapter.updateData(filteredProducts)
+                }
             }
         }
     }
+
+
 
 
     private fun observeBrands() {
@@ -231,28 +238,32 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+
     private fun observeFavoriteItemsCount() {
         lifecycleScope.launch {
-                sharedViewModel.favoriteItemsState.collect { state ->
-                    when (state) {
-                        is State.Success -> {
-                            Log.d("FAV","${state.data.size}")
-                            val favoriteItemsCount = state.data.size
-                            binding.favoriteCounter.text = favoriteItemsCount.toString()
+            sharedViewModel.favoriteItemsState.collect { state ->
+                when (state) {
+                    is State.Success -> {
+                        val favoriteItemsCount = state.data.size
+                        binding.favoriteCounter.text = favoriteItemsCount.toString()
+                        if (favoriteItemsCount == 0) {
+                            binding.favoriteCounter.visibility = View.GONE
+                        } else {
                             binding.favoriteCounter.visibility = View.VISIBLE
                         }
-                        is State.Error -> {
-                            Log.d("FAV","error")
-                            binding.favoriteCounter.visibility = View.GONE
-                        }
-                        is State.Loading -> {
-                            Log.d("FAV","loading")
-                            binding.favoriteCounter.visibility = View.GONE
-                        }
+                    }
+                    is State.Error -> {
+                        binding.favoriteCounter.visibility = View.GONE
+                    }
+                    is State.Loading -> {
+                        binding.favoriteCounter.visibility = View.GONE
                     }
                 }
+            }
         }
     }
+
 
 
 

@@ -11,7 +11,8 @@ import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.databinding.ItemListBinding
 import com.example.glamora.util.Constants
 
-class ProductsAdapter(private var productList: List<ProductDTO>
+class ProductsAdapter(private var productList: List<ProductDTO>,
+                      private val onProductClick: (String) -> Unit
 ) : RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>() {
 
     inner class ProductViewHolder(val binding: ItemListBinding) : RecyclerView.ViewHolder(binding.root)
@@ -29,7 +30,7 @@ class ProductsAdapter(private var productList: List<ProductDTO>
         holder.binding.product = product
         holder.binding.executePendingBindings()
         holder.itemView.setOnClickListener {
-            Log.d("ProductListAdapter", "Product ID: ${product.id}")
+            onProductClick(product.id)
         }
     }
 

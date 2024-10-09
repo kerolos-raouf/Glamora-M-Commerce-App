@@ -78,13 +78,17 @@ class OrderDetailsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        orderDetailsAdapter = OrderLineItemsAdapter(emptyList())
+        orderDetailsAdapter = OrderLineItemsAdapter(emptyList()) { productId ->
+            val action = OrderDetailsFragmentDirections.actionOrderDetailsFragmentToProductDetailsFragment(productId)
+            navController.navigate(action)
+        }
+
         orderDetailsBinding.orderDetailsProductRV.apply {
             adapter = orderDetailsAdapter
             layoutManager = LinearLayoutManager(context)
         }
-        Log.d("OrderDetailsFragment", "RecyclerView setup complete")
     }
+
 
 
     private fun observeOrderDetails() {
