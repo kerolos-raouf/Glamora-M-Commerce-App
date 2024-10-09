@@ -18,6 +18,8 @@
         android:paddingStart="16dp"
         android:paddingTop="10dp"
         android:paddingEnd="16dp"
+        android:clickable="true"
+        android:onClick="@{()->listener.onItemClick(product)}"
         android:paddingBottom="10dp">
 
         <ImageView
