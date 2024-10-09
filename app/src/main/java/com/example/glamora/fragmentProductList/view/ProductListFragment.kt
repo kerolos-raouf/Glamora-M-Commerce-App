@@ -38,7 +38,7 @@ class ProductListFragment : Fragment() {
     private lateinit var binding: FragmentProductListBinding
     private val productListViewModel: ProductListViewModel by activityViewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private lateinit var productRecycleAdapter: ProductListAdapterr
+    private lateinit var productRecycleAdapter: ProductListAdapter
     private lateinit var navController: NavController
     private lateinit var filterDialog: Dialog
     private lateinit var filterBinding: DialogFilterBinding
@@ -91,8 +91,8 @@ class ProductListFragment : Fragment() {
     }
 
     private fun setupProduct() {
-        productRecycleAdapter = ProductListAdapterr(emptyList())
-        binding.rvListOfProduct.apply {
+        productRecycleAdapter = ProductListAdapter(emptyList())
+        binding.listOfProductRecyclerview.apply {
              layoutManager = GridLayoutManager(context, 2)
             adapter = productRecycleAdapter
         }

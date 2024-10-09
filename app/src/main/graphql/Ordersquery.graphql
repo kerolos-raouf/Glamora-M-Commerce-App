@@ -1,0 +1,35 @@
+query GetOrdersByCustomer($email: String!) {
+    orders(first: 10, query: $email) {
+        edges {
+            node {
+                id
+                name
+                createdAt
+                totalPriceSet {
+                    shopMoney {
+                        amount
+                        currencyCode
+                    }
+                }
+                lineItems(first: 5) {
+                    edges {
+                        node {
+
+                            name
+                            quantity
+                            image{
+                                url
+                            }
+                            originalUnitPriceSet {
+                                shopMoney {
+                                    amount
+                                    currencyCode
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

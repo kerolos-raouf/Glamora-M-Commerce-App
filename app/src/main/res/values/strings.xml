@@ -8,12 +8,10 @@
     <string name="login">Log In</string>
     <string name="or">OR</string>
     <string name="err_email_msg">Oops! Your Email Is Not Correct</string>
-    <string name="err_email_msg2">Oops! Email has already been taken</string>
     <string name="err_pass_msg">Oops! Your Password Is Not Correct</string>
     <string name="err_pass_msg2">Oops! Your Password Is Too Small</string>
     <string name="enter_phone">Enter Phone Number</string>
     <string name="err_phone_msg">Oops! Phone Number is Incorrect</string>
-    <string name="err_phone_msg2">Oops! Phone has already been taken</string>
     <string name="sign_up_google">Login with Google</string>
     <string name="log_in_guest">Login As Guest</string>
     <string name="dont_have_account">"Don’t have a account? "</string>
@@ -69,17 +67,26 @@
     <string name="type">Type</string>
     <string name="from">From</string>
     <string name="to">To</string>
-    <string name="remove_filter">REMOVE</string>
+    <string name="remove_filter">CLEAR</string>
     <string name="shipping">Shipping</string>
     <string name="_0">0 EGP</string>
-    <string name="reset">Forgot Password?</string>
-    <string name="_900_00">$900.00</string>
-    <string name="_24">24%</string>
-    <string name="address_details">Address Details</string>
-    <string name="orders">Orders</string>
     <string name="identity">Identity</string>
     <string name="cash_on_delivery">Cash On Delivery</string>
     <string name="pay_now">Pay Now</string>
     <string name="pay_with_card">Pay With Card</string>
+    <string name="reset">Forgot Password?</string>
+    <string name="address_details">Address Details</string>
+    <string name="orders">Orders</string>
+    <string name="item">Item</string>
+    <string name="product">Product</string>
+    <string name="payment">Payment</string>
+    <string name="shipping_details">Shipping Details</string>
+    <string name="date">Order Date</string>
+    <string name="payment_details">Payment Details</string>
+    <string name="itemPrice">Item price</string>
+    <string name="_900_00">$900.00</string>
+    <string name="_24">24%</string>
+    <string name="err_phone_msg2">Oops! Phone has already been taken</string>
+    <string name="err_email_msg2">Oops! Email has already been taken</string>
 
 </resources>
