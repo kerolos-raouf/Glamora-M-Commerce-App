@@ -93,7 +93,12 @@
         android:label="ProductListFragment" >
         <action
             android:id="@+id/action_productListFragment_to_productDetailsFragment"
-            app:destination="@id/productDetailsFragment" />
+            app:destination="@id/productDetailsFragment" >
+        <argument
+            android:name="productId"
+            app:argType="string"/>
+        </action>
+
     </fragment>
 
     <fragment
