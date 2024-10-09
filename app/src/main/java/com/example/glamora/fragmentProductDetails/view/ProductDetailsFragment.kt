@@ -136,7 +136,7 @@ class ProductDetailsFragment : Fragment() {
 
             productDetailsViewModel.addToCard(CartItemDTO(
                 id = variante.id,
-                productId = productDTO!!.id,
+                productDTO!!.id,
                 draftOrderId = "",
                 title = "",
                 quantity = 1,
