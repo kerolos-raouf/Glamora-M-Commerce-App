@@ -5,6 +5,9 @@ query GetDraftOrdersByCustomer($query: String!) {
             tags
             lineItems(first: 100) {
                 nodes {
+                    product{
+                        id
+                    }
                     name
                     quantity
                     title

@@ -402,7 +402,7 @@ class CartFragment : Fragment(),CartItemInterface {
     override fun onItemClicked(item: CartItemDTO) {
         if (communicator.isInternetAvailable())
         {
-            val action = CartFragmentDirections.actionCartFragmentToProductDetailsFragment(item.id)
+            val action = CartFragmentDirections.actionCartFragmentToProductDetailsFragment(item.productId)
             findNavController().navigate(action)
         }
     }
