@@ -2,58 +2,77 @@ package com.example.glamora.fragmentLogin.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.glamora.data.firebase.FirebaseHandler
-import com.example.glamora.data.firebase.LoginState
+import com.example.glamora.data.contracts.Repository
+import com.example.glamora.data.model.customerModels.CustomerInfo
+import com.example.glamora.util.State
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val repository: Repository
+) : ViewModel() {
 
-    private val firebaseHandler: FirebaseHandler = FirebaseHandler()
+    private val _loginState = MutableStateFlow<State<CustomerInfo>?>(null)
+    val loginState: StateFlow<State<CustomerInfo>?> get() = _loginState
 
-    private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
-    val loginState: StateFlow<LoginState> get() = _loginState
+    private val _toastMessage = MutableStateFlow<String?>(null)
+    val toastMessage: StateFlow<String?> get() = _toastMessage
+
+    private val _customerEmail = MutableStateFlow<String?>(null)
+    val customerEmail: StateFlow<String?> get() = _customerEmail
+
+
 
     fun loginWithEmail(email: String, password: String) {
         viewModelScope.launch {
-            firebaseHandler.signIn(email, password) { success, error ->
-                if (success) {
-                    _loginState.value = LoginState.Success(firebaseHandler.getCurrentUser())
-                } else {
-                    _loginState.value = LoginState.Error(error ?: "Unknown error")
-                }
+            _loginState.value = State.Loading
+            repository.loginWithEmail(email, password).collect { result ->
+                result.fold(
+                    onSuccess = {
+                        _customerEmail.value = it.email
+                        _loginState.value = State.Success(it)
+                                },
+                    onFailure = { _loginState.value = State.Error(it.message ?: "Unknown error") }
+                )
             }
         }
     }
 
     fun resetUserPass(email: String) {
         viewModelScope.launch {
-            firebaseHandler.resetPassword(email) { success, error ->
-                if (success) {
-                    _loginState.value = LoginState.Success(null)
-                } else {
-                    _loginState.value = LoginState.Error(error ?: "Failed to send reset email")
-                }
+            _loginState.value = State.Loading
+            repository.resetUserPassword(email).collect { result ->
+                result.fold(
+                    onSuccess = { _toastMessage.value = "Check your email" },
+                    onFailure = {
+                        _loginState.value = State.Error(it.message ?: "Failed to send reset email")
+                    }
+                )
             }
         }
     }
-
 
     fun loginWithGoogle(idToken: String) {
         viewModelScope.launch {
-            firebaseHandler.signInWithGoogle(idToken) { success, error ->
-                if (success) {
-                    _loginState.value = LoginState.Success(firebaseHandler.getCurrentUser())    // firebaseHandler.getCurrentUser()?.email
-                } else {
-                    _loginState.value = LoginState.Error(error ?: "Unknown error")
-                }
+            _loginState.value = State.Loading
+            repository.loginWithGoogle(idToken).collect { result ->
+                result.fold(
+                    onSuccess = {
+                        _customerEmail.value = it.email
+                        _loginState.value = State.Success(it)
+                                },
+                    onFailure = { _loginState.value = State.Error(it.message ?: "Unknown error") }
+                )
             }
         }
     }
 
-//    fun resetLoginState() {
-//        _loginState.value = LoginState.Idle
-//    }
+    fun clearToastMessage() {
+        _toastMessage.value = null
+    }
 
 }

@@ -4,6 +4,9 @@
 
     <data>
 
+        <variable
+            name="cartItem"
+            type="com.example.glamora.data.model.CartItemDTO" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
-            android:text="@string/nike_air_zoom_pegasus_36_miami"
+            app:setText="@{cartItem.title}"
             android:maxLines="2"
             android:ellipsize="end"
 
@@ -72,15 +75,15 @@
             android:id="@+id/cartItemPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/_766_56"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="10dp"
             android:textColor="@color/light_blue"
             android:textSize="15sp"
             android:textStyle="bold"
 
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cartItemImage" />
+            app:layout_constraintBottom_toTopOf="@+id/cartItemQuantityLinearLayout"
+            app:layout_constraintStart_toEndOf="@+id/cartItemImage"
+            app:setPrice="@{cartItem.price}" />
 
 
         <LinearLayout
@@ -114,7 +117,7 @@
                 android:id="@+id/cartItemQuantity"
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
-                android:text="1"
+                app:setText="@{String.valueOf(cartItem.quantity)}"
                 android:gravity="center"
                 android:background="@color/light_gray"
                 />

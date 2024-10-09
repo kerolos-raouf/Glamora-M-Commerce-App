@@ -1,0 +1,7 @@
+mutation CreateDrafterOrder($input: DraftOrderInput!) {
+    draftOrderCreate(input: $input) {
+        draftOrder {
+            id
+        }
+    }
+}

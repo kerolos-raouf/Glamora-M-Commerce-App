@@ -1,0 +1,21 @@
+query GetCustomerByEmail($email: String!) {
+    customers(first: 1 ,query: $email) {
+        edges {
+            node {
+                id
+                firstName
+                lastName
+                email
+                addresses {
+                    firstName
+                    lastName
+                    city
+                    country
+                    address1
+                    phone
+                }
+            }
+        }
+    }
+}
+

@@ -14,7 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/frameLayout"
@@ -22,6 +22,17 @@
                 android:layout_height="match_parent"
                 tools:context=".fragmentLogin.view.LoginFragment">
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:indeterminateTint="@color/light_blue"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/logo"
@@ -231,7 +242,7 @@
                     android:id="@+id/resetBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="15dp"
                     android:clickable="true"
                     android:gravity="center"
                     android:text="@string/reset"
@@ -245,7 +256,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -265,6 +276,8 @@
                         android:layout_height="48dp"
                         android:clickable="true"
                         android:gravity="center"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/register"
                         android:textColor="#40BFFF"
                         android:textSize="12sp"

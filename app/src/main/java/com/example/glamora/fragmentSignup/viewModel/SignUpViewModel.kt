@@ -1,11 +1,10 @@
 package com.example.glamora.fragmentSignup.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
-import com.example.glamora.data.firebase.FirebaseHandler
-import com.example.glamora.data.firebase.SignUpState
+import com.example.glamora.data.model.customerModels.CustomerInfo
+import com.example.glamora.util.State
 import com.example.glamora.util.getFirstAndLastName
 import com.example.glamora.util.isNotShort
 import com.example.glamora.util.isPasswordEqualRePassword
@@ -17,14 +16,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel  @Inject constructor(
+class SignUpViewModel @Inject constructor(
     private val repository: Repository
-): ViewModel() {
+) : ViewModel() {
 
-    private val _signUpState = MutableStateFlow<SignUpState>(SignUpState.Idle)
-    val signUpState: StateFlow<SignUpState> get() = _signUpState
-
-    private val firebaseHandler = FirebaseHandler()
+    private val _signUpState = MutableStateFlow<State<CustomerInfo>?>(null)
+    val signUpState: StateFlow<State<CustomerInfo>?> get() = _signUpState
 
     fun validateAndSignUp(
         name: String,
@@ -33,42 +30,49 @@ class SignUpViewModel  @Inject constructor(
         rePassword: String,
         phone: String
     ) {
-        viewModelScope.launch {
-            _signUpState.value = SignUpState.Loading
+        _signUpState.value = State.Loading
 
-            try {
-                val validName = isNotShort(name)
-                val validEmail = isValidEmail(email)
-                val validPass = isNotShort(password)
-                val validRepass = isPasswordEqualRePassword(password, rePassword)
-                val validPhone = isNotShort(phone, 11)
+        try {
+            val validName = isNotShort(name)
+            val validEmail = isValidEmail(email)
+            val validPass = isNotShort(password)
+            val validRepass = isPasswordEqualRePassword(password, rePassword)
+            val validPhone = isNotShort(phone, 11)
 
-                if (validName && validEmail && validPass && validRepass && validPhone) {
-                    // Perform Firebase Sign Up
-                    firebaseHandler.signUp(email, password) { success, errorMessage ->
-                        if (success) {
-                            val (firstName, lastName) = getFirstAndLastName(name)
-
-                            // No need for nested launch, just call repository
-                            viewModelScope.launch {
-                                try {
-                                    repository.createShopifyUser(email, firstName, lastName, phone)
-                                    Log.d("Abanob", "After validateAndSignUp: User created in Shopify")
-                                    _signUpState.value = SignUpState.Success
-                                } catch (e: Exception) {
-                                    _signUpState.value = SignUpState.Error("Failed to create Shopify user: ${e.message}")
+            if (validName && validEmail && validPass && validRepass && validPhone) {
+                val (firstName, lastName) = getFirstAndLastName(name)
+                viewModelScope.launch {
+                    repository.createShopifyUser(email, firstName, lastName, phone)
+                        .collect { result ->
+                            result.fold(
+                                onSuccess = { _ ->
+                                    repository.signUp(email, password).collect { signUpResult ->
+                                        signUpResult.fold(
+                                            onSuccess = { customerInfo ->
+                                                _signUpState.value = State.Success(customerInfo)
+                                            },
+                                            onFailure = { signUpError ->
+                                                _signUpState.value = State.Error(
+                                                    signUpError.message ?: "Sign-up failed"
+                                                )
+                                            }
+                                        )
+                                    }
+                                },
+                                onFailure = { createError ->
+                                    _signUpState.value = State.Error(
+                                        createError.message ?: "Failed to create Shopify user"
+                                    )
                                 }
-                            }
-                        } else {
-                            _signUpState.value = SignUpState.Error(errorMessage ?: "Sign-up failed.")
+                            )
                         }
-                    }
-                } else {
-                    _signUpState.value = SignUpState.Error("Please fill in all fields correctly.")
                 }
-            } catch (e: Exception) {
-                _signUpState.value = SignUpState.Error("Sign-up failed: ${e.message}")
+            } else {
+                _signUpState.value = State.Error("Validation failed. Please check your inputs.")
             }
+        } catch (e: Exception) {
+            _signUpState.value = State.Error("Sign-up failed: ${e.message}")
         }
     }
+
 }

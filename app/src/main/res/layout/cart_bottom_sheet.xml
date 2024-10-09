@@ -52,24 +52,36 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/bottomSheetCountryName">
                 <TextView
-                    android:id="@+id/cartItemsText"
+                    android:id="@+id/bottomSheetUserName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:text="Name : Kerolos"
-                    android:textColor="@color/gray"
+                    android:text="Name : No respient was selected"
+                    android:textColor="@color/dark_blue"
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/cartShippingText"
+                    android:id="@+id/bottomSheetUserAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:text="Address : Alexandria"
-                    android:textColor="@color/gray"
+                    android:text="Address : No address was selected"
+                    android:textColor="@color/dark_blue"
                     android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/bottomSheetSetNewAddressButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="Set Address"
+                    app:backgroundTint="@null"
+                    android:background="@drawable/check_out_button_background"
+                    />
 
             </LinearLayout>
 
@@ -90,13 +102,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
+                    android:buttonTint="@color/dark_blue"
                     android:text="@string/cash_on_delivery" />
 
                 <RadioButton
                     android:id="@+id/bottomSheetPaymentMethodsPayWithCardRadio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pay With Card" />
+                    android:buttonTint="@color/dark_blue"
+                    android:text="@string/pay_with_card" />
 
             </RadioGroup>
 
@@ -112,7 +126,7 @@
                 android:background="@drawable/check_out_button_background"
                 app:backgroundTint="@null"
                 android:text="@string/pay_now"
-                android:textColor="@color/dark_blue"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
 
@@ -122,6 +136,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/bottomSheetPaymentMethodsRadioGroup" />
 
 
+            <com.paypal.android.paymentbuttons.PayPalButton
+                android:id="@+id/bottomSheetPaypalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bottomSheetPaymentMethodsRadioGroup" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

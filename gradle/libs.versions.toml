@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.1"
+checkoutSheetKit = "3.0.1"
 kotlin = "1.9.0"
 circleimageview = "3.1.0"
 firebaseAuthKtx = "24.8.0"
@@ -10,6 +11,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
+playServicesWallet = "19.4.0"
 roomRuntime = "2.6.1"
 hiltAndroid = "2.52"
 retrofit = "2.11.0"
@@ -24,6 +26,7 @@ activity = "1.9.2"
 constraintlayout = "2.1.4"
 apolloRuntime = "4.0.1"
 dotsindicator = "4.3"
+swiperefreshlayout = "1.2.0-alpha01"
 viewpager2 = "1.1.0"
 okhttp = "4.12.0"
 googleGmsGoogleServices = "4.4.2"
@@ -36,8 +39,12 @@ cardPayments = "1.5.0"
 
 
 [libraries]
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+checkout-sheet-kit = { module = "com.shopify:checkout-sheet-kit", version.ref = "checkoutSheetKit" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
+payment-buttons = { module = "com.paypal.android:payment-buttons", version.ref = "cardPayments" }
+paypal-web-payments = { module = "com.paypal.android:paypal-web-payments", version.ref = "cardPayments" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,6 +63,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+play-services-wallet = { module = "com.google.android.gms:play-services-wallet", version.ref = "playServicesWallet" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }

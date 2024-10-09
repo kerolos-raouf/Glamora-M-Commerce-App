@@ -2,8 +2,10 @@ query GetDraftOrdersByCustomer($query: String!) {
     draftOrders(query: $query, first: 100) {
         nodes {
             id
+            tags
             lineItems(first: 100) {
                 nodes {
+                    name
                     quantity
                     title
                     variant {

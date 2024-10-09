@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="order"
+            type="com.example.glamora.data.model.ordersModel.OrderDTO" />
+        <variable
+            name="orderItem"
+            type="com.example.glamora.data.model.ordersModel.LineItemDTO" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="4dp"
+        android:id="@+id/item"
+        app:cardUseCompatPadding="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/orderlist_cv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:backgroundTint="@color/white"
+                app:cardCornerRadius="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/orderlist_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/item"
+                    android:padding="5dp"
+                    tools:src="@drawable/product"
+                    app:srcCompat="@{orderItem.image}"/>
+            </androidx.cardview.widget.CardView>
+
+
+            <TextView
+                android:id="@+id/orderlist_itemName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/black"
+                android:text="@{orderItem.name}"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/orderlist_itemPrice"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/orderlist_cv"
+                app:layout_constraintTop_toTopOf="@+id/orderlist_cv"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/orderlist_itemPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                tools:text="@{orderItem.unitPrice + ' ' + orderItem.currencyCode}"
+                android:textStyle="bold"
+                android:textColor="@color/light_blue"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@id/orderlist_itemName"
+                app:layout_constraintTop_toBottomOf="@+id/orderlist_itemName" />
+
+            <TextView
+                android:id="@+id/orderlist_quantity"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                app:setText="@{String.valueOf(orderItem.quantity)}"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:background="@color/white"
+                android:textColor="@color/dark_blue"
+                app:layout_constraintTop_toBottomOf= "@id/orderlist_itemPrice"
+                app:layout_constraintStart_toStartOf="@id/orderlist_itemPrice"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+</layout>

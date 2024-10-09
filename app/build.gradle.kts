@@ -170,8 +170,16 @@ dependencies {
     implementation (libs.stripe.android)
 
     //paypal
-    implementation (libs.card.payments)
+    implementation (libs.paypal.web.payments)
+    //paypal cart
+    implementation(libs.card.payments)
+    implementation(libs.payment.buttons)
 
     //Shopify Checkout Sheet Kit
-    implementation ("com.shopify:checkout-sheet-kit:3.0.1")
+    implementation (libs.checkout.sheet.kit)
+
+
+    //swiperefreshlayout
+    implementation(libs.androidx.swiperefreshlayout)
+
 }
