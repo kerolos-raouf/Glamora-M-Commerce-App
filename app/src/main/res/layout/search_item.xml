@@ -18,6 +18,8 @@
         android:paddingStart="16dp"
         android:paddingTop="10dp"
         android:paddingEnd="16dp"
+        android:clickable="true"
+        android:onClick="@{()->listener.onItemClick(product)}"
         android:paddingBottom="10dp">
 
         <ImageView
@@ -33,18 +35,31 @@
             android:id="@+id/Product_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_regular"
-            android:textColor="#9098B1"
-            android:textSize="14sp"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:fontFamily="@font/poppins_regular"
+            android:maxLines="2"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@{product.title}"
+            android:textColor="#9098B1"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/product_img"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@{product.title}" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/product_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/light_blue"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:setPrice="@{product.availableProducts[0].price}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Product_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
