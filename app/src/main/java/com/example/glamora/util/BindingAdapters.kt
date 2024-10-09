@@ -60,3 +60,39 @@ fun setCardBackgroundColor(cardView: CardView, colorString: String?) {
         cardView.setCardBackgroundColor(Color.GRAY)
     }
 }
+
+@BindingAdapter("app:srcCompat")
+fun loadImage(view: ImageView, url: String?) {
+    if (!url.isNullOrEmpty()) {
+        Glide.with(view.context)
+            .load(url)
+            .placeholder(R.drawable.product)
+            .error(R.drawable.brand)
+            .into(view)
+    }
+}
+
+@BindingAdapter("app:setItemPrice")
+fun setItemPrice(view: TextView, price: Double?) {
+    price?.let {
+        view.text = String.format("Item Price: $%.2f", it)
+    }
+}
+
+@BindingAdapter("app:setTotalPrice", "app:setCurrencyCode")
+fun setTotalPrice(view: TextView, totalPrice: String?, currencyCode: String?) {
+    if (totalPrice.isNullOrEmpty()) {
+        view.text = "Total Price: N/A"
+    } else {
+        view.text = "Total Price:       $totalPrice$currencyCode"
+    }
+}
+
+@BindingAdapter("app:setCreatedAt")
+fun setCreatedAt(view: TextView, createdAt: String?) {
+    view.text = if (createdAt.isNullOrEmpty()) {
+        ""
+    } else {
+        "Order Date:         $createdAt"
+    }
+}

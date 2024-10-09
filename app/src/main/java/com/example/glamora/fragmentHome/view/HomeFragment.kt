@@ -34,6 +34,7 @@ import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
+import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -124,7 +125,7 @@ class HomeFragment : Fragment() {
             navController.navigate(action)
         }
         binding.homeRvBrand.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = CarouselLayoutManager()
             adapter = brandsAdapter
         }
     }

@@ -11,6 +11,7 @@ import com.example.DeleteDraftOrderMutation
 import com.example.DiscountCodesQuery
 import com.example.GetCustomerByEmailQuery
 import com.example.GetDraftOrdersByCustomerQuery
+import com.example.GetOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
@@ -37,7 +38,8 @@ import com.example.glamora.util.toPriceRulesDTO
 import com.example.glamora.util.toProductDTO
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import com.example.glamora.data.model.customerModels.CustomerInfo
-import com.example.glamora.util.toAddressMode
+import com.example.glamora.data.model.ordersModel.LineItemDTO
+import com.example.glamora.data.model.ordersModel.OrderDTO
 import com.example.glamora.util.toCartItemsDTO
 import com.example.glamora.util.toFavoriteItemsDTO
 import com.example.type.CustomerInput
@@ -47,6 +49,7 @@ import com.example.type.DraftOrderDeleteInput
 import com.example.type.DraftOrderInput
 import com.example.type.DraftOrderLineItemInput
 import com.example.type.MailingAddressInput
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -373,7 +376,8 @@ class RepositoryImpl @Inject constructor(
         customerId: String,
         customerEmail: String,
         cartItems: List<CartItemDTO>,
-        discountAmount: Double
+        discountAmount: Double,
+        address: AddressModel
     ): Flow<State<String>> = flow {
         emit(State.Loading)
         try {
@@ -397,7 +401,17 @@ class RepositoryImpl @Inject constructor(
                     appliedDiscount = Optional.Present(DraftOrderAppliedDiscountInput(
                         value = discountAmount,
                         valueType = DraftOrderAppliedDiscountType.PERCENTAGE
-                      )
+                    )
+                    ),
+                    billingAddress = Optional.Present(
+                        MailingAddressInput(
+                            address1 = Optional.Present(address.street),
+                            city = Optional.Present(address.city),
+                            country = Optional.Present(address.country),
+                            firstName = Optional.Present(address.firstName),
+                            lastName = Optional.Present(address.lastName),
+                            phone = Optional.Present(address.phone)
+                        )
                     )
                 )
             )).execute()
@@ -450,7 +464,7 @@ class RepositoryImpl @Inject constructor(
                     val addresses = customerEdges[0].node.addresses
                     val addressModelList = mutableListOf<AddressModel>()
                     addresses.forEach {
-                        addressModelList.add(it.toAddressMode())
+                        addressModelList.add(it.toAddressModel())
                     }
                     emit(State.Success(addressModelList))
                 } else {
@@ -596,7 +610,8 @@ class RepositoryImpl @Inject constructor(
                         displayName = "${customer.firstName} ${customer.lastName}",
                         email = customer.email.toString(),
                         userId = customer.id,
-                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1]
+                        userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1],
+                        addresses = customer.addresses.map { it.toAddressModel() }
                     )
                     emit(State.Success(customerInfo))
                 } else {
@@ -605,6 +620,47 @@ class RepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             emit(State.Error(e.message.toString()))
+        }
+    }
+
+    @OptIn(FlowPreview::class)
+    override fun getOrdersByCustomer(customerEmail: String): Flow<State<List<OrderDTO>>> = flow {
+        emit(State.Loading)
+        try {
+            val ordersResponse = apolloClient.query(GetOrdersByCustomerQuery(customerEmail)).execute()
+
+            if (ordersResponse.data != null) {
+                val orders = ordersResponse.data!!.orders
+
+                if (orders != null && orders.edges.isNotEmpty()) {
+                    val orderDTOList = orders.edges.map { edge ->
+                        OrderDTO(
+                            id = edge.node.id,
+                            name = edge.node.name,
+                            createdAt = edge.node.createdAt.toString(),
+                            totalPrice = edge.node.totalPriceSet.shopMoney.amount.toString(),
+                            currencyCode = edge.node.totalPriceSet.shopMoney.currencyCode.name,
+                            lineItems = edge.node.lineItems.edges.map { itemEdge ->
+                                LineItemDTO(
+                                    name = itemEdge.node.name,
+                                    quantity = itemEdge.node.quantity,
+                                    unitPrice = itemEdge.node.originalUnitPriceSet.shopMoney.amount.toString(),
+                                    currencyCode = itemEdge.node.originalUnitPriceSet.shopMoney.currencyCode.name,
+                                    image =itemEdge.node.image?.url.toString()
+                                )
+                            }
+                        )
+                    }
+
+                    emit(State.Success(orderDTOList))
+                } else {
+                    emit(State.Success(emptyList()))
+                }
+            } else {
+                emit(State.Error("No orders found"))
+            }
+        } catch (e: Exception) {
+            emit(State.Error("An error occurred: ${e.message}"))
         }
     }
 
