@@ -285,5 +285,10 @@ class MapFragment : Fragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        communicator.hideBottomNav()
+    }
+
 
 }
