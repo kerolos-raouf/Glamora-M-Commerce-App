@@ -7,16 +7,20 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.glamora.R
 import com.example.glamora.data.model.AvailableProductsModel
+import com.example.glamora.data.model.CartItemDTO
+import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.databinding.FragmentProductDetailsBinding
 import com.example.glamora.fragmentProductDetails.view.adapters.ColorsAdapter
 import com.example.glamora.fragmentProductDetails.view.adapters.SizesAdapter
 import com.example.glamora.fragmentProductDetails.view.adapters.ViewPagerAdapter
+import com.example.glamora.fragmentProductDetails.viewModel.ProductDetailsViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
@@ -27,14 +31,22 @@ import kotlinx.coroutines.launch
 class ProductDetailsFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val productDetailsViewModel: ProductDetailsViewModel by viewModels()
     private lateinit var productDetailsBinding: FragmentProductDetailsBinding
 
     private lateinit var sizesAdapter: SizesAdapter
 
     private lateinit var colorsAdapter: ColorsAdapter
+
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var viewPager: ViewPager2
     private lateinit var dotsIndicator: DotsIndicator
+
+    private var productID = "8309560443018"
+    private var productDTO: ProductDTO? = null
+    private var isFavorite = false
+    private lateinit var variante: AvailableProductsModel
+
 
     private val communicator: Communicator by lazy {
         (requireActivity() as Communicator)
@@ -43,6 +55,7 @@ class ProductDetailsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         communicator.hideBottomNav()
+        productDetailsViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userId.split("/")[4])
     }
 
     override fun onCreateView(
@@ -51,28 +64,84 @@ class ProductDetailsFragment : Fragment() {
     ): View {
         productDetailsBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_product_details, container, false)
+
+        sharedViewModel.fetchFavoriteItems()
         sharedViewModel.fetchProducts()
+
         return productDetailsBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if(arguments?.isEmpty == false){
+            productID = arguments?.getString("productId").toString()
+        }
 
 
         lifecycleScope.launch {
             sharedViewModel.productList.collect { _ ->
-                val productDTO = sharedViewModel.getProductByID("8309560443018")
+                productDTO = sharedViewModel.getProductByID(productID)
+
                 if(productDTO != null)
                 {
-                    val productDetails = getProductDetails(productDTO)
+                    val productDetails = getProductDetails(productDTO!!)
+                    variante = productDTO!!.availableProducts[0]
                     updateUI(productDetails)
+
+                    isFavorite = sharedViewModel.isFavorite(productID = productDTO!!.availableProducts[0].id)
+                    if(isFavorite){
+                        productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
+                    }
                 }
+            }
+        }
+
+
+        productDetailsBinding.favBtn.setOnClickListener{
+            if(isFavorite){
+                productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite_border)
+
+                if(productDTO != null){
+                    sharedViewModel.deleteFromFavorites(FavoriteItemDTO(variante.id,"",
+                        productDTO!!.title,
+                        variante.price,
+                        productDTO!!.mainImage))
+                }
+
+                isFavorite = false
+
+            }
+            else{
+                productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
+
+                if (productDTO != null){
+                    sharedViewModel.addToFavorites(FavoriteItemDTO(variante.id,"",
+                        productDTO!!.title,
+                        variante.price,
+                        productDTO!!.mainImage))
+                }
+
+                isFavorite = true
             }
         }
 
         productDetailsBinding.reviewsBtn.setOnClickListener {
             findNavController().navigate(R.id.action_productDetailsFragment_to_reviewsFragment)
+        }
+
+        productDetailsBinding.addCardBtn.setOnClickListener{
+
+            productDetailsViewModel.addToCard(CartItemDTO(
+                id = variante.id,
+                draftOrderId = "",
+                title = "",
+                quantity = 1,
+                inventoryQuantity = 0,
+                price = variante.price,
+                image = "",
+                isFavorite = isFavorite
+            ), sharedViewModel.currentCustomerInfo.value.userId.split("/")[4] ,sharedViewModel.currentCustomerInfo.value.email)
         }
 
     }
@@ -96,18 +165,6 @@ class ProductDetailsFragment : Fragment() {
         )
     }
 
-
-    private fun updateMainUI(titleText: String, desText: String, price: String){
-
-        val titleList = titleText.split("|")
-        productDetailsBinding.title.text = "${titleList[1]}"
-
-        productDetailsBinding.desTxt.text = desText
-
-        productDetailsBinding.price.text = "$$price"
-
-    }
-
     private fun updateUI(productDetails: Map<String, Any> ){
 
         val imagesList = productDetails["images"] as List<String>
@@ -122,13 +179,24 @@ class ProductDetailsFragment : Fragment() {
 
 
 
-        updateMainUI(titleText , desText , availableProducts[0].price)
+        updateMainUI(titleText , desText , variante.price)
 
         updateImageList(imagesList)
 
         updateColors(colors)
 
         updateSizes(availableProducts)
+
+    }
+
+    private fun updateMainUI(titleText: String, desText: String, price: String){
+
+        val titleList = titleText.split("|")
+        productDetailsBinding.title.text = "${titleList[1]}"
+
+        productDetailsBinding.desTxt.text = desText
+
+        productDetailsBinding.price.text = "$$price"
 
     }
 
@@ -141,15 +209,14 @@ class ProductDetailsFragment : Fragment() {
     }
 
     private fun updateSizes(availableProducts: List<AvailableProductsModel>){
-        sizesAdapter = SizesAdapter(availableProducts){ price ->
-            productDetailsBinding.price.text = "$$price"
+        sizesAdapter = SizesAdapter(availableProducts){ v ->
+            variante  = v
+            productDetailsBinding.price.text = "$${variante.price}"
         }
         productDetailsBinding.recSizes.adapter = sizesAdapter
     }
 
     private fun updateColors(colors: List<String>) {
-
-
         val colorMap = mapOf(
             "WHITE" to 0,
             "BLACK" to 1,
@@ -162,7 +229,6 @@ class ProductDetailsFragment : Fragment() {
 
         val selectedColor = colors[0].uppercase()
         val colorNumber = colorMap[selectedColor] ?: -1
-
 
         val colorsList = listOf(
             "#FFFFFF",

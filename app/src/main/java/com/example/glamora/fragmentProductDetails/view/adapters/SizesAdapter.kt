@@ -9,7 +9,7 @@ import com.example.glamora.databinding.ItemProductsSizesBinding
 
 class SizesAdapter(
     private val availableProducts: List<AvailableProductsModel>,
-    private val onSizeSelected: (price: String) -> Unit
+    private val onSizeSelected: (variant: AvailableProductsModel) -> Unit
 ) : RecyclerView.Adapter<SizesAdapter.SizeViewHolder>() {
 
 
@@ -34,7 +34,7 @@ class SizesAdapter(
             binding.root.setOnClickListener {
                 val selectedProduct = availableProducts.find { it.size.toString() == size }
                 selectedProduct?.let {
-                    onSizeSelected(it.price.toString())
+                    onSizeSelected(it)
                 }
 
                 val previousPosition = selectedPosition

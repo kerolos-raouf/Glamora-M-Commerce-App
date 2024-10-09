@@ -111,7 +111,7 @@ class SharedViewModel @Inject constructor(
                 } else {
                     _favoriteItemsState.value = State.Loading
                     withContext(Dispatchers.IO) {
-                        repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList).collect{
+                        repository.updateFavoritesDraftOrder(currentList[0].draftOrderId, updatedList).collect{
                             fetchFavoriteItems()
                         }
                     }
@@ -124,6 +124,7 @@ class SharedViewModel @Inject constructor(
     fun addToFavorites(product: FavoriteItemDTO) {
         viewModelScope.launch {
             val currentState = _favoriteItemsState.value
+
             if (currentState is State.Success) {
                 val currentList = currentState.data
 
@@ -133,19 +134,48 @@ class SharedViewModel @Inject constructor(
 
                 val updatedList = currentList + product
 
-                withContext(Dispatchers.IO) {
-                    repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList).collect{
-                        fetchFavoriteItems()
+                // product.draftOrderId
+                repository.updateFavoritesDraftOrder(currentList[0].draftOrderId, updatedList).collect{
+                    when(it){
+                        is State.Success -> {
+                            fetchFavoriteItems()
+                        }
+                        is State.Error -> {
+                            Log.d("Abanob", "${it.message}")
+                        }
+                        else -> {
+                            Log.d("Abanob", "Load")
+                        }
                     }
                 }
             }
         }
     }
 
+    // Is Favorite Product
+    fun isFavorite(productID: String): Boolean {
+        val currentState = _favoriteItemsState.value
+        var result = false
+        when(currentState){
+            is State.Success ->{
+                result = if(currentState.data.isNotEmpty()){
+                    currentState.data.any { it.id == productID }
+                }else{
+                    false
+                }
+            }
+            is State.Error ->{
+                return false
+            }
+            is State.Loading -> {}
+        }
+        return  result
+    }
+
 
     // ProductByID
     fun getProductByID(productID: String): ProductDTO? {
-        return productList.value?.find { it.id.contains(productID) }
+        return productList.value.find { it.id.contains(productID) }
     }
 
 
