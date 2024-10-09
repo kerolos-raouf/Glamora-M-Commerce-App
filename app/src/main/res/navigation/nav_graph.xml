@@ -149,7 +149,11 @@
         app:argType="string" />
         <action
             android:id="@+id/action_orderDetailsFragment_to_productDetailsFragment"
-            app:destination="@id/productDetailsFragment" />
+            app:destination="@id/productDetailsFragment" >
+            <argument
+                android:name="productId"
+                app:argType="string"/>
+        </action>
     </fragment>
     <fragment
         android:id="@+id/productDetailsFragment"
