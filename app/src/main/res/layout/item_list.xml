@@ -7,9 +7,7 @@
         <variable
             name="product"
             type="com.example.glamora.data.model.ProductDTO" />
-        <variable
-            name="viewModel"
-            type="com.example.glamora.mainActivity.viewModel.SharedViewModel" />
+
     </data>
 
     <androidx.cardview.widget.CardView
