@@ -9,14 +9,19 @@ import com.example.glamora.data.model.ordersModel.LineItemDTO
 import com.example.glamora.data.model.ordersModel.OrderDTO
 import com.example.glamora.databinding.OrderListItemBinding
 
-class OrderLineItemsAdapter(private var lineItems: List<LineItemDTO>) :
+class OrderLineItemsAdapter(private var lineItems: List<LineItemDTO>,
+                            private val onItemClick: (String) -> Unit ) :
     RecyclerView.Adapter<OrderLineItemsAdapter.LineItemViewHolder>() {
 
     class LineItemViewHolder(private val binding: OrderListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(lineItem: LineItemDTO) {
+        fun bind(lineItem: LineItemDTO,  onItemClick: (String) -> Unit) {
             binding.orderItem = lineItem
             binding.executePendingBindings()
+
+            binding.root.setOnClickListener {
+                onItemClick(lineItem.id) // Trigger navigation by passing the product ID
+            }
         }
     }
 
@@ -30,7 +35,7 @@ class OrderLineItemsAdapter(private var lineItems: List<LineItemDTO>) :
 
     override fun onBindViewHolder(holder: LineItemViewHolder, position: Int) {
         val lineItem = lineItems[position]
-        holder.bind(lineItem)
+        holder.bind(lineItem, onItemClick)
     }
 
     override fun getItemCount(): Int {

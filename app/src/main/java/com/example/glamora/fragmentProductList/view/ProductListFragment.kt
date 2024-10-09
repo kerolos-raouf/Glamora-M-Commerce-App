@@ -91,13 +91,17 @@ class ProductListFragment : Fragment() {
     }
 
     private fun setupProduct() {
-        productRecycleAdapter = ProductListAdapter(emptyList())
+        productRecycleAdapter = ProductListAdapter(emptyList()) { product ->
+            val action = ProductListFragmentDirections
+                .actionProductListFragmentToProductDetailsFragment(product.id)
+            navController.navigate(action)
+        }
         binding.listOfProductRecyclerview.apply {
-             layoutManager = GridLayoutManager(context, 2)
+            layoutManager = GridLayoutManager(context, 2)
             adapter = productRecycleAdapter
         }
-
     }
+
 
     private fun setupProductListObserver() {
         lifecycleScope.launch {
