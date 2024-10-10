@@ -9,10 +9,12 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.glamora.R
 import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.databinding.FragmentSearchBinding
+import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -22,6 +24,10 @@ class SearchFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var searchBinding: FragmentSearchBinding
     private lateinit var searchAdapter: SearchAdapter
+
+    private val communicator: Communicator by lazy {
+        (requireActivity() as Communicator)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,15 +62,22 @@ class SearchFragment : Fragment() {
     private fun updateSearchViewAppearance(query: String?) {
         if (!query.isNullOrEmpty()) {
             searchBinding.searchView.setBackgroundResource(R.drawable.button_background_focused)
+            communicator.hideBottomNav()
         } else {
             searchBinding.searchView.setBackgroundResource(R.drawable.button_background)
+            communicator.showBottomNav()
+
         }
     }
 
     private fun setupRecyclerView() {
         searchAdapter = SearchAdapter(object : SearchClickListener {
             override fun onItemClick(product: ProductDTO) {
-                Log.d("SearchFragment", "Clicked on: ${product.id} == ${product.title}")
+                val bundle = Bundle().apply {
+                    putString("productId", product.id)
+                }
+
+                findNavController().navigate(R.id.action_searchFragment_to_productDetailsFragment, bundle)
             }
         })
 

@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
 import com.example.glamora.databinding.FragmentManageLocationsBinding
 import com.example.glamora.fragmentManageLocations.viewModel.ManageAddressesViewModel
@@ -69,6 +70,11 @@ class ManageLocationsFragment : Fragment() {
         if(sharedViewModel.currentCustomerInfo.value.addresses.isNotEmpty())
         {
             adapter.submitList(sharedViewModel.currentCustomerInfo.value.addresses)
+        }
+
+
+        binding.manageLocationsAddButton.setOnClickListener {
+            findNavController().navigate(R.id.action_manageLocationsFragment_to_mapFragment)
         }
 
     }

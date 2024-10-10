@@ -395,6 +395,7 @@ class RepositoryImpl @Inject constructor(
 
             val createDraftOrder = apolloClient.mutation(CreateDrafterOrderMutation(
                 DraftOrderInput(
+                    tags = Optional.present(listOf(Constants.CART_DRAFT_ORDER_KEY)),
                     customerId = Optional.Present(customerId),
                     email = Optional.Present(customerEmail),
                     lineItems = Optional.Present(draftOrderItemList),
