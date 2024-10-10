@@ -16,6 +16,7 @@ import com.example.glamora.fragmentProfile.viewModel.ProfileViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
+import com.example.glamora.util.customAlertDialog.CustomAlertDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,6 +28,8 @@ class ProfileFragment : Fragment() {
     private lateinit var binding : FragmentProfileBinding
 
     private val communicator by lazy { requireActivity() as Communicator }
+
+    private lateinit var customAlertDialog: CustomAlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +47,7 @@ class ProfileFragment : Fragment() {
 
     private fun initView()
     {
+        customAlertDialog = CustomAlertDialog(requireActivity())
         binding.profileSettingsLayout.setOnClickListener {
             communicator.hideBottomNav()
             findNavController().navigate(R.id.action_profileFragment_to_settingsFragment)
@@ -60,10 +64,12 @@ class ProfileFragment : Fragment() {
             binding.profileUsername.text = "Hello, ${sharedViewModel.currentCustomerInfo.value.displayName}"
 
         binding.profileLogOutLayout.setOnClickListener {
-            sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN)
-            profileViewModel.signOut()
-            findNavController().popBackStack(R.id.action_profileFragment_to_loginFragment,true)
-            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+            customAlertDialog.showAlertDialog("Are you sure you want to log out?", "Log Out"){
+                sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN)
+                profileViewModel.signOut()
+                findNavController().popBackStack(R.id.action_profileFragment_to_loginFragment,true)
+                findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+            }
         }
     }
 
