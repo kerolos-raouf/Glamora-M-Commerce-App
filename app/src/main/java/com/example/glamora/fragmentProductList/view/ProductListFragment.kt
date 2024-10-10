@@ -39,7 +39,6 @@ class ProductListFragment : Fragment() {
     private val productListViewModel: ProductListViewModel by activityViewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var productRecycleAdapter: ProductListAdapter
-    private lateinit var navController: NavController
     private lateinit var filterDialog: Dialog
     private lateinit var filterBinding: DialogFilterBinding
     private var type: String = ""
@@ -72,8 +71,6 @@ class ProductListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navController = Navigation.findNavController(view)
-
         binding.listOfProductBackButton.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -94,7 +91,7 @@ class ProductListFragment : Fragment() {
         productRecycleAdapter = ProductListAdapter(emptyList()) { product ->
             val action = ProductListFragmentDirections
                 .actionProductListFragmentToProductDetailsFragment(product.id)
-            navController.navigate(action)
+            findNavController().navigate(action)
             Log.d("MAI","$action")
         }
         binding.listOfProductRecyclerview.apply {

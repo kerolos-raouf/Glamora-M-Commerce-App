@@ -43,7 +43,6 @@ class HomeFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var productsAdapter: ProductsAdapter
-    private lateinit var navController: NavController
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
 
@@ -75,7 +74,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navController = findNavController()
 
 
         binding.homeFavoriteButton.setOnClickListener{
@@ -116,7 +114,7 @@ class HomeFragment : Fragment() {
     private fun setupRandomItemsRecyclerView() {
         productsAdapter = ProductsAdapter(emptyList()) { productId ->
             val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
-            navController.navigate(action)
+            findNavController().navigate(action)
             Log.d("MAI","$action")
         }
 
@@ -132,7 +130,7 @@ class HomeFragment : Fragment() {
             val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
                 selectedBrand.title
             )
-            navController.navigate(action)
+            findNavController().navigate(action)
         }
         binding.homeRvBrand.apply {
             layoutManager = CarouselLayoutManager()
@@ -167,18 +165,18 @@ class HomeFragment : Fragment() {
 
             homeShoescv.setOnClickListener{
                 val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
-                navController.navigate(action)
+                findNavController().navigate(action)
 
             }
             homeTshirtcv.setOnClickListener{
                 val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
-                navController.navigate(action)
+                findNavController().navigate(action)
 
             }
 
             homeAccssCV.setOnClickListener{
                 val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
-                navController.navigate(action)
+                findNavController().navigate(action)
 
             }
 

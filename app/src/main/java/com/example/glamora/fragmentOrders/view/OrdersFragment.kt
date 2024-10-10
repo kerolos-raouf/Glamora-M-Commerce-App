@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class OrdersFragment : Fragment() {
     private lateinit var ordersFragmentBinding: FragmentOrdersBinding
-    private lateinit var navController: NavController
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val orderViewModel: OrderViewModel by viewModels()
     private lateinit var ordersAdapter: OrdersAdapter
@@ -49,7 +48,6 @@ class OrdersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navController = Navigation.findNavController(view)
 
         ordersFragmentBinding.ordersBackButton.setOnClickListener {
             findNavController().popBackStack()
@@ -90,6 +88,6 @@ class OrdersFragment : Fragment() {
 
     private fun navigateToOrderDetails(orderId: String) {
         val action = OrdersFragmentDirections.actionOrdersFragmentToOrderDetailsFragment(orderId)
-        navController.navigate(action)
+        findNavController().navigate(action)
     }
 }
