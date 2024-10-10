@@ -14,30 +14,22 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.apollographql.apollo.ApolloClient
 import com.example.glamora.R
-import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.DiscountCodeDTO
-import com.example.glamora.data.network.ApolloClientInterceptor
-import com.example.glamora.data.repository.RepositoryImpl
-import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
+import com.example.glamora.util.showGurstDialog
 import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
-import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -84,10 +76,12 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.homeFavoriteButton.setOnClickListener{
-            findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
+            if (sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN) {
+                findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
+            }else {
+                showGurstDialog(requireContext())
+            }
         }
-
-        navController = Navigation.findNavController(view)
 
         initHome()
         setUpRecyclerViews()
@@ -203,9 +197,14 @@ class HomeFragment : Fragment() {
             imagesList,
             object : DiscountCodeListener {
                 override fun onDiscountCodeClicked(discountCode: DiscountCodeDTO) {
-                    val clipData = ClipData.newPlainText("Promotion Code", discountCode.code)
-                    clipboardManager.setPrimaryClip(clipData)
-                    Toast.makeText(context, "Promotion Code Copied ${discountCode.code}", Toast.LENGTH_SHORT).show()
+                    if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN){
+                        val clipData = ClipData.newPlainText("Promotion Code", discountCode.code)
+                        clipboardManager.setPrimaryClip(clipData)
+                        Toast.makeText(context, "Promotion Code Copied ${discountCode.code}", Toast.LENGTH_SHORT).show()
+                    }else{
+                        showGurstDialog(requireContext())
+                    }
+
                 }
             }
         )
