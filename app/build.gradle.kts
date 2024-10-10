@@ -133,8 +133,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     ///navigation
-    implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.ui)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     ///hilt
     implementation(libs.hilt.android)

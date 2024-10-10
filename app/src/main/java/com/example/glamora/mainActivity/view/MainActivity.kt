@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +16,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import com.example.glamora.R
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.databinding.ActivityMainBinding
@@ -56,6 +54,12 @@ class MainActivity : AppCompatActivity(), Communicator {
         initView()
         initObservers()
     }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    
 
 
     private fun initObservers()

@@ -19,7 +19,8 @@ activityKtx = "1.9.2"
 fragmentKtx = "1.8.3"
 glide = "4.16.0"
 lottie = "5.2.0"
-navigationFragment = "2.8.0"
+navigationFragmentKtx = "2.8.2"
+navigationUiKtx = "2.8.2"
 osmdroidAndroid = "6.1.10"
 playServicesLocation = "21.3.0"
 activity = "1.9.2"
@@ -69,8 +70,8 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
-androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment", version.ref = "navigationFragment" }
-androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigationFragment" }
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
