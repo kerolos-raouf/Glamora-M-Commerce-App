@@ -44,6 +44,9 @@ class SettingsFragment : Fragment() {
 
 
     private fun initViews(){
+
+        hideViewsInGuestMode()
+
         binding.settingsBackButton.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -84,8 +87,13 @@ class SettingsFragment : Fragment() {
             }
         }
 
+    }
 
-
+    private fun hideViewsInGuestMode(){
+        if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) == Constants.UNKNOWN){
+            binding.settingsManageLocationLayout.visibility = View.GONE
+            binding.settingsDeliveryLocationLayout.visibility = View.GONE
+        }
     }
 
 

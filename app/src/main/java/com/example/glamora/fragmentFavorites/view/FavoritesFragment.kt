@@ -11,13 +11,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.glamora.R
 import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.databinding.FragmentFavoritesBinding
 import com.example.glamora.fragmentFavorites.viewModel.FavoritesViewModel
+import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.State
+import com.example.glamora.util.customAlertDialog.CustomAlertDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -29,6 +32,9 @@ class FavoritesFragment : Fragment() {
     private lateinit var fvAdapter: FavoritesAdapter
 
 
+    private lateinit var customAlertDialog: CustomAlertDialog
+
+    private val communicator by lazy { requireActivity() as Communicator }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,16 +46,20 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        customAlertDialog = CustomAlertDialog(requireActivity())
 
         sharedViewModel.fetchFavoriteItems()
 
         fvAdapter = FavoritesAdapter(object : FavoritesClickListener{
             override fun onDeleteClick(product: FavoriteItemDTO) {
-                sharedViewModel.deleteFromFavorites(product)
+                customAlertDialog.showAlertDialog("Are you sure you want to delete this item?", "Delete"){
+                    sharedViewModel.deleteFromFavorites(product)
+                }
             }
 
             override fun onItemClick(product: FavoriteItemDTO) {
-                // Go To Product Info With Budel Product ID
+                val action = FavoritesFragmentDirections.actionFavoritesFragmentToProductDetailsFragment(product.productId)
+                findNavController().navigate(action)
             }
 
         })
@@ -57,6 +67,10 @@ class FavoritesFragment : Fragment() {
         favoritesBinding.recFavorites.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = fvAdapter
+        }
+
+        favoritesBinding.favoritesBackArrow.setOnClickListener {
+            findNavController().popBackStack()
         }
 
 
@@ -81,6 +95,11 @@ class FavoritesFragment : Fragment() {
 
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        communicator.hideBottomNav()
     }
 
 }

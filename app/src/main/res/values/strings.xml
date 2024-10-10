@@ -103,6 +103,10 @@
     <string name="itemPrice">Item price</string>
     <string name="manage_locations">Manage Locations</string>
     <string name="my_locations">My Locations</string>
+    <string name="title_activity_test_bottom_nav">testBottomNav</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 
 
 </resources>
