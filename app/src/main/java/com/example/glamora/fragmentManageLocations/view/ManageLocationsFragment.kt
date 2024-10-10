@@ -92,6 +92,13 @@ class ManageLocationsFragment : Fragment() {
             findNavController().navigate(R.id.action_manageLocationsFragment_to_mapFragment)
         }
 
+
+
+        binding.manageLocationsSwipeRefreshLayout.setOnRefreshListener {
+            manageAddressesViewModel.fetchCustomerAddresses(sharedViewModel.currentCustomerInfo.value.email)
+            binding.manageLocationsSwipeRefreshLayout.isRefreshing = false
+        }
+
     }
 
 
@@ -100,10 +107,8 @@ class ManageLocationsFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED)
             {
                 manageAddressesViewModel.customerAddresses.collect{addresses->
-                    addresses?.let {
-                        adapter.submitList(it)
-                        sharedViewModel.currentCustomerInfo.value.addresses = it
-                    }
+                    adapter.submitList(addresses)
+                    sharedViewModel.currentCustomerInfo.value.addresses = addresses
                 }
             }
         }

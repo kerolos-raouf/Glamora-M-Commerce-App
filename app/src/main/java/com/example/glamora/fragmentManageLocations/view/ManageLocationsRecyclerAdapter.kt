@@ -35,18 +35,15 @@ class ManageLocationsRecyclerAdapter (
                 deleteItem(item)
             }
             addressItemCheckBox.isChecked = item.isDefault
-            addressItemCheckBox.isClickable = !item.isDefault
             if(item.isDefault) addressItemDeleteButton.visibility = View.GONE
 
-            addressItemCheckBox.setOnCheckedChangeListener { _, isChecked ->
-                if(isChecked)
-                {
-                    addressItemCheckBox.isChecked = false
-                }
-            }
+
+            addressItemCheckBox.isClickable = !item.isDefault
 
             addressItemCheckBox.setOnClickListener {
-                setDefaultAddress(item)
+                addressItemCheckBox.isChecked = item.isDefault
+                if(!item.isDefault)
+                    setDefaultAddress(item)
             }
 
         }

@@ -19,8 +19,8 @@ class ManageAddressesViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel(){
 
-    private val _customerAddresses = MutableStateFlow<List<AddressModel>?>(null)
-    val customerAddresses : StateFlow<List<AddressModel>?> = _customerAddresses
+    private val _customerAddresses = MutableStateFlow<List<AddressModel>>(emptyList())
+    val customerAddresses : StateFlow<List<AddressModel>> = _customerAddresses
 
     private val _message = MutableSharedFlow<String>()
     val message : SharedFlow<String> = _message
@@ -75,7 +75,6 @@ class ManageAddressesViewModel @Inject constructor(
 
     fun updateCustomerDefaultAddress(customerID : String, addressId : String,email: String)
     {
-        Log.d("Kerolos", "updateCustomerDefaultAddress: $customerID - $addressId")
         viewModelScope.launch {
             repository.updateCustomerDefaultAddress(customerID, addressId).collect { state ->
                 when(state)
