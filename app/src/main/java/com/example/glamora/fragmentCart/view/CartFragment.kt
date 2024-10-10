@@ -390,22 +390,34 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {
-        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
-        applyPriceChangeOnUI(-item.price.toDouble())
+        if(!communicator.isInternetAvailable()){
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }else{
+            cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
+            applyPriceChangeOnUI(-item.price.toDouble())
+        }
     }
 
     override fun onItemMinusClicked(item: CartItemDTO) {
-        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
-        applyPriceChangeOnUI(item.price.toDouble())
+        if(!communicator.isInternetAvailable()){
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }else{
+            cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
+            applyPriceChangeOnUI(item.price.toDouble())
+        }
     }
 
     override fun onItemDeleteClicked(item: CartItemDTO) {
-        customAlertDialog.showAlertDialog(
-            message = "Are about deleting this item?",
-            actionText = "Delete"
-        ){
-            cartViewModel.deleteCartItemFromDraftOrder(item,sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
-            applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
+        if(!communicator.isInternetAvailable()){
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }else{
+            customAlertDialog.showAlertDialog(
+                message = "Are about deleting this item?",
+                actionText = "Delete"
+            ){
+                cartViewModel.deleteCartItemFromDraftOrder(item,sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
+                applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
+            }
         }
     }
 
@@ -418,6 +430,8 @@ class CartFragment : Fragment(),CartItemInterface {
         {
             val action = CartFragmentDirections.actionCartFragmentToProductDetailsFragment(item.productId)
             findNavController().navigate(action)
+        }else{
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
         }
     }
 
