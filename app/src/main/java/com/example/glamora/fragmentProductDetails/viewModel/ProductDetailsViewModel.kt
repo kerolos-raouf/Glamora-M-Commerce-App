@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
+import com.example.glamora.data.model.FavoriteItemDTO
+import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,8 +62,30 @@ class ProductDetailsViewModel @Inject constructor(
                         userEmail,
                         listOf(variant),
                         0.0,
-                        AddressModel()
-                    )
+                        AddressModel(),
+                        Constants.CART_DRAFT_ORDER_KEY
+                    ).collect{
+                        when(it){
+                            is State.Error -> {}
+                            State.Loading -> {}
+                            is State.Success -> {
+                                val cardItem = variant.copy(draftOrderId = it.data)
+                                repository.updateCartDraftOrder(cardItem.draftOrderId, listOf(cardItem)).collect{
+                                    when(it){
+                                        is State.Success -> {
+                                            fetchCartItems(userId)
+                                        }
+                                        is State.Error -> {
+                                            Log.d("Abanob", "${it.message}")
+                                        }
+                                        else -> {
+                                            Log.d("Abanob", "Load")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 else
                 {
