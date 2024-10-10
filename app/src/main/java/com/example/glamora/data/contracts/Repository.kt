@@ -43,12 +43,15 @@ interface Repository {
         customerEmail : String,
         cartItems : List<CartItemDTO>,
         discountAmount: Double,
-        address: AddressModel
+        address: AddressModel,
+        tag: String
         ) : Flow<State<String>>
 
     fun createOrderFromDraftOrder(draftOrderId: String) : Flow<State<String>>
 
     fun getCustomerAddressesByEmail(email: String): Flow<State<List<AddressModel>>>
+
+    fun updateCustomerDefaultAddress(customerId: String, addressId: String) : Flow<State<String>>
 
     fun createShopifyUser(
         email: String,

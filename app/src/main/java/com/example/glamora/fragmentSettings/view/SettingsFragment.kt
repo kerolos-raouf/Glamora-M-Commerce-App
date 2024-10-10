@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
 import com.example.glamora.databinding.FragmentSettingsBinding
+import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +25,8 @@ class SettingsFragment : Fragment() {
 
     private lateinit var binding : FragmentSettingsBinding
     private val sharedViewModel : SharedViewModel by activityViewModels()
+
+    private val communicator by lazy { requireActivity() as Communicator }
 
 
     override fun onCreateView(
@@ -44,14 +48,25 @@ class SettingsFragment : Fragment() {
 
 
     private fun initViews(){
+
+        hideViewsInGuestMode()
+
         binding.settingsBackButton.setOnClickListener {
             findNavController().popBackStack()
         }
         binding.settingsDeliveryLocationLayout.setOnClickListener {
-            findNavController().navigate(R.id.action_settingsFragment_to_mapFragment)
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection", Toast.LENGTH_SHORT).show()
+            }else{
+                findNavController().navigate(R.id.action_settingsFragment_to_mapFragment)
+            }
         }
         binding.settingsManageLocationLayout.setOnClickListener {
-            findNavController().navigate(R.id.action_settingsFragment_to_manageLocationsFragment)
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection", Toast.LENGTH_SHORT).show()
+            }else{
+                findNavController().navigate(R.id.action_settingsFragment_to_manageLocationsFragment)
+            }
         }
 
 
@@ -73,9 +88,13 @@ class SettingsFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    sharedViewModel.setSharedPrefString(Constants.CURRENCY_KEY,currencyList[position])
-                    sharedViewModel.setSharedPrefString(Constants.CURRENCY_SELECTION_VALUE_KEY,position.toString())
-                    sharedViewModel.convertCurrency()
+                    if(!communicator.isInternetAvailable()){
+                        Toast.makeText(requireContext(),"No Internet Connection, Currency not changed.",Toast.LENGTH_SHORT).show()
+                    }else{
+                        sharedViewModel.setSharedPrefString(Constants.CURRENCY_KEY,currencyList[position])
+                        sharedViewModel.setSharedPrefString(Constants.CURRENCY_SELECTION_VALUE_KEY,position.toString())
+                        sharedViewModel.convertCurrency()
+                    }
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -84,8 +103,13 @@ class SettingsFragment : Fragment() {
             }
         }
 
+    }
 
-
+    private fun hideViewsInGuestMode(){
+        if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) == Constants.UNKNOWN){
+            binding.settingsManageLocationLayout.visibility = View.GONE
+            binding.settingsDeliveryLocationLayout.visibility = View.GONE
+        }
     }
 
 

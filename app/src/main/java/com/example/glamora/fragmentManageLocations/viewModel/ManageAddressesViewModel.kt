@@ -1,5 +1,6 @@
 package com.example.glamora.fragmentManageLocations.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
@@ -18,8 +19,8 @@ class ManageAddressesViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel(){
 
-    private val _customerAddresses = MutableStateFlow<List<AddressModel>?>(null)
-    val customerAddresses : StateFlow<List<AddressModel>?> = _customerAddresses
+    private val _customerAddresses = MutableStateFlow<List<AddressModel>>(emptyList())
+    val customerAddresses : StateFlow<List<AddressModel>> = _customerAddresses
 
     private val _message = MutableSharedFlow<String>()
     val message : SharedFlow<String> = _message
@@ -27,7 +28,31 @@ class ManageAddressesViewModel @Inject constructor(
     private val _loading = MutableStateFlow(false)
     val loading : StateFlow<Boolean> = _loading
 
-    fun deleteCustomerAddresses(customerID : String,addresses : List<AddressModel>)
+
+    fun fetchCustomerAddresses(email : String)
+    {
+        viewModelScope.launch {
+            repository.getShopifyUserByEmail(email).collect { state ->
+                when (state) {
+                    is State.Error -> {
+                        _message.emit(state.message)
+                        _loading.value = false
+                    }
+
+                    State.Loading -> {
+                        _loading.value = true
+                    }
+
+                    is State.Success -> {
+                        _customerAddresses.value = state.data.addresses
+                        _loading.value = false
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteCustomerAddresses(customerID : String,email : String,addresses : List<AddressModel>)
     {
         viewModelScope.launch {
             repository.updateCustomerAddress(customerID,addresses).collect { state ->
@@ -41,8 +66,29 @@ class ManageAddressesViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _customerAddresses.value = addresses
+                        fetchCustomerAddresses(email)
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateCustomerDefaultAddress(customerID : String, addressId : String,email: String)
+    {
+        viewModelScope.launch {
+            repository.updateCustomerDefaultAddress(customerID, addressId).collect { state ->
+                when(state)
+                {
+                    is State.Error -> {
+                        _message.emit(state.message)
                         _loading.value = false
+                    }
+                    State.Loading -> {
+                        _loading.value = true
+                    }
+                    is State.Success -> {
+                        _message.emit("Default address updated successfully")
+                        fetchCustomerAddresses(email)
                     }
                 }
             }

@@ -32,7 +32,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class OrderDetailsFragment : Fragment() {
     private lateinit var orderDetailsBinding: FragmentOrderDetailsBinding
-    private lateinit var navController: NavController
     private lateinit var orderDetailsAdapter: OrderLineItemsAdapter
     private val orderDetailsViewModel: OrderDetailsViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
@@ -61,7 +60,6 @@ class OrderDetailsFragment : Fragment() {
         Log.d("OrderDetailsFragment", "Order ID received: $orderId")
 
 
-        navController = Navigation.findNavController(view)
 
         orderDetailsBinding.ordersDetailsBackButton.setOnClickListener {
             findNavController().popBackStack()
@@ -78,13 +76,18 @@ class OrderDetailsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        orderDetailsAdapter = OrderLineItemsAdapter(emptyList())
+        orderDetailsAdapter = OrderLineItemsAdapter(emptyList()) { productId ->
+            val action = OrderDetailsFragmentDirections.actionOrderDetailsFragmentToProductDetailsFragment(productId)
+            findNavController().navigate(action)
+            Log.d("MAI","$action")
+        }
+
         orderDetailsBinding.orderDetailsProductRV.apply {
             adapter = orderDetailsAdapter
             layoutManager = LinearLayoutManager(context)
         }
-        Log.d("OrderDetailsFragment", "RecyclerView setup complete")
     }
+
 
 
     private fun observeOrderDetails() {

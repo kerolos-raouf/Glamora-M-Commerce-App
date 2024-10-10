@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
+import com.example.glamora.data.model.AddressModel
+import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.ProductDTO
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.math.log
 
 
 @HiltViewModel
@@ -47,7 +50,7 @@ class SharedViewModel @Inject constructor(
 
 
     ///internet state
-    private val _internetState = MutableStateFlow(ConnectivityObserver.InternetState.AVAILABLE)
+    private val _internetState = MutableStateFlow(ConnectivityObserver.InternetState.Lost)
     val internetState : StateFlow<ConnectivityObserver.InternetState> = _internetState
 
     ///operation Done with pay pal
@@ -120,7 +123,7 @@ class SharedViewModel @Inject constructor(
                 } else {
                     _favoriteItemsState.value = State.Loading
                     withContext(Dispatchers.IO) {
-                        repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList).collect{
+                        repository.updateFavoritesDraftOrder(currentList[0].draftOrderId, updatedList).collect{
                             fetchFavoriteItems()
                         }
                     }
@@ -133,28 +136,112 @@ class SharedViewModel @Inject constructor(
     fun addToFavorites(product: FavoriteItemDTO) {
         viewModelScope.launch {
             val currentState = _favoriteItemsState.value
+
             if (currentState is State.Success) {
                 val currentList = currentState.data
 
-                if (currentList.any { it.id == product.id }) {
-                    return@launch
-                }
-
-                val updatedList = currentList + product
-
-                withContext(Dispatchers.IO) {
-                    repository.updateFavoritesDraftOrder(product.draftOrderId, updatedList).collect{
-                        fetchFavoriteItems()
+                if (currentList.isEmpty())
+                {
+                    repository.createFinalDraftOrder(
+                        _currentCustomerInfo.value.userId,
+                        _currentCustomerInfo.value.email,
+                        listOf(CartItemDTO(
+                            id = product.id,
+                            productId = product.productId,
+                            draftOrderId = product.draftOrderId,
+                            title = product.title,
+                            quantity = 1,
+                            inventoryQuantity = 0,
+                            price = product.price,
+                            image = product.image,
+                            isFavorite = true
+                            )),
+                        0.0,
+                        AddressModel(),
+                        Constants.FAVORITES_DRAFT_ORDER_KEY
+                    ).collect{
+                        when(it){
+                            is State.Error -> {}
+                            State.Loading -> {}
+                            is State.Success -> {
+                                val fvProduct = FavoriteItemDTO(
+                                    id = product.id,
+                                    productId = product.productId,
+                                    draftOrderId = it.data,
+                                    title = product.title,
+                                    price = product.price,
+                                    image = product.image
+                                )
+                                repository.updateFavoritesDraftOrder(fvProduct.draftOrderId, listOf(fvProduct)).collect{
+                                    when(it){
+                                        is State.Success -> {
+                                            fetchFavoriteItems()
+                                        }
+                                        is State.Error -> {
+                                            Log.d("Abanob", "${it.message}")
+                                        }
+                                        else -> {
+                                            Log.d("Abanob", "Load")
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            }
+                else{
+                    if (currentList.any { it.id == product.id }) {
+                        return@launch
+                    }
+
+                    val updatedList = currentList + product
+
+                    repository.updateFavoritesDraftOrder(currentList[0].draftOrderId, updatedList).collect{
+                        when(it){
+                            is State.Success -> {
+                                fetchFavoriteItems()
+                            }
+                            is State.Error -> {
+                                Log.d("Abanob", "${it.message}")
+                            }
+                            else -> {
+                                Log.d("Abanob", "Load")
+                            }
+                        }
+                    }
+                }
+                }
         }
     }
 
+    // Is Favorite Product
+    fun isFavorite(productID: String): Boolean {
+        val currentState = _favoriteItemsState.value
+        var result = false
+        when(currentState){
+            is State.Success ->{
+                result = if(currentState.data.isNotEmpty()){
+                    currentState.data.any { it.id == productID }
+                }else{
+                    false
+                }
+            }
+            is State.Error ->{
+                return false
+            }
+            is State.Loading -> {}
+        }
+        return  result
+    }
+
+
+    fun setFavoriteWithEmptyList(){
+        _favoriteItemsState.value = State.Success(emptyList())
+    }
 
     // ProductByID
     fun getProductByID(productID: String): ProductDTO? {
-        return productList.value?.find { it.id.contains(productID) }
+        return productList.value.find { it.id.contains(productID) }
     }
 
 

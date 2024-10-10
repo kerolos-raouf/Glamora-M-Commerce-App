@@ -3,7 +3,6 @@ package com.example.glamora.fragmentCart.view
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
@@ -24,13 +24,12 @@ import com.example.glamora.databinding.CartBottomSheetBinding
 import com.example.glamora.databinding.FragmentCartBinding
 import com.example.glamora.databinding.OperationDoneBottomSheetBinding
 import com.example.glamora.fragmentCart.viewModel.CartViewModel
+import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
+import com.example.glamora.util.showGuestDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.paypal.android.cardpayments.CardClient
-import com.paypal.android.corepayments.CoreConfig
-import com.paypal.android.corepayments.Environment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -60,6 +59,10 @@ class CartFragment : Fragment(),CartItemInterface {
     private var address : AddressModel = AddressModel()
 
 
+
+    private val communicator: Communicator by lazy {
+        requireActivity() as Communicator
+    }
 
 
     override fun onCreateView(
@@ -107,20 +110,25 @@ class CartFragment : Fragment(),CartItemInterface {
 
         //apply discount code
         binding.cartApplyButton.setOnClickListener {
-            var found = false
-            for (discount in sharedViewModel.discountCodes.value)
-            {
-                if(discount.code == binding.cartCuponCodeEditText.text.toString())
+            if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN){
+                var found = false
+                for (discount in sharedViewModel.discountCodes.value)
                 {
-                    actionAfterGettingFoundDiscountCode(discount)
-                    found = true
-                    break
+                    if(discount.code == binding.cartCuponCodeEditText.text.toString())
+                    {
+                        actionAfterGettingFoundDiscountCode(discount)
+                        found = true
+                        break
+                    }
                 }
+                if (!found)
+                {
+                    Toast.makeText(requireContext(), "Invalid code", Toast.LENGTH_SHORT).show()
+                }
+            }else{
+                showGuestDialog(requireContext())
             }
-            if (!found)
-            {
-                Toast.makeText(requireContext(), "Invalid code", Toast.LENGTH_SHORT).show()
-            }
+
         }
 
 
@@ -128,7 +136,14 @@ class CartFragment : Fragment(),CartItemInterface {
         bottomSheet = BottomSheetDialog(requireContext())
         bottomSheetBinding = CartBottomSheetBinding.inflate(layoutInflater)
         binding.cartCheckOutButton.setOnClickListener {
-            showBottomSheet()
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN){
+                showBottomSheet()
+            }else{
+                showGuestDialog(requireContext())
+            }
         }
     }
 
@@ -270,14 +285,31 @@ class CartFragment : Fragment(),CartItemInterface {
             }
         }
 
+        //set default address
+        if(sharedViewModel.currentCustomerInfo.value.addresses.isNotEmpty())
+        {
+
+            sharedViewModel.currentCustomerInfo.value.addresses.forEach { currentAddress->
+                if(currentAddress.isDefault)
+                {
+                    address = currentAddress
+                    bottomSheetBinding.bottomSheetUserName.text = "Name : ${currentAddress.firstName}"
+                    bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${currentAddress.country}, ${currentAddress.city}, ${currentAddress.street}"
+                }
+            }
+
+        }
+
 
         bottomSheetBinding.bottomSheetSetNewAddressButton.setOnClickListener {
             showPopUpAddresses(bottomSheetBinding.bottomSheetDetailsLinearLayout)
         }
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
-
-            if(address.city != Constants.UNKNOWN)
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if(address.city != Constants.UNKNOWN)
             {
                 finishDraftOrder()
                 bottomSheet.dismiss()
@@ -288,7 +320,10 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
         bottomSheetBinding.bottomSheetPaypalButton.setOnClickListener {
-            if(cartViewModel.cartItems.value?.isEmpty() == true)
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if(cartViewModel.cartItems.value?.isEmpty() == true)
             {
                 Toast.makeText(requireContext(), "Your cart is empty", Toast.LENGTH_SHORT).show()
             }
@@ -309,21 +344,24 @@ class CartFragment : Fragment(),CartItemInterface {
     private fun showPopUpAddresses(view : View) {
         val popupMenu = PopupMenu(requireContext(),view)
         val addresses = sharedViewModel.currentCustomerInfo.value.addresses
-        if(addresses.isNotEmpty())
-        {
-            addresses.forEachIndexed { index, addressModel ->
-                popupMenu.menu.add(0,index,0,"${addressModel.country}-${addressModel.city}-${addressModel.street}")
+        popupMenu.menu.add(0,0,0,"+Add new address")
+        addresses.forEachIndexed { index, addressModel ->
+            popupMenu.menu.add(0,index+1,0,"${addressModel.country}, ${addressModel.city}, ${addressModel.street}")
+        }
+
+        popupMenu.setOnMenuItemClickListener {menuItem ->
+            if(menuItem.itemId == 0)
+            {
+                findNavController().navigate(R.id.action_cartFragment_to_mapFragment)
+                bottomSheet.dismiss()
+            }else
+            {
+                address = sharedViewModel.currentCustomerInfo.value.addresses[menuItem.itemId-1]
+                bottomSheetBinding.bottomSheetUserName.text = "Name : ${address.firstName}"
+                bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}, ${address.city}, ${address.street}"
             }
 
-            popupMenu.setOnMenuItemClickListener {menuItem ->
-                address = sharedViewModel.currentCustomerInfo.value.addresses[menuItem.itemId]
-                bottomSheetBinding.bottomSheetUserName.text = "Name : ${address.firstName}"
-                bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}-${address.city}-${address.street}"
-                true
-            }
-        }else
-        {
-            popupMenu.menu.add(0,0,0,"<There is no addresses>")
+            true
         }
         popupMenu.show()
     }
@@ -351,22 +389,34 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {
-        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
-        applyPriceChangeOnUI(-item.price.toDouble())
+        if(!communicator.isInternetAvailable()){
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }else{
+            cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
+            applyPriceChangeOnUI(-item.price.toDouble())
+        }
     }
 
     override fun onItemMinusClicked(item: CartItemDTO) {
-        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
-        applyPriceChangeOnUI(item.price.toDouble())
+        if(!communicator.isInternetAvailable()){
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }else{
+            cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
+            applyPriceChangeOnUI(item.price.toDouble())
+        }
     }
 
     override fun onItemDeleteClicked(item: CartItemDTO) {
-        customAlertDialog.showAlertDialog(
-            message = "Are about deleting this item?",
-            actionText = "Delete"
-        ){
-            cartViewModel.deleteCartItemFromDraftOrder(item,sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
-            applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
+        if(!communicator.isInternetAvailable()){
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }else{
+            customAlertDialog.showAlertDialog(
+                message = "Are about deleting this item?",
+                actionText = "Delete"
+            ){
+                cartViewModel.deleteCartItemFromDraftOrder(item,sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
+                applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
+            }
         }
     }
 
@@ -375,7 +425,13 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     override fun onItemClicked(item: CartItemDTO) {
-
+        if (communicator.isInternetAvailable())
+        {
+            val action = CartFragmentDirections.actionCartFragmentToProductDetailsFragment(item.productId)
+            findNavController().navigate(action)
+        }else{
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onReachedMaxQuantity(item: CartItemDTO) {
@@ -390,6 +446,11 @@ class CartFragment : Fragment(),CartItemInterface {
         binding.cartItemsNumber.text = "${String.format("%.2f", oldItemsPrice - newItemsPrice)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
         binding.cartTotalPriceNumber.text = "${String.format("%.2f", aftersDiscount)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
         binding.cartDiscountNumber.text = "${String.format("%.2f", newDiscount)} ${sharedViewModel.getSharedPrefString(Constants.CURRENCY_KEY,Constants.EGP)}"
+    }
+
+    override fun onStart() {
+        super.onStart()
+        communicator.showBottomNav()
     }
 
 }

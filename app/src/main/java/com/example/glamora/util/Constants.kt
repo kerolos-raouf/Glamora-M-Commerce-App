@@ -4,7 +4,7 @@ object Constants {
 
     const val GRAPHQL_BASE_URL = "https://android-alex-team1.myshopify.com/admin/api/2024-07/graphql.json"
     const val RETROFIT_BASE_URL = "https://android-alex-team1.myshopify.com/admin/api/2024-07/"
-    const val  CURRENCY_API = "https://api.apilayer.com/exchangerates_data/"
+    const val CURRENCY_API = "https://v6.exchangerate-api.com/v6/"
     const val CITIES_BASE_URL = "https://api.api-ninjas.com/v1/"
     const val PAYPAL_BASE_URL = "https://api-m.sandbox.paypal.com/"
 

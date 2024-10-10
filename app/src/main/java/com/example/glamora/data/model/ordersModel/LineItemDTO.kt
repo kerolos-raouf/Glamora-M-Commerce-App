@@ -1,6 +1,7 @@
 package com.example.glamora.data.model.ordersModel
 
 data class LineItemDTO(
+    val productId: String,
 //    val id: String,
     val name: String,
     val quantity: Int,

@@ -6,12 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
 import com.example.glamora.databinding.FragmentManageLocationsBinding
 import com.example.glamora.fragmentManageLocations.viewModel.ManageAddressesViewModel
@@ -55,20 +57,46 @@ class ManageLocationsFragment : Fragment() {
 
     private fun initViews(){
         customAlertDialog = CustomAlertDialog(requireActivity())
-        adapter = ManageLocationsRecyclerAdapter{address->
+        adapter = ManageLocationsRecyclerAdapter(
+            {address->
+
+                customAlertDialog.showAlertDialog("Set as default address?", "Set Default"){
+                    manageAddressesViewModel.updateCustomerDefaultAddress(
+                        sharedViewModel.currentCustomerInfo.value.userId,
+                        address.addressId,
+                        sharedViewModel.currentCustomerInfo.value.email
+                    )
+                }
+
+            }){address->
             customAlertDialog.showAlertDialog(
                 "Are you sure you want to delete this address?",
                 "Delete"
             ){
                 val newAddresses = sharedViewModel.currentCustomerInfo.value.addresses.filter { it != address}
-                manageAddressesViewModel.deleteCustomerAddresses(sharedViewModel.currentCustomerInfo.value.userId,newAddresses)
+                Log.d("Kerolos", "initViews: ${newAddresses.size}")
+                manageAddressesViewModel.deleteCustomerAddresses(
+                    sharedViewModel.currentCustomerInfo.value.userId,
+                    sharedViewModel.currentCustomerInfo.value.email,
+                    newAddresses)
             }
         }
+
+
         binding.addressesRecyclerView.adapter = adapter
 
-        if(sharedViewModel.currentCustomerInfo.value.addresses.isNotEmpty())
-        {
-            adapter.submitList(sharedViewModel.currentCustomerInfo.value.addresses)
+        manageAddressesViewModel.fetchCustomerAddresses(sharedViewModel.currentCustomerInfo.value.email)
+
+
+        binding.manageLocationsAddButton.setOnClickListener {
+            findNavController().navigate(R.id.action_manageLocationsFragment_to_mapFragment)
+        }
+
+
+
+        binding.manageLocationsSwipeRefreshLayout.setOnRefreshListener {
+            manageAddressesViewModel.fetchCustomerAddresses(sharedViewModel.currentCustomerInfo.value.email)
+            binding.manageLocationsSwipeRefreshLayout.isRefreshing = false
         }
 
     }
@@ -79,10 +107,18 @@ class ManageLocationsFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED)
             {
                 manageAddressesViewModel.customerAddresses.collect{addresses->
-                    addresses?.let {
-                        adapter.submitList(it)
-                        sharedViewModel.currentCustomerInfo.value.addresses = it
-                    }
+                    adapter.submitList(addresses)
+                    sharedViewModel.currentCustomerInfo.value.addresses = addresses
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED)
+            {
+                manageAddressesViewModel.message.collect{message->
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 }
             }
         }

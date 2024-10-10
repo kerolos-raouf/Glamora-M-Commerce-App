@@ -15,6 +15,7 @@ import com.example.GetOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
+import com.example.UpdateCustomerDefaultAddressMutation
 import com.example.UpdateDraftOrderMutation
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
@@ -255,6 +256,7 @@ class RepositoryImpl @Inject constructor(
                 )
             }
 
+
             val customerInput = CustomerInput(
                 id = Optional.Present(customerId),
                 addresses = Optional.Present(mailingAddressInputList)
@@ -377,7 +379,8 @@ class RepositoryImpl @Inject constructor(
         customerEmail: String,
         cartItems: List<CartItemDTO>,
         discountAmount: Double,
-        address: AddressModel
+        address: AddressModel,
+        tag: String
     ): Flow<State<String>> = flow {
         emit(State.Loading)
         try {
@@ -395,6 +398,7 @@ class RepositoryImpl @Inject constructor(
 
             val createDraftOrder = apolloClient.mutation(CreateDrafterOrderMutation(
                 DraftOrderInput(
+                    tags = Optional.present(listOf(tag)),
                     customerId = Optional.Present(customerId),
                     email = Optional.Present(customerEmail),
                     lineItems = Optional.Present(draftOrderItemList),
@@ -470,6 +474,24 @@ class RepositoryImpl @Inject constructor(
                 } else {
                     emit(State.Error("User not found"))
                 }
+            }
+        } catch (e: Exception) {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun updateCustomerDefaultAddress(
+        customerId: String,
+        addressId: String
+    ): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+            val response = apolloClient.mutation(UpdateCustomerDefaultAddressMutation(addressId, customerId)).execute()
+
+            if (response.hasErrors()) {
+                emit(State.Error("Error fetching user: ${response.errors}"))
+            } else {
+                emit(State.Success(response.data?.customerUpdateDefaultAddress?.customer?.defaultAddress?.id.toString()))
             }
         } catch (e: Exception) {
             emit(State.Error(e.message.toString()))
@@ -605,13 +627,22 @@ class RepositoryImpl @Inject constructor(
 
                 if (!customerEdges.isNullOrEmpty()) {
                     val customer = customerEdges[0].node
+                    val addresses = customer.addresses.map { it.toAddressModel() }
+                    val defaultAddress = customer.defaultAddress?.toAddressModel()
+                    if (defaultAddress != null) {
+                        addresses.forEach {
+                            if (it.addressId == defaultAddress.addressId){
+                                it.isDefault = true
+                            }
+                        }
+                    }
 
                     val customerInfo = CustomerInfo(
                         displayName = "${customer.firstName} ${customer.lastName}",
                         email = customer.email.toString(),
                         userId = customer.id,
                         userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1],
-                        addresses = customer.addresses.map { it.toAddressModel() }
+                        addresses = addresses
                     )
                     emit(State.Success(customerInfo))
                 } else {
@@ -645,6 +676,7 @@ class RepositoryImpl @Inject constructor(
                             currencyCode = edge.node.totalPriceSet.shopMoney.currencyCode.name,
                             lineItems = edge.node.lineItems.edges.map { itemEdge ->
                                 LineItemDTO(
+                                    productId = itemEdge.node.variant!!.product.id,
                                     name = itemEdge.node.name,
                                     quantity = itemEdge.node.quantity,
                                     unitPrice = itemEdge.node.originalUnitPriceSet.shopMoney.amount.toString(),

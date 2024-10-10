@@ -14,30 +14,22 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.apollographql.apollo.ApolloClient
 import com.example.glamora.R
-import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.DiscountCodeDTO
-import com.example.glamora.data.network.ApolloClientInterceptor
-import com.example.glamora.data.repository.RepositoryImpl
-import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
+import com.example.glamora.util.showGuestDialog
 import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
-import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -51,7 +43,6 @@ class HomeFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var productsAdapter: ProductsAdapter
-    private lateinit var navController: NavController
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
 
@@ -84,10 +75,16 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.homeFavoriteButton.setOnClickListener{
-            findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
+            if(!communicator.isInternetAvailable())
+            {
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if (sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN) {
+                findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
+            }else {
+                showGuestDialog(requireContext())
+            }
         }
-
-        navController = Navigation.findNavController(view)
 
         initHome()
         setUpRecyclerViews()
@@ -108,28 +105,55 @@ class HomeFragment : Fragment() {
         setupCardViews()
     }
 
+    private fun actionOnInternetAvailable() {
+        sharedViewModel.fetchProducts()
+        homeViewModel.getALlBrands()
+        sharedViewModel.fetchDiscountCodes()
+    }
+
     private fun initHome() {
         val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
         if (userEmail != Constants.UNKNOWN) {
             sharedViewModel.getCustomerInfo(userEmail)
             sharedViewModel.fetchFavoriteItems()
         }
+
+        binding.homeSwiperefreshlayout.setOnRefreshListener {
+            if(communicator.isInternetAvailable()) {
+                actionOnInternetAvailable()
+            }else {
+                Toast.makeText(requireContext(), "No Internet Connection", Toast.LENGTH_SHORT).show()
+            }
+            binding.homeSwiperefreshlayout.isRefreshing = false
+        }
+
     }
 
     private fun setupRandomItemsRecyclerView() {
-        productsAdapter = ProductsAdapter(emptyList())
+        productsAdapter = ProductsAdapter(emptyList()) { productId ->
+            if(!communicator.isInternetAvailable())
+            {
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }else{
+                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
+                findNavController().navigate(action)
+                Log.d("MAI","$action")
+            }
+        }
+
         binding.homeRvItem.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = productsAdapter
         }
     }
 
+
     private fun setupBrandsRecyclerView() {
         brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
             val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
                 selectedBrand.title
             )
-            navController.navigate(action)
+            findNavController().navigate(action)
         }
         binding.homeRvBrand.apply {
             layoutManager = CarouselLayoutManager()
@@ -139,14 +163,16 @@ class HomeFragment : Fragment() {
 
     private fun observeRandomProducts() {
         lifecycleScope.launch {
-            sharedViewModel.productList.collect { randomProducts ->
-                val filteredProducts = randomProducts.shuffled().take(10)
-                productsAdapter.updateData(filteredProducts)
-                productsAdapter = ProductsAdapter(filteredProducts)
-                binding.homeRvItem.adapter = productsAdapter
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.productList.collect { randomProducts ->
+                    val filteredProducts = randomProducts.shuffled().take(10)
+                    productsAdapter.updateData(filteredProducts)
+                }
             }
         }
     }
+
+
 
 
     private fun observeBrands() {
@@ -161,20 +187,35 @@ class HomeFragment : Fragment() {
         binding.apply {
 
             homeShoescv.setOnClickListener{
-                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
-                navController.navigate(action)
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                }else
+                {
+                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
+                    findNavController().navigate(action)
+                }
 
             }
             homeTshirtcv.setOnClickListener{
-                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
-                navController.navigate(action)
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                }else{
+                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
+                    findNavController().navigate(action)
+                }
 
             }
 
             homeAccssCV.setOnClickListener{
-                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
-                navController.navigate(action)
-
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                }else {
+                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
+                    findNavController().navigate(action)
+                }
             }
 
         }
@@ -195,9 +236,14 @@ class HomeFragment : Fragment() {
             imagesList,
             object : DiscountCodeListener {
                 override fun onDiscountCodeClicked(discountCode: DiscountCodeDTO) {
-                    val clipData = ClipData.newPlainText("Promotion Code", discountCode.code)
-                    clipboardManager.setPrimaryClip(clipData)
-                    Toast.makeText(context, "Promotion Code Copied ${discountCode.code}", Toast.LENGTH_SHORT).show()
+                    if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN){
+                        val clipData = ClipData.newPlainText("Promotion Code", discountCode.code)
+                        clipboardManager.setPrimaryClip(clipData)
+                        Toast.makeText(context, "Promotion Code Copied ${discountCode.code}", Toast.LENGTH_SHORT).show()
+                    }else{
+                        showGuestDialog(requireContext())
+                    }
+
                 }
             }
         )
@@ -231,28 +277,32 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+
     private fun observeFavoriteItemsCount() {
         lifecycleScope.launch {
-                sharedViewModel.favoriteItemsState.collect { state ->
-                    when (state) {
-                        is State.Success -> {
-                            Log.d("FAV","${state.data.size}")
-                            val favoriteItemsCount = state.data.size
-                            binding.favoriteCounter.text = favoriteItemsCount.toString()
+            sharedViewModel.favoriteItemsState.collect { state ->
+                when (state) {
+                    is State.Success -> {
+                        val favoriteItemsCount = state.data.size
+                        binding.favoriteCounter.text = favoriteItemsCount.toString()
+                        if (favoriteItemsCount == 0) {
+                            binding.favoriteCounter.visibility = View.GONE
+                        } else {
                             binding.favoriteCounter.visibility = View.VISIBLE
                         }
-                        is State.Error -> {
-                            Log.d("FAV","error")
-                            binding.favoriteCounter.visibility = View.GONE
-                        }
-                        is State.Loading -> {
-                            Log.d("FAV","loading")
-                            binding.favoriteCounter.visibility = View.GONE
-                        }
+                    }
+                    is State.Error -> {
+                        binding.favoriteCounter.visibility = View.GONE
+                    }
+                    is State.Loading -> {
+                        binding.favoriteCounter.visibility = View.GONE
                     }
                 }
+            }
         }
     }
+
 
 
 
@@ -260,6 +310,7 @@ class HomeFragment : Fragment() {
         super.onStart()
         scrollJob?.start()
         communicator.showBottomNav()
+        findNavController().graph.setStartDestination(R.id.homeFragment)
     }
     override fun onStop() {
         super.onStop()

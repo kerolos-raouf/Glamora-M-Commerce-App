@@ -9,7 +9,7 @@ import com.example.glamora.databinding.ItemProductsSizesBinding
 
 class SizesAdapter(
     private val availableProducts: List<AvailableProductsModel>,
-    private val onSizeSelected: (price: String) -> Unit
+    private val onSizeSelected: (variant: AvailableProductsModel) -> Unit
 ) : RecyclerView.Adapter<SizesAdapter.SizeViewHolder>() {
 
 
@@ -22,19 +22,18 @@ class SizesAdapter(
             binding.size = size
             binding.executePendingBindings()
 
-            val cardView = binding.cardView
 
             if (isSelected) {
-                cardView.setCardBackgroundColor(binding.root.context.getColor(R.color.dark_blue))
+                binding.item.setBackgroundResource(R.drawable.circle_background_sizes_clicked)
             } else {
-                cardView.setCardBackgroundColor(binding.root.context.getColor(R.color.light_blue))
+                binding.item.setBackgroundResource(R.drawable.circle_background_sizes)
             }
 
 
             binding.root.setOnClickListener {
                 val selectedProduct = availableProducts.find { it.size.toString() == size }
                 selectedProduct?.let {
-                    onSizeSelected(it.price.toString())
+                    onSizeSelected(it)
                 }
 
                 val previousPosition = selectedPosition

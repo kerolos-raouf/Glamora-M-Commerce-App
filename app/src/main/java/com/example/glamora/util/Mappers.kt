@@ -101,14 +101,29 @@ fun BrandsQuery.Collections.toBrandDTO(): List<Brands> {
 fun UpdateCustomerAddressMutation.Address.toAddressModel(): AddressModel {
     val addressModel = AddressModel()
 
+    addressModel.addressId = id ?: Constants.UNKNOWN
     addressModel.city = city ?: Constants.UNKNOWN
     addressModel.country = country ?: Constants.UNKNOWN
     addressModel.firstName = firstName ?: Constants.UNKNOWN
     addressModel.lastName = lastName ?: Constants.UNKNOWN
     addressModel.phone = phone ?: Constants.UNKNOWN
     addressModel.street = address1 ?: Constants.UNKNOWN
+    addressModel.isDefault = false
 
 
+    return addressModel
+}
+
+fun GetCustomerByEmailQuery.DefaultAddress.toAddressModel(): AddressModel {
+    val addressModel = AddressModel()
+    addressModel.addressId = id ?: Constants.UNKNOWN
+    addressModel.city = city ?: Constants.UNKNOWN
+    addressModel.country = country ?: Constants.UNKNOWN
+    addressModel.firstName = firstName ?: Constants.UNKNOWN
+    addressModel.lastName = lastName ?: Constants.UNKNOWN
+    addressModel.phone = phone ?: Constants.UNKNOWN
+    addressModel.street = address1 ?: Constants.UNKNOWN
+    addressModel.isDefault = true
     return addressModel
 }
 
@@ -122,6 +137,7 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toCartItemsDTO() : List<CartItemDT
             draftOrder.lineItems.nodes.forEach { lineItem ->
                 cartItems.add(CartItemDTO(
                     id = lineItem.variant?.id ?: Constants.UNKNOWN,
+                    productId = lineItem.product?.id ?: Constants.UNKNOWN,
                     draftOrderId = draftOrder.id ?: Constants.UNKNOWN,
                     title = lineItem.title ?: Constants.UNKNOWN,
                     quantity = lineItem.quantity ?: 0,
@@ -136,6 +152,7 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toCartItemsDTO() : List<CartItemDT
     return cartItems
 }
 
+
 fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<FavoriteItemDTO> {
     val favoritesItems = mutableListOf<FavoriteItemDTO>()
 
@@ -145,6 +162,7 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<Favori
             draftOrder.lineItems.nodes.forEach { lineItem ->
                 favoritesItems.add(FavoriteItemDTO(
                     id = lineItem.variant?.id ?: Constants.UNKNOWN,
+                    productId = lineItem.product?.id ?: Constants.UNKNOWN,
                     draftOrderId = draftOrder.id ?: Constants.UNKNOWN,
                     title = lineItem.title ?: Constants.UNKNOWN,
                     price = lineItem.variant?.price.toString() ?: "0",
@@ -159,12 +177,14 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<Favori
 
 fun GetCustomerByEmailQuery.Address.toAddressModel(): AddressModel {
     return AddressModel(
+        addressId = id ?: Constants.UNKNOWN,
         city = city ?: Constants.UNKNOWN,
         country = country ?: Constants.UNKNOWN,
         firstName = firstName ?: Constants.UNKNOWN,
         lastName = lastName ?: Constants.UNKNOWN,
         phone = phone ?: Constants.UNKNOWN,
-        street = address1 ?: Constants.UNKNOWN
+        street = address1 ?: Constants.UNKNOWN,
+        isDefault = false
     )
 }
 
@@ -178,6 +198,7 @@ fun GetOrdersByCustomerQuery.Orders.toOrderDTO(): List<OrderDTO> {
         val lineItems = orderNode.lineItems.edges.map { lineItemEdge ->
             val lineItemNode = lineItemEdge.node
             LineItemDTO(
+                productId = lineItemNode.variant!!.product.id,
                 name = lineItemNode.name,
                 quantity = lineItemNode.quantity,
                 unitPrice = lineItemNode.originalUnitPriceSet.shopMoney.amount.toString(),
