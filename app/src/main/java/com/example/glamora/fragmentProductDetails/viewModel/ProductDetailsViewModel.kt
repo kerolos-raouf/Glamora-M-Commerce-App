@@ -18,30 +18,30 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductDetailsViewModel @Inject constructor(
     private val repository: Repository
-) : ViewModel(){
+) : ViewModel() {
 
     private val _cartItems = MutableStateFlow<List<CartItemDTO>>(emptyList())
 
-    private val _message = MutableStateFlow("")
-    val message : StateFlow<String> = _message
+    val _state = MutableStateFlow<State<Boolean>>(State.Loading)
+    val state: StateFlow<State<Boolean>> = _state
 
-    private val _loading = MutableStateFlow(false)
-    val loading : StateFlow<Boolean> = _loading
 
-    fun fetchCartItems(userId: String){
+    fun fetchCartItems(userId: String) {
         viewModelScope.launch {
-            repository.getCartItemsForCustomer(userId).collect{state ->
-                when(state){
+            _state.value = State.Loading
+            repository.getCartItemsForCustomer(userId).collect { state ->
+                when (state) {
                     is State.Error -> {
-                        _message.value = state.message
-                        _loading.value = false
+                        _state.value = State.Error("Error in Fetching Card Items")
                     }
+
                     State.Loading -> {
-                        _loading.value = true
+                        _state.value = State.Loading
                     }
+
                     is State.Success -> {
                         _cartItems.value = state.data
-                        _loading.value = false
+                        _state.value = State.Success(true)
                     }
                 }
             }
@@ -52,59 +52,64 @@ class ProductDetailsViewModel @Inject constructor(
     fun addToCard(variant: CartItemDTO, userId: String, userEmail: String) {
 
         viewModelScope.launch {
+            _state.value = State.Loading
+
             val currentState = _cartItems.value
-
-
-                if(currentState.isEmpty())
-                {
-                    repository.createFinalDraftOrder(
-                        userId,
-                        userEmail,
-                        listOf(variant),
-                        0.0,
-                        AddressModel(),
-                        Constants.CART_DRAFT_ORDER_KEY
-                    ).collect{
-                        when(it){
-                            is State.Error -> {}
-                            State.Loading -> {}
-                            is State.Success -> {
-                                val cardItem = variant.copy(draftOrderId = it.data)
-                                repository.updateCartDraftOrder(cardItem.draftOrderId, listOf(cardItem)).collect{
-                                    when(it){
+            if (currentState.isEmpty()) {
+                repository.createFinalDraftOrder(
+                    userId,
+                    userEmail,
+                    listOf(variant),
+                    0.0,
+                    AddressModel(),
+                    Constants.CART_DRAFT_ORDER_KEY
+                ).collect {
+                    when (it) {
+                        is State.Error -> {}
+                        State.Loading -> {}
+                        is State.Success -> {
+                            val cardItem = variant.copy(draftOrderId = it.data)
+                            repository.updateCartDraftOrder(cardItem.draftOrderId, listOf(cardItem))
+                                .collect {
+                                    when (it) {
                                         is State.Success -> {
                                             fetchCartItems(userId)
+                                            _state.value = State.Success(true)
                                         }
+
                                         is State.Error -> {
                                             Log.d("Abanob", "${it.message}")
                                         }
+
                                         else -> {
                                             Log.d("Abanob", "Load")
                                         }
                                     }
                                 }
-                            }
                         }
                     }
                 }
-                else
-                {
-                    if (!currentState.any { it.id == variant.id }) {
-                        val updatedList = currentState + variant
-                    repository.updateCartDraftOrder(currentState[0].draftOrderId, updatedList).collect {
-                        when (it) {
-                            is State.Success -> {
-                                _cartItems.value = updatedList
-                                fetchCartItems(userId)
-                            }
-                            is State.Error -> {
-                                Log.d("Abanob", "Error: ${it.message}")
-                            }
-                            else -> {
-                                Log.d("Abanob", "Loading")
+            } else {
+                if (!currentState.any { it.id == variant.id }) {
+                    val updatedList = currentState + variant
+                    repository.updateCartDraftOrder(currentState[0].draftOrderId, updatedList)
+                        .collect {
+                            when (it) {
+                                is State.Success -> {
+                                    _cartItems.value = updatedList
+                                    fetchCartItems(userId)
+                                    _state.value = State.Success(true)
+                                }
+
+                                is State.Error -> {
+                                    Log.d("Abanob", "Error: ${it.message}")
+                                }
+
+                                else -> {
+                                    Log.d("Abanob", "Loading")
+                                }
                             }
                         }
-                    }
                 }
             }
         }

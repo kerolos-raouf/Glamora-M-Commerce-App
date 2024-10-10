@@ -26,8 +26,11 @@ import com.example.glamora.fragmentProductDetails.viewModel.ProductDetailsViewMo
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
+import com.example.glamora.util.State
+import com.example.glamora.util.showGuestDialog
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -84,6 +87,23 @@ class ProductDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        lifecycleScope.launch {
+            productDetailsViewModel.state.collectLatest{
+                when (it) {
+                    is State.Loading -> {
+                        productDetailsBinding.progressBar.visibility = View.VISIBLE
+                    }
+                    is State.Success -> {
+                        productDetailsBinding.progressBar.visibility = View.GONE
+                    }
+                    is State.Error -> {
+                        productDetailsBinding.progressBar.visibility = View.GONE
+                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
         if(arguments?.isEmpty == false){
             productID = arguments?.getString("productId").toString()
         }
@@ -104,6 +124,8 @@ class ProductDetailsFragment : Fragment() {
                     if(isFavorite){
                         productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
                     }
+
+                    productDetailsViewModel._state.value = State.Success(true)
                 }
             }
         }
@@ -114,8 +136,10 @@ class ProductDetailsFragment : Fragment() {
 
         productDetailsBinding.favBtn.setOnClickListener{
             if(isGuestUser){
-                Toast.makeText(context, "Please Login To Can Add To Favorites", Toast.LENGTH_SHORT).show()
+                showGuestDialog(requireContext())
             }else{
+                productDetailsViewModel._state.value = State.Loading
+
                 if(isFavorite){
                     productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite_border)
 
@@ -127,6 +151,8 @@ class ProductDetailsFragment : Fragment() {
                     }
 
                     isFavorite = false
+
+                    productDetailsViewModel._state.value = State.Success(true)
 
                     Toast.makeText(context, "Delete From Favorite successful", Toast.LENGTH_SHORT).show()
                 }
@@ -142,6 +168,8 @@ class ProductDetailsFragment : Fragment() {
 
                     isFavorite = true
 
+                    productDetailsViewModel._state.value = State.Success(true)
+
                     Toast.makeText(context, "Add To Favorite successful", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -155,8 +183,9 @@ class ProductDetailsFragment : Fragment() {
         productDetailsBinding.addCardBtn.setOnClickListener{
 
             if(isGuestUser){
-                Toast.makeText(context, "Please Login To Can Add To Card", Toast.LENGTH_SHORT).show()
+                showGuestDialog(requireContext())
             }else{
+                productDetailsViewModel._state.value = State.Loading
                 productDetailsViewModel.addToCard(CartItemDTO(
                     id = variante.id,
                     productDTO!!.id,
@@ -168,6 +197,8 @@ class ProductDetailsFragment : Fragment() {
                     image = "",
                     isFavorite = isFavorite
                 ), sharedViewModel.currentCustomerInfo.value.userId.split("/")[4] ,sharedViewModel.currentCustomerInfo.value.email)
+
+                productDetailsViewModel._state.value = State.Success(true)
                 Toast.makeText(context, "Add To Card successful", Toast.LENGTH_SHORT).show()
             }
         }
