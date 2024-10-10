@@ -1,5 +1,5 @@
 query GetOrdersByCustomer($email: String!) {
-    orders(first: 10, query: $email) {
+    orders(first: 100, query: $email) {
         edges {
             node {
                 id
@@ -16,7 +16,7 @@ query GetOrdersByCustomer($email: String!) {
                         currencyCode
                     }
                 }
-                lineItems(first: 5) {
+                lineItems(first: 100) {
                     edges {
                         node {
                             variant {
