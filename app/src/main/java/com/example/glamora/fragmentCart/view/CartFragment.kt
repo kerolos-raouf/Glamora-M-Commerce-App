@@ -136,7 +136,10 @@ class CartFragment : Fragment(),CartItemInterface {
         bottomSheet = BottomSheetDialog(requireContext())
         bottomSheetBinding = CartBottomSheetBinding.inflate(layoutInflater)
         binding.cartCheckOutButton.setOnClickListener {
-            if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN){
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN){
                 showBottomSheet()
             }else{
                 showGuestDialog(requireContext())
@@ -298,8 +301,10 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
-
-            if(address.city != Constants.UNKNOWN)
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if(address.city != Constants.UNKNOWN)
             {
                 finishDraftOrder()
                 bottomSheet.dismiss()
@@ -310,7 +315,10 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
         bottomSheetBinding.bottomSheetPaypalButton.setOnClickListener {
-            if(cartViewModel.cartItems.value?.isEmpty() == true)
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if(cartViewModel.cartItems.value?.isEmpty() == true)
             {
                 Toast.makeText(requireContext(), "Your cart is empty", Toast.LENGTH_SHORT).show()
             }
@@ -382,22 +390,34 @@ class CartFragment : Fragment(),CartItemInterface {
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {
-        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
-        applyPriceChangeOnUI(-item.price.toDouble())
+        if(!communicator.isInternetAvailable()){
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }else{
+            cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
+            applyPriceChangeOnUI(-item.price.toDouble())
+        }
     }
 
     override fun onItemMinusClicked(item: CartItemDTO) {
-        cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
-        applyPriceChangeOnUI(item.price.toDouble())
+        if(!communicator.isInternetAvailable()){
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }else{
+            cartViewModel.updateCartItemQuantity(item.draftOrderId, item.id, item.quantity)
+            applyPriceChangeOnUI(item.price.toDouble())
+        }
     }
 
     override fun onItemDeleteClicked(item: CartItemDTO) {
-        customAlertDialog.showAlertDialog(
-            message = "Are about deleting this item?",
-            actionText = "Delete"
-        ){
-            cartViewModel.deleteCartItemFromDraftOrder(item,sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
-            applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
+        if(!communicator.isInternetAvailable()){
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+        }else{
+            customAlertDialog.showAlertDialog(
+                message = "Are about deleting this item?",
+                actionText = "Delete"
+            ){
+                cartViewModel.deleteCartItemFromDraftOrder(item,sharedViewModel.currentCustomerInfo.value.userIdAsNumber)
+                applyPriceChangeOnUI(item.price.toDouble() * item.quantity)
+            }
         }
     }
 
@@ -410,6 +430,8 @@ class CartFragment : Fragment(),CartItemInterface {
         {
             val action = CartFragmentDirections.actionCartFragmentToProductDetailsFragment(item.productId)
             findNavController().navigate(action)
+        }else{
+            Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
         }
     }
 
