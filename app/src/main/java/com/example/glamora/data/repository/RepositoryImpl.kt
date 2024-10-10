@@ -15,6 +15,7 @@ import com.example.GetOrdersByCustomerQuery
 import com.example.PriceRulesQuery
 import com.example.ProductQuery
 import com.example.UpdateCustomerAddressMutation
+import com.example.UpdateCustomerDefaultAddressMutation
 import com.example.UpdateDraftOrderMutation
 import com.example.glamora.data.contracts.RemoteDataSource
 import com.example.glamora.data.contracts.Repository
@@ -474,6 +475,24 @@ class RepositoryImpl @Inject constructor(
                 } else {
                     emit(State.Error("User not found"))
                 }
+            }
+        } catch (e: Exception) {
+            emit(State.Error(e.message.toString()))
+        }
+    }
+
+    override fun updateCustomerDefaultAddress(
+        customerId: String,
+        addressId: String
+    ): Flow<State<String>> = flow {
+        emit(State.Loading)
+        try {
+            val response = apolloClient.mutation(UpdateCustomerDefaultAddressMutation(addressId, customerId)).execute()
+
+            if (response.hasErrors()) {
+                emit(State.Error("Error fetching user: ${response.errors}"))
+            } else {
+                emit(State.Success(response.data?.customerUpdateDefaultAddress?.customer?.defaultAddress?.id.toString()))
             }
         } catch (e: Exception) {
             emit(State.Error(e.message.toString()))

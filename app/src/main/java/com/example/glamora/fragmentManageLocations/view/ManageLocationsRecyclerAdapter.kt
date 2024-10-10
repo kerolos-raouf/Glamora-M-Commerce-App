@@ -17,7 +17,8 @@ class DiffUtilCallback : DiffUtil.ItemCallback<AddressModel>() {
 }
 
 class ManageLocationsRecyclerAdapter (
-    private val deleteItem : (address : AddressModel)->Unit
+    private val setDefaultAddress : (address : AddressModel)->Unit,
+    private val deleteItem : (address : AddressModel)->Unit,
 ) : ListAdapter<AddressModel, ViewHolder>(DiffUtilCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_manage_locations, parent, false))
@@ -34,6 +35,20 @@ class ManageLocationsRecyclerAdapter (
                 deleteItem(item)
             }
             addressItemCheckBox.isChecked = item.isDefault
+            addressItemCheckBox.isClickable = !item.isDefault
+            if(item.isDefault) addressItemDeleteButton.visibility = View.GONE
+
+            addressItemCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                if(isChecked)
+                {
+                    addressItemCheckBox.isChecked = false
+                }
+            }
+
+            addressItemCheckBox.setOnClickListener {
+                setDefaultAddress(item)
+            }
+
         }
     }
 }

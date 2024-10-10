@@ -28,7 +28,31 @@ class ManageAddressesViewModel @Inject constructor(
     private val _loading = MutableStateFlow(false)
     val loading : StateFlow<Boolean> = _loading
 
-    fun deleteCustomerAddresses(customerID : String,addresses : List<AddressModel>)
+
+    fun fetchCustomerAddresses(email : String)
+    {
+        viewModelScope.launch {
+            repository.getShopifyUserByEmail(email).collect { state ->
+                when (state) {
+                    is State.Error -> {
+                        _message.emit(state.message)
+                        _loading.value = false
+                    }
+
+                    State.Loading -> {
+                        _loading.value = true
+                    }
+
+                    is State.Success -> {
+                        _customerAddresses.value = state.data.addresses
+                        _loading.value = false
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteCustomerAddresses(customerID : String,email : String,addresses : List<AddressModel>)
     {
         viewModelScope.launch {
             repository.updateCustomerAddress(customerID,addresses).collect { state ->
@@ -42,9 +66,30 @@ class ManageAddressesViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
-                        Log.d("Kerolos", "deleteCustomerAddresses: ${state.data}")
-                        _customerAddresses.value = addresses
+                        fetchCustomerAddresses(email)
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateCustomerDefaultAddress(customerID : String, addressId : String,email: String)
+    {
+        Log.d("Kerolos", "updateCustomerDefaultAddress: $customerID - $addressId")
+        viewModelScope.launch {
+            repository.updateCustomerDefaultAddress(customerID, addressId).collect { state ->
+                when(state)
+                {
+                    is State.Error -> {
+                        _message.emit(state.message)
                         _loading.value = false
+                    }
+                    State.Loading -> {
+                        _loading.value = true
+                    }
+                    is State.Success -> {
+                        _message.emit("Default address updated successfully")
+                        fetchCustomerAddresses(email)
                     }
                 }
             }

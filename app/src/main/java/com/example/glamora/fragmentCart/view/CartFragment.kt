@@ -288,11 +288,16 @@ class CartFragment : Fragment(),CartItemInterface {
         //set default address
         if(sharedViewModel.currentCustomerInfo.value.addresses.isNotEmpty())
         {
-            bottomSheetBinding.bottomSheetUserAddress.text =
-                "Address : ${sharedViewModel.currentCustomerInfo.value.addresses[0].country}, ${sharedViewModel.currentCustomerInfo.value.addresses[0].city}, ${sharedViewModel.currentCustomerInfo.value.addresses[0].street}"
 
-            bottomSheetBinding.bottomSheetUserName.text = "Name : ${sharedViewModel.currentCustomerInfo.value.addresses[0].firstName}"
-            address = sharedViewModel.currentCustomerInfo.value.addresses[0]
+            sharedViewModel.currentCustomerInfo.value.addresses.forEach { currentAddress->
+                if(currentAddress.isDefault)
+                {
+                    address = currentAddress
+                    bottomSheetBinding.bottomSheetUserName.text = "Name : ${currentAddress.firstName}"
+                    bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${currentAddress.country}, ${currentAddress.city}, ${currentAddress.street}"
+                }
+            }
+
         }
 
 
@@ -353,7 +358,7 @@ class CartFragment : Fragment(),CartItemInterface {
             {
                 address = sharedViewModel.currentCustomerInfo.value.addresses[menuItem.itemId-1]
                 bottomSheetBinding.bottomSheetUserName.text = "Name : ${address.firstName}"
-                bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}-${address.city}-${address.street}"
+                bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}, ${address.city}, ${address.street}"
             }
 
             true

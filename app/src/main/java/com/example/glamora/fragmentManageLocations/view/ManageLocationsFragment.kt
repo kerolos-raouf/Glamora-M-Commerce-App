@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -56,22 +57,35 @@ class ManageLocationsFragment : Fragment() {
 
     private fun initViews(){
         customAlertDialog = CustomAlertDialog(requireActivity())
-        adapter = ManageLocationsRecyclerAdapter{address->
+        adapter = ManageLocationsRecyclerAdapter(
+            {address->
+
+                customAlertDialog.showAlertDialog("Set as default address?", "Set Default"){
+                    manageAddressesViewModel.updateCustomerDefaultAddress(
+                        sharedViewModel.currentCustomerInfo.value.userId,
+                        address.addressId,
+                        sharedViewModel.currentCustomerInfo.value.email
+                    )
+                }
+
+            }){address->
             customAlertDialog.showAlertDialog(
                 "Are you sure you want to delete this address?",
                 "Delete"
             ){
                 val newAddresses = sharedViewModel.currentCustomerInfo.value.addresses.filter { it != address}
                 Log.d("Kerolos", "initViews: ${newAddresses.size}")
-                manageAddressesViewModel.deleteCustomerAddresses(sharedViewModel.currentCustomerInfo.value.userId,newAddresses)
+                manageAddressesViewModel.deleteCustomerAddresses(
+                    sharedViewModel.currentCustomerInfo.value.userId,
+                    sharedViewModel.currentCustomerInfo.value.email,
+                    newAddresses)
             }
         }
+
+
         binding.addressesRecyclerView.adapter = adapter
 
-        if(sharedViewModel.currentCustomerInfo.value.addresses.isNotEmpty())
-        {
-            adapter.submitList(sharedViewModel.currentCustomerInfo.value.addresses)
-        }
+        manageAddressesViewModel.fetchCustomerAddresses(sharedViewModel.currentCustomerInfo.value.email)
 
 
         binding.manageLocationsAddButton.setOnClickListener {
@@ -90,6 +104,16 @@ class ManageLocationsFragment : Fragment() {
                         adapter.submitList(it)
                         sharedViewModel.currentCustomerInfo.value.addresses = it
                     }
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED)
+            {
+                manageAddressesViewModel.message.collect{message->
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
