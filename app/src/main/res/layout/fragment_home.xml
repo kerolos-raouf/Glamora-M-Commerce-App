@@ -7,351 +7,394 @@
 
     </data>
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/home_swiperefreshlayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        tools:context=".HomeFragment">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/home_loading"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="16dp"
-                android:visibility="gone"
-                app:lottie_rawRes="@raw/loading"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true" />
-
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/home_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-                <TextView
-                    android:id="@+id/appname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/pollerone_regular"
-                    android:text="@string/app_name"
-                    android:textColor="@color/dark_blue"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center"
-                    android:layout_marginEnd="16dp">
-
-                    <ImageButton
-                        android:id="@+id/home_favoriteButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/favorite_button"
-                        android:src="@drawable/favorite"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/favoriteCounter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/circle_background"
-                        android:text="@string/counter"
-                        android:gravity="center"
-                        android:padding="0.5dp"
-                        android:visibility="gone"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.appcompat.widget.Toolbar>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/home_rv_offers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/home_toolbar"
-                tools:listitem="@layout/offers_item" />
-
-
-<!--            <androidx.cardview.widget.CardView-->
-<!--                android:id="@+id/home_cardview_image"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="10dp"-->
-<!--                android:layout_marginTop="12dp"-->
-<!--                android:layout_marginEnd="10dp"-->
-<!--                app:cardCornerRadius="5dp"-->
-<!--                app:cardElevation="4dp"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/home_rv_offers">-->
-
-<!--                <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                    android:id="@+id/home_img_container"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/home_rv_offers">-->
-
-
-<!--                    <ImageView-->
-<!--                        android:id="@+id/image_item"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:foreground="@drawable/background"-->
-<!--                        android:scaleType="fitXY"-->
-<!--                        android:src="@drawable/recommended"-->
-<!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                        app:layout_constraintEnd_toEndOf="parent"-->
-<!--                        app:layout_constraintStart_toStartOf="parent"-->
-<!--                        app:layout_constraintTop_toTopOf="parent"-->
-<!--                    />-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/home_textview_recomm1"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:padding="25dp"-->
-<!--                        android:text="@string/recomtext2"-->
-<!--                        android:textColor="@color/white"-->
-<!--                        android:textSize="30sp"-->
-<!--                        android:textStyle="bold"-->
-<!--                        app:layout_constraintEnd_toEndOf="@id/image_item"-->
-<!--                        app:layout_constraintStart_toStartOf="@id/image_item"-->
-<!--                        app:layout_constraintTop_toTopOf="@id/image_item" />-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/home_textview_recomm2"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:padding="25dp"-->
-<!--                        android:text="@string/recomtext"-->
-<!--                        android:textColor="@android:color/white"-->
-<!--                        android:textSize="16sp"-->
-<!--                        android:textStyle="bold"-->
-<!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                        app:layout_constraintEnd_toEndOf="parent"-->
-<!--                        app:layout_constraintStart_toStartOf="@id/image_item"-->
-<!--                         />-->
-
-<!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
-<!--            </androidx.cardview.widget.CardView>-->
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/home_rv_item"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:clipToPadding="false"
-                android:padding="10dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/home_brand_container"
-                app:spanCount="2"
-                tools:layout_editor_absoluteX="8dp"
-                tools:listitem="@layout/item_list" />
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            tools:context=".HomeFragment">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/home_category_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/home_rv_offers">
+                android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/categories_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/categories"
-                    android:textColor="@color/dark_blue"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-                <HorizontalScrollView
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/home_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/categories_textview">
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+                    <TextView
+                        android:id="@+id/appname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/pollerone_regular"
+                        android:text="@string/app_name"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center"
+                        android:layout_marginEnd="16dp">
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/home_shoescv"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:layout_marginStart="20dp"
-                            android:backgroundTint="@color/white"
-                            app:cardCornerRadius="50dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleX="0.5"
-                                android:scaleY="0.5"
-                                app:srcCompat="@drawable/shoes" />
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/home_tshirtcv"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:layout_marginStart="25dp"
-                            android:backgroundTint="@color/white"
-                            app:cardCornerRadius="50dp"
-                            app:layout_constraintStart_toEndOf="@id/home_shoescv"
-                            app:layout_constraintTop_toTopOf="@id/home_shoescv">
-
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleX="0.5"
-                                android:scaleY="0.5"
-                                app:srcCompat="@drawable/tshirt"/>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/home_accssCV"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:layout_marginStart="25dp"
-                            android:layout_marginEnd="20dp"
-                            android:backgroundTint="@color/white"
-                            app:cardCornerRadius="50dp"
-                            app:layout_constraintStart_toEndOf="@id/home_tshirtcv"
-                            app:layout_constraintTop_toTopOf="@id/home_tshirtcv">
-
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleX="0.5"
-                                android:scaleY="0.5"
-                                app:srcCompat="@drawable/accessories"/>
-                        </androidx.cardview.widget.CardView>
-
-                        <TextView
-                            android:id="@+id/textView9"
+                        <ImageButton
+                            android:id="@+id/home_favoriteButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="28dp"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/shoes"
-                            android:textColor="@color/dark_blue"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="@id/home_shoescv"
-                            app:layout_constraintTop_toBottomOf="@id/home_shoescv" />
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@string/favorite_button"
+                            android:src="@drawable/favorite"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:id="@+id/textView10"
+                            android:id="@+id/favoriteCounter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/t_shirts"
-                            android:textColor="@color/dark_blue"
-                            android:layout_marginStart="20dp"
-                            android:textSize="16sp"
+                            android:background="@drawable/circle_background"
+                            android:gravity="center"
+                            android:padding="0.5dp"
+                            android:text="@string/counter"
+                            android:textAlignment="center"
+                            android:textColor="@color/white"
+                            android:textSize="10sp"
                             android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/home_tshirtcv"
-                            app:layout_constraintStart_toStartOf="@id/home_tshirtcv" />
-
-                        <TextView
-                            android:id="@+id/textView11"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/accessories"
-                            android:textColor="@color/dark_blue"
-                            android:layout_marginStart="5dp"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/home_accssCV"
-                            app:layout_constraintStart_toStartOf="@id/home_accssCV" />
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                </HorizontalScrollView>
+
+                </androidx.appcompat.widget.Toolbar>
+
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/homeNoInternet"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginTop="50dp"
+
+                    app:lottie_rawRes="@raw/no_internet_2"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/home_toolbar" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/homeContentLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/home_toolbar"
+                    >
+
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/home_loading"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="32dp"
+                        android:layout_marginBottom="16dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/loading" />
+
+
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/home_rv_offers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/home_toolbar"
+                        tools:listitem="@layout/offers_item" />
+
+
+                    <!--            <androidx.cardview.widget.CardView-->
+                    <!--                android:id="@+id/home_cardview_image"-->
+                    <!--                android:layout_width="match_parent"-->
+                    <!--                android:layout_height="wrap_content"-->
+                    <!--                android:layout_marginStart="10dp"-->
+                    <!--                android:layout_marginTop="12dp"-->
+                    <!--                android:layout_marginEnd="10dp"-->
+                    <!--                app:cardCornerRadius="5dp"-->
+                    <!--                app:cardElevation="4dp"-->
+                    <!--                app:layout_constraintEnd_toEndOf="parent"-->
+                    <!--                app:layout_constraintStart_toStartOf="parent"-->
+                    <!--                app:layout_constraintTop_toBottomOf="@id/home_rv_offers">-->
+
+                    <!--                <androidx.constraintlayout.widget.ConstraintLayout-->
+                    <!--                    android:id="@+id/home_img_container"-->
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+                    <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                    <!--                    app:layout_constraintTop_toBottomOf="@id/home_rv_offers">-->
+
+
+                    <!--                    <ImageView-->
+                    <!--                        android:id="@+id/image_item"-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="match_parent"-->
+                    <!--                        android:foreground="@drawable/background"-->
+                    <!--                        android:scaleType="fitXY"-->
+                    <!--                        android:src="@drawable/recommended"-->
+                    <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
+                    <!--                        app:layout_constraintEnd_toEndOf="parent"-->
+                    <!--                        app:layout_constraintStart_toStartOf="parent"-->
+                    <!--                        app:layout_constraintTop_toTopOf="parent"-->
+                    <!--                    />-->
+
+                    <!--                    <TextView-->
+                    <!--                        android:id="@+id/home_textview_recomm1"-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:padding="25dp"-->
+                    <!--                        android:text="@string/recomtext2"-->
+                    <!--                        android:textColor="@color/white"-->
+                    <!--                        android:textSize="30sp"-->
+                    <!--                        android:textStyle="bold"-->
+                    <!--                        app:layout_constraintEnd_toEndOf="@id/image_item"-->
+                    <!--                        app:layout_constraintStart_toStartOf="@id/image_item"-->
+                    <!--                        app:layout_constraintTop_toTopOf="@id/image_item" />-->
+
+                    <!--                    <TextView-->
+                    <!--                        android:id="@+id/home_textview_recomm2"-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:padding="25dp"-->
+                    <!--                        android:text="@string/recomtext"-->
+                    <!--                        android:textColor="@android:color/white"-->
+                    <!--                        android:textSize="16sp"-->
+                    <!--                        android:textStyle="bold"-->
+                    <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
+                    <!--                        app:layout_constraintEnd_toEndOf="parent"-->
+                    <!--                        app:layout_constraintStart_toStartOf="@id/image_item"-->
+                    <!--                         />-->
+
+                    <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
+                    <!--            </androidx.cardview.widget.CardView>-->
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/home_rv_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:clipToPadding="false"
+                        android:padding="10dp"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:layout_constraintTop_toBottomOf="@id/home_brand_container"
+                        app:spanCount="2"
+                        tools:layout_editor_absoluteX="-122dp"
+                        tools:listitem="@layout/item_list" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/home_category_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="12dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/home_rv_offers">
+
+                        <TextView
+                            android:id="@+id/categories_textview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/categories"
+                            android:textColor="@color/dark_blue"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <HorizontalScrollView
+                            android:id="@+id/horizontalScrollView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="16dp"
+                            app:layout_constraintTop_toBottomOf="@id/categories_textview">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/home_shoescv"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:layout_marginStart="20dp"
+                                    android:backgroundTint="@color/white"
+                                    app:cardCornerRadius="50dp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleX="0.5"
+                                        android:scaleY="0.5"
+                                        app:srcCompat="@drawable/shoes" />
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/home_tshirtcv"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:layout_marginStart="25dp"
+                                    android:backgroundTint="@color/white"
+                                    app:cardCornerRadius="50dp"
+                                    app:layout_constraintStart_toEndOf="@id/home_shoescv"
+                                    app:layout_constraintTop_toTopOf="@id/home_shoescv">
+
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleX="0.5"
+                                        android:scaleY="0.5"
+                                        app:srcCompat="@drawable/tshirt" />
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/home_accssCV"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:layout_marginStart="25dp"
+                                    android:layout_marginEnd="20dp"
+                                    android:backgroundTint="@color/white"
+                                    app:cardCornerRadius="50dp"
+                                    app:layout_constraintStart_toEndOf="@id/home_tshirtcv"
+                                    app:layout_constraintTop_toTopOf="@id/home_tshirtcv">
+
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleX="0.5"
+                                        android:scaleY="0.5"
+                                        app:srcCompat="@drawable/accessories" />
+                                </androidx.cardview.widget.CardView>
+
+                                <TextView
+                                    android:id="@+id/textView9"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="28dp"
+                                    android:layout_marginTop="4dp"
+                                    android:text="@string/shoes"
+                                    android:textColor="@color/dark_blue"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintStart_toStartOf="@id/home_shoescv"
+                                    app:layout_constraintTop_toBottomOf="@id/home_shoescv" />
+
+                                <TextView
+                                    android:id="@+id/textView10"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginTop="4dp"
+                                    android:text="@string/t_shirts"
+                                    android:textColor="@color/dark_blue"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintStart_toStartOf="@id/home_tshirtcv"
+                                    app:layout_constraintTop_toBottomOf="@id/home_tshirtcv" />
+
+                                <TextView
+                                    android:id="@+id/textView11"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginTop="4dp"
+                                    android:text="@string/accessories"
+                                    android:textColor="@color/dark_blue"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintStart_toStartOf="@id/home_accssCV"
+                                    app:layout_constraintTop_toBottomOf="@id/home_accssCV" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </HorizontalScrollView>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/home_brand_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/home_category_container">
+
+                        <TextView
+                            android:id="@+id/brand_textview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/brands"
+                            android:textColor="@color/dark_blue"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/home_brand_container" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/home_rv_brand"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal"
+                            app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/brand_textview"
+                            tools:listitem="@layout/brands_item" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/home_brand_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/home_category_container">
 
-            <TextView
-                android:id="@+id/brand_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@string/brands"
-                android:textColor="@color/dark_blue"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/home_brand_container" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/home_rv_brand"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/brand_textview"
-                tools:listitem="@layout/brands_item" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>
 

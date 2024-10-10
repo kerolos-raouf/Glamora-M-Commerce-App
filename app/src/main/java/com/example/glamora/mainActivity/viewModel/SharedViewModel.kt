@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.math.log
 
 
 @HiltViewModel
@@ -49,7 +50,7 @@ class SharedViewModel @Inject constructor(
 
 
     ///internet state
-    private val _internetState = MutableStateFlow(ConnectivityObserver.InternetState.AVAILABLE)
+    private val _internetState = MutableStateFlow(ConnectivityObserver.InternetState.Lost)
     val internetState : StateFlow<ConnectivityObserver.InternetState> = _internetState
 
     ///operation Done with pay pal
@@ -357,6 +358,7 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
+                        Log.d("Kerolos", "convertCurrency: ${it.data}")
                         setSharedPrefString(Constants.CURRENCY_MULTIPLIER_KEY,it.data.toString())
                     }
                 }

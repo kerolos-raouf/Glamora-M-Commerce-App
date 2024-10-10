@@ -25,8 +25,12 @@ import com.example.glamora.fragmentProductDetails.view.adapters.ViewPagerAdapter
 import com.example.glamora.fragmentProductDetails.viewModel.ProductDetailsViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
+import com.example.glamora.util.Constants
+import com.example.glamora.util.State
+import com.example.glamora.util.showGuestDialog
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -48,6 +52,7 @@ class ProductDetailsFragment : Fragment() {
     private var productDTO: ProductDTO? = null
     private var isFavorite = false
     private lateinit var variante: AvailableProductsModel
+    private var isGuestUser = true
 
 
     private val communicator: Communicator by lazy {
@@ -57,7 +62,16 @@ class ProductDetailsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         communicator.hideBottomNav()
-        productDetailsViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userId.split("/")[4])
+        isGuestUser = if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) == Constants.UNKNOWN){
+            true
+        }else{
+            false
+        }
+
+        if(!isGuestUser){
+            productDetailsViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userId.split("/")[4])
+        }
+
     }
 
     override fun onCreateView(
@@ -72,6 +86,23 @@ class ProductDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        lifecycleScope.launch {
+            productDetailsViewModel.state.collectLatest{
+                when (it) {
+                    is State.Loading -> {
+                        productDetailsBinding.progressBar.visibility = View.VISIBLE
+                    }
+                    is State.Success -> {
+                        productDetailsBinding.progressBar.visibility = View.GONE
+                    }
+                    is State.Error -> {
+                        productDetailsBinding.progressBar.visibility = View.GONE
+                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
 
         if(arguments?.isEmpty == false){
             productID = arguments?.getString("productId").toString()
@@ -93,39 +124,54 @@ class ProductDetailsFragment : Fragment() {
                     if(isFavorite){
                         productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
                     }
+
+                    productDetailsViewModel._state.value = State.Success(true)
                 }
             }
         }
 
+        productDetailsBinding.productDetailsBackArrow.setOnClickListener{
+            findNavController().popBackStack()
+        }
 
         productDetailsBinding.favBtn.setOnClickListener{
-            if(isFavorite){
-                productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite_border)
+            if(isGuestUser){
+                showGuestDialog(requireContext())
+            }else{
+                productDetailsViewModel._state.value = State.Loading
 
-                if(productDTO != null){
-                    sharedViewModel.deleteFromFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
-                        productDTO!!.title,
-                        variante.price,
-                        productDTO!!.mainImage))
+                if(isFavorite){
+                    productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite_border)
+
+                    if(productDTO != null){
+                        sharedViewModel.deleteFromFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
+                            productDTO!!.title,
+                            variante.price,
+                            productDTO!!.mainImage))
+                    }
+
+                    isFavorite = false
+
+                    productDetailsViewModel._state.value = State.Success(true)
+
+                    Toast.makeText(context, "Delete From Favorite successful", Toast.LENGTH_SHORT).show()
                 }
+                else{
+                    productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
 
-                isFavorite = false
+                    if (productDTO != null){
+                        sharedViewModel.addToFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
+                            productDTO!!.title,
+                            variante.price,
+                            productDTO!!.mainImage))
+                    }
 
-                Toast.makeText(context, "Delete From Favorite successful", Toast.LENGTH_SHORT).show()
-            }
-            else{
-                productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
+                    isFavorite = true
 
-                if (productDTO != null){
-                    sharedViewModel.addToFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
-                        productDTO!!.title,
-                        variante.price,
-                        productDTO!!.mainImage))
+                    productDetailsViewModel._state.value = State.Success(true)
+
+                    Toast.makeText(context, "Add To Favorite successful", Toast.LENGTH_SHORT).show()
                 }
-
-                isFavorite = true
-
-                Toast.makeText(context, "Add To Favorite successful", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -136,18 +182,28 @@ class ProductDetailsFragment : Fragment() {
 
         productDetailsBinding.addCardBtn.setOnClickListener{
 
-            productDetailsViewModel.addToCard(CartItemDTO(
-                id = variante.id,
-                productDTO!!.id,
-                draftOrderId = "",
-                title = "",
-                quantity = 1,
-                inventoryQuantity = 0,
-                price = variante.price,
-                image = "",
-                isFavorite = isFavorite
-            ), sharedViewModel.currentCustomerInfo.value.userId.split("/")[4] ,sharedViewModel.currentCustomerInfo.value.email)
-            Toast.makeText(context, "Add To Card successful", Toast.LENGTH_SHORT).show()
+            if(isGuestUser){
+                showGuestDialog(requireContext())
+            }else{
+                productDetailsViewModel._state.value = State.Loading
+                productDetailsViewModel.addToCard(CartItemDTO(
+                    id = variante.id,
+                    productDTO!!.id,
+                    draftOrderId = "",
+                    title = "",
+                    quantity = 1,
+                    inventoryQuantity = 0,
+                    price = variante.price,
+                    image = "",
+                    isFavorite = isFavorite
+                )
+                    ,sharedViewModel.currentCustomerInfo.value.userId
+                    ,sharedViewModel.currentCustomerInfo.value.email
+                )
+
+                productDetailsViewModel._state.value = State.Success(true)
+                Toast.makeText(context, "Add To Card successful", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }

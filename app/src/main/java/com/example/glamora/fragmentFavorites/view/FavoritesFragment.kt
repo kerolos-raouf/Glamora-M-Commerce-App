@@ -83,8 +83,17 @@ class FavoritesFragment : Fragment() {
                     is State.Success -> {
                         favoritesBinding.progressBar.visibility = View.GONE
                         val favoriteItems = state.data
-                        Log.d("Abanob", "onViewCreated: ${favoriteItems.size}")
                         fvAdapter.submitList(favoriteItems)
+
+                        if(favoriteItems.isEmpty()){
+                            favoritesBinding.recFavorites.visibility = View.GONE
+                            favoritesBinding.fvIc.visibility = View.VISIBLE
+                        }
+                        else{
+                            favoritesBinding.recFavorites.visibility = View.VISIBLE
+                            favoritesBinding.fvIc.visibility = View.GONE
+                        }
+
                     }
                     is State.Error -> {
                         favoritesBinding.progressBar.visibility = View.GONE

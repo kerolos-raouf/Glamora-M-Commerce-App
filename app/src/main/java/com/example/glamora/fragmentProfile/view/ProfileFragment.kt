@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -55,8 +56,10 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_profileFragment_to_settingsFragment)
         }
         binding.profileOrdersLayout.setOnClickListener {
-            Log.d("Kerolos", "initView: ${sharedViewModel.currentCustomerInfo.value.email}")
-            if (sharedViewModel.currentCustomerInfo.value.email == Constants.UNKNOWN) {
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection", Toast.LENGTH_SHORT).show()
+            }
+            else if (sharedViewModel.currentCustomerInfo.value.email == Constants.UNKNOWN) {
                 showGuestDialog(requireContext())
             } else {
                 communicator.hideBottomNav()
