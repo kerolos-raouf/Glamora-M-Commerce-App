@@ -80,9 +80,9 @@ fun setTotalPrice(view: TextView, totalPrice: String?) {
         val code = sharedPreferences.getString(Constants.CURRENCY_KEY, Constants.EGP) ?: Constants.EGP
         val valueToMultiply = sharedPreferences.getString(Constants.CURRENCY_MULTIPLIER_KEY, "1") ?: "1"
         val priceValue = String.format("%.2f", it.toDoubleOrNull()?.times(valueToMultiply.toDoubleOrNull() ?: 1.0) ?: 0.0)
-        view.text = "Total Price:       $priceValue $code"
+        view.text = "Total Price:  $priceValue $code"
     } ?: run {
-        view.text = "Total Price:       "
+        view.text = "Total Price:"
     }
 }
 
@@ -92,7 +92,7 @@ fun setCreatedAt(view: TextView, createdAt: String?) {
     view.text = if (createdAt.isNullOrEmpty()) {
         ""
     } else {
-        "Order Date:         $createdAt"
+        "Order Date:  $createdAt"
     }
 }
 
@@ -101,6 +101,6 @@ fun setOrderLocation(view: TextView, location: String?) {
     view.text = if (location.isNullOrEmpty()) {
         ""
     } else {
-        "Address Details:         $location"
+        "Address Details:  $location"
     }
 }
