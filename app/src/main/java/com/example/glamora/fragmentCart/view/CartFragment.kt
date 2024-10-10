@@ -136,7 +136,10 @@ class CartFragment : Fragment(),CartItemInterface {
         bottomSheet = BottomSheetDialog(requireContext())
         bottomSheetBinding = CartBottomSheetBinding.inflate(layoutInflater)
         binding.cartCheckOutButton.setOnClickListener {
-            if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN){
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN){
                 showBottomSheet()
             }else{
                 showGuestDialog(requireContext())
@@ -298,8 +301,10 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
         bottomSheetBinding.bottomSheetPayNowButton.setOnClickListener {
-
-            if(address.city != Constants.UNKNOWN)
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if(address.city != Constants.UNKNOWN)
             {
                 finishDraftOrder()
                 bottomSheet.dismiss()
@@ -310,7 +315,10 @@ class CartFragment : Fragment(),CartItemInterface {
         }
 
         bottomSheetBinding.bottomSheetPaypalButton.setOnClickListener {
-            if(cartViewModel.cartItems.value?.isEmpty() == true)
+            if(!communicator.isInternetAvailable()){
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if(cartViewModel.cartItems.value?.isEmpty() == true)
             {
                 Toast.makeText(requireContext(), "Your cart is empty", Toast.LENGTH_SHORT).show()
             }

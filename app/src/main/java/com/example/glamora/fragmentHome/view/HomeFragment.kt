@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.glamora.R
+import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
@@ -76,7 +77,11 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.homeFavoriteButton.setOnClickListener{
-            if (sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN) {
+            if(!communicator.isInternetAvailable())
+            {
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if (sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN) {
                 findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
             }else {
                 showGuestDialog(requireContext())
@@ -93,6 +98,7 @@ class HomeFragment : Fragment() {
         observeRandomProducts()
         observeBrands()
         observeFavoriteItemsCount()
+        observeOnInternet()
     }
 
     private fun setUpRecyclerViews(){
@@ -102,19 +108,57 @@ class HomeFragment : Fragment() {
         setupCardViews()
     }
 
+    private fun actionOnInternetAvailable() {
+        sharedViewModel.fetchProducts()
+        sharedViewModel.fetchDiscountCodes()
+        homeViewModel.getALlBrands()
+        sharedViewModel.fetchFavoriteItems()
+    }
+
+
+    private fun observeOnInternet(){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED)
+            {
+                sharedViewModel.internetState.collect{
+                    if(it == ConnectivityObserver.InternetState.AVAILABLE)
+                    {
+                        actionOnInternetAvailable()
+                        binding.homeContentLayout.visibility = View.VISIBLE
+                        binding.homeNoInternet.visibility = View.GONE
+                    }else
+                    {
+                        binding.homeContentLayout.visibility = View.GONE
+                        binding.homeNoInternet.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+    }
+
     private fun initHome() {
         val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
         if (userEmail != Constants.UNKNOWN) {
             sharedViewModel.getCustomerInfo(userEmail)
             sharedViewModel.fetchFavoriteItems()
         }
+
+        binding.homeSwiperefreshlayout.setOnRefreshListener {
+            actionOnInternetAvailable()
+            binding.homeSwiperefreshlayout.isRefreshing = false
+        }
     }
 
     private fun setupRandomItemsRecyclerView() {
         productsAdapter = ProductsAdapter(emptyList()) { productId ->
-            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
-            navController.navigate(action)
-            Log.d("MAI","$action")
+            if(!communicator.isInternetAvailable())
+            {
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }else{
+                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
+                navController.navigate(action)
+                Log.d("MAI","$action")
+            }
         }
 
         binding.homeRvItem.apply {
@@ -163,20 +207,35 @@ class HomeFragment : Fragment() {
         binding.apply {
 
             homeShoescv.setOnClickListener{
-                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
-                navController.navigate(action)
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                }else
+                {
+                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
+                    navController.navigate(action)
+                }
 
             }
             homeTshirtcv.setOnClickListener{
-                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
-                navController.navigate(action)
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                }else{
+                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
+                    navController.navigate(action)
+                }
 
             }
 
             homeAccssCV.setOnClickListener{
-                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
-                navController.navigate(action)
-
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                }else {
+                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
+                    navController.navigate(action)
+                }
             }
 
         }
