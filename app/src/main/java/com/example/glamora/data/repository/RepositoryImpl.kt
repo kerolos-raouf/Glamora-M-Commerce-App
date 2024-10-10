@@ -377,7 +377,8 @@ class RepositoryImpl @Inject constructor(
         customerEmail: String,
         cartItems: List<CartItemDTO>,
         discountAmount: Double,
-        address: AddressModel
+        address: AddressModel,
+        tag: String
     ): Flow<State<String>> = flow {
         emit(State.Loading)
         try {
@@ -395,7 +396,7 @@ class RepositoryImpl @Inject constructor(
 
             val createDraftOrder = apolloClient.mutation(CreateDrafterOrderMutation(
                 DraftOrderInput(
-                    tags = Optional.present(listOf(Constants.CART_DRAFT_ORDER_KEY)),
+                    tags = Optional.present(listOf(tag)),
                     customerId = Optional.Present(customerId),
                     email = Optional.Present(customerEmail),
                     lineItems = Optional.Present(draftOrderItemList),

@@ -1,6 +1,7 @@
 package com.example.glamora.fragmentProductDetails.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,9 +67,6 @@ class ProductDetailsFragment : Fragment() {
         productDetailsBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_product_details, container, false)
 
-        sharedViewModel.fetchFavoriteItems()
-        sharedViewModel.fetchProducts()
-
         return productDetailsBinding.root
     }
 
@@ -88,6 +86,7 @@ class ProductDetailsFragment : Fragment() {
                 {
                     val productDetails = getProductDetails(productDTO!!)
                     variante = productDTO!!.availableProducts[0]
+                    productDetailsBinding.product = variante
                     updateUI(productDetails)
 
                     isFavorite = sharedViewModel.isFavorite(productID = productDTO!!.availableProducts[0].id)
@@ -112,6 +111,7 @@ class ProductDetailsFragment : Fragment() {
 
                 isFavorite = false
 
+                Toast.makeText(context, "Delete From Favorite successful", Toast.LENGTH_SHORT).show()
             }
             else{
                 productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
@@ -124,6 +124,8 @@ class ProductDetailsFragment : Fragment() {
                 }
 
                 isFavorite = true
+
+                Toast.makeText(context, "Add To Favorite successful", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -215,7 +217,6 @@ class ProductDetailsFragment : Fragment() {
     private fun updateSizes(availableProducts: List<AvailableProductsModel>){
         sizesAdapter = SizesAdapter(availableProducts){ v ->
             variante  = v
-            productDetailsBinding.price.text = "$${variante.price}"
         }
         productDetailsBinding.recSizes.adapter = sizesAdapter
     }
@@ -226,7 +227,7 @@ class ProductDetailsFragment : Fragment() {
             "BLACK" to 1,
             "BURGANDY" to 2,
             "YELLOW" to 3,
-            "Blue" to 4,
+            "BLUE" to 4,
             "RED" to 5,
             "PURPLE" to 6,
         )

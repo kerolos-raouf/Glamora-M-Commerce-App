@@ -147,7 +147,8 @@ class CartViewModel @Inject constructor(
         customerId: String,
         customerEmail : String,
         discountAmount : Double,
-        address: AddressModel
+        address: AddressModel,
+        tag: String = Constants.CART_DRAFT_ORDER_KEY
     ){
         if(!cartItems.value.isNullOrEmpty()){
             viewModelScope.launch {
@@ -156,7 +157,8 @@ class CartViewModel @Inject constructor(
                         customerId,customerEmail,
                         cartItems.value ?: emptyList(),
                         discountAmount,
-                        address)
+                        address,
+                        tag)
                         .collect{state->
                             when(state){
                                 is State.Error -> {

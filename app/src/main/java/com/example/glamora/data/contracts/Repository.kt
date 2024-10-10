@@ -43,7 +43,8 @@ interface Repository {
         customerEmail : String,
         cartItems : List<CartItemDTO>,
         discountAmount: Double,
-        address: AddressModel
+        address: AddressModel,
+        tag: String
         ) : Flow<State<String>>
 
     fun createOrderFromDraftOrder(draftOrderId: String) : Flow<State<String>>

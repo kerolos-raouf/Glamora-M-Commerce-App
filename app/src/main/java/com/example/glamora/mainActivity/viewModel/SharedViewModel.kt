@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
+import com.example.glamora.data.model.AddressModel
+import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.ProductDTO
@@ -137,27 +139,77 @@ class SharedViewModel @Inject constructor(
             if (currentState is State.Success) {
                 val currentList = currentState.data
 
-                if (currentList.any { it.id == product.id }) {
-                    return@launch
-                }
-
-                val updatedList = currentList + product
-
-                // product.draftOrderId
-                repository.updateFavoritesDraftOrder(currentList[0].draftOrderId, updatedList).collect{
-                    when(it){
-                        is State.Success -> {
-                            fetchFavoriteItems()
-                        }
-                        is State.Error -> {
-                            Log.d("Abanob", "${it.message}")
-                        }
-                        else -> {
-                            Log.d("Abanob", "Load")
+                if (currentList.isEmpty())
+                {
+                    repository.createFinalDraftOrder(
+                        _currentCustomerInfo.value.userId,
+                        _currentCustomerInfo.value.email,
+                        listOf(CartItemDTO(
+                            id = product.id,
+                            productId = product.productId,
+                            draftOrderId = product.draftOrderId,
+                            title = product.title,
+                            quantity = 1,
+                            inventoryQuantity = 0,
+                            price = product.price,
+                            image = product.image,
+                            isFavorite = true
+                            )),
+                        0.0,
+                        AddressModel(),
+                        Constants.FAVORITES_DRAFT_ORDER_KEY
+                    ).collect{
+                        when(it){
+                            is State.Error -> {}
+                            State.Loading -> {}
+                            is State.Success -> {
+                                val fvProduct = FavoriteItemDTO(
+                                    id = product.id,
+                                    productId = product.productId,
+                                    draftOrderId = it.data,
+                                    title = product.title,
+                                    price = product.price,
+                                    image = product.image
+                                )
+                                repository.updateFavoritesDraftOrder(fvProduct.draftOrderId, listOf(fvProduct)).collect{
+                                    when(it){
+                                        is State.Success -> {
+                                            fetchFavoriteItems()
+                                        }
+                                        is State.Error -> {
+                                            Log.d("Abanob", "${it.message}")
+                                        }
+                                        else -> {
+                                            Log.d("Abanob", "Load")
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-            }
+                else{
+                    if (currentList.any { it.id == product.id }) {
+                        return@launch
+                    }
+
+                    val updatedList = currentList + product
+
+                    repository.updateFavoritesDraftOrder(currentList[0].draftOrderId, updatedList).collect{
+                        when(it){
+                            is State.Success -> {
+                                fetchFavoriteItems()
+                            }
+                            is State.Error -> {
+                                Log.d("Abanob", "${it.message}")
+                            }
+                            else -> {
+                                Log.d("Abanob", "Load")
+                            }
+                        }
+                    }
+                }
+                }
         }
     }
 

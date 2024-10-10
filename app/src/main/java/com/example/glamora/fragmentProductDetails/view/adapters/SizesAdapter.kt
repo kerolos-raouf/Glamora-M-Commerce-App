@@ -22,12 +22,11 @@ class SizesAdapter(
             binding.size = size
             binding.executePendingBindings()
 
-            val cardView = binding.cardView
 
             if (isSelected) {
-                cardView.setCardBackgroundColor(binding.root.context.getColor(R.color.dark_blue))
+                binding.item.setBackgroundResource(R.drawable.circle_background_sizes_clicked)
             } else {
-                cardView.setCardBackgroundColor(binding.root.context.getColor(R.color.light_blue))
+                binding.item.setBackgroundResource(R.drawable.circle_background_sizes)
             }
 
 
