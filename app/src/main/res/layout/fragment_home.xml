@@ -80,10 +80,12 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/circle_background"
                         android:text="@string/counter"
+                        android:gravity="center"
+                        android:padding="0.5dp"
                         android:visibility="gone"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />

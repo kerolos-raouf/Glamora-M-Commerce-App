@@ -19,7 +19,12 @@ query GetOrdersByCustomer($email: String!) {
                 lineItems(first: 5) {
                     edges {
                         node {
-                            id
+                            variant {
+                                id
+                                product {
+                                    id
+                                }
+                            }
                             name
                             quantity
                             image{
