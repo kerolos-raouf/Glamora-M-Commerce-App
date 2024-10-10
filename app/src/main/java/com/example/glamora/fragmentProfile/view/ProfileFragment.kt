@@ -18,7 +18,7 @@ import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
-import com.example.glamora.util.showGurstDialog
+import com.example.glamora.util.showGuestDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,7 +57,7 @@ class ProfileFragment : Fragment() {
         binding.profileOrdersLayout.setOnClickListener {
             Log.d("Kerolos", "initView: ${sharedViewModel.currentCustomerInfo.value.email}")
             if (sharedViewModel.currentCustomerInfo.value.email == Constants.UNKNOWN) {
-                showGurstDialog(requireContext())
+                showGuestDialog(requireContext())
             } else {
                 communicator.hideBottomNav()
                 findNavController().navigate(R.id.action_profileFragment_to_ordersFragment)

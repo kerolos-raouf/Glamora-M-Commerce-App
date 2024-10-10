@@ -3,7 +3,7 @@ package com.example.glamora.util
 import android.app.AlertDialog
 import android.content.Context
 
-fun showGurstDialog(context: Context) {
+fun showGuestDialog(context: Context) {
     val builder = AlertDialog.Builder(context)
     builder.setMessage("Your in guest mode. Please login.")
         .setPositiveButton("OK") { dialog, _ ->
