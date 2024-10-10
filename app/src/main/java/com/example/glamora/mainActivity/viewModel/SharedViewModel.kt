@@ -234,6 +234,10 @@ class SharedViewModel @Inject constructor(
     }
 
 
+    fun setFavoriteWithEmptyList(){
+        _favoriteItemsState.value = State.Success(emptyList())
+    }
+
     // ProductByID
     fun getProductByID(productID: String): ProductDTO? {
         return productList.value.find { it.id.contains(productID) }
