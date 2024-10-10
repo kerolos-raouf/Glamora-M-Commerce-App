@@ -33,6 +33,7 @@ class ManageLocationsRecyclerAdapter (
             addressItemDeleteButton.setOnClickListener {
                 deleteItem(item)
             }
+            addressItemCheckBox.isChecked = item.isDefault
         }
     }
 }

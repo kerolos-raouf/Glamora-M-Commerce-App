@@ -339,30 +339,24 @@ class CartFragment : Fragment(),CartItemInterface {
     private fun showPopUpAddresses(view : View) {
         val popupMenu = PopupMenu(requireContext(),view)
         val addresses = sharedViewModel.currentCustomerInfo.value.addresses
-        if(addresses.isNotEmpty())
-        {
-            popupMenu.menu.add(0,0,0,"+Add new address")
-            addresses.forEachIndexed { index, addressModel ->
-                popupMenu.menu.add(0,index+1,0,"${addressModel.country}, ${addressModel.city}, ${addressModel.street}")
+        popupMenu.menu.add(0,0,0,"+Add new address")
+        addresses.forEachIndexed { index, addressModel ->
+            popupMenu.menu.add(0,index+1,0,"${addressModel.country}, ${addressModel.city}, ${addressModel.street}")
+        }
+
+        popupMenu.setOnMenuItemClickListener {menuItem ->
+            if(menuItem.itemId == 0)
+            {
+                findNavController().navigate(R.id.action_cartFragment_to_mapFragment)
+                bottomSheet.dismiss()
+            }else
+            {
+                address = sharedViewModel.currentCustomerInfo.value.addresses[menuItem.itemId-1]
+                bottomSheetBinding.bottomSheetUserName.text = "Name : ${address.firstName}"
+                bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}-${address.city}-${address.street}"
             }
 
-            popupMenu.setOnMenuItemClickListener {menuItem ->
-                if(menuItem.itemId == 0)
-                {
-                    findNavController().navigate(R.id.action_cartFragment_to_mapFragment)
-                    bottomSheet.dismiss()
-                }else
-                {
-                    address = sharedViewModel.currentCustomerInfo.value.addresses[menuItem.itemId-1]
-                    bottomSheetBinding.bottomSheetUserName.text = "Name : ${address.firstName}"
-                    bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${address.country}-${address.city}-${address.street}"
-                }
-
-                true
-            }
-        }else
-        {
-            popupMenu.menu.add(0,0,0,"<There is no addresses>")
+            true
         }
         popupMenu.show()
     }

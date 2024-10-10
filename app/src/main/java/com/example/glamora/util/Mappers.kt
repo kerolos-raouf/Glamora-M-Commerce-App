@@ -101,14 +101,29 @@ fun BrandsQuery.Collections.toBrandDTO(): List<Brands> {
 fun UpdateCustomerAddressMutation.Address.toAddressModel(): AddressModel {
     val addressModel = AddressModel()
 
+    addressModel.addressId = id ?: Constants.UNKNOWN
     addressModel.city = city ?: Constants.UNKNOWN
     addressModel.country = country ?: Constants.UNKNOWN
     addressModel.firstName = firstName ?: Constants.UNKNOWN
     addressModel.lastName = lastName ?: Constants.UNKNOWN
     addressModel.phone = phone ?: Constants.UNKNOWN
     addressModel.street = address1 ?: Constants.UNKNOWN
+    addressModel.isDefault = false
 
 
+    return addressModel
+}
+
+fun GetCustomerByEmailQuery.DefaultAddress.toAddressModel(): AddressModel {
+    val addressModel = AddressModel()
+    addressModel.addressId = id ?: Constants.UNKNOWN
+    addressModel.city = city ?: Constants.UNKNOWN
+    addressModel.country = country ?: Constants.UNKNOWN
+    addressModel.firstName = firstName ?: Constants.UNKNOWN
+    addressModel.lastName = lastName ?: Constants.UNKNOWN
+    addressModel.phone = phone ?: Constants.UNKNOWN
+    addressModel.street = address1 ?: Constants.UNKNOWN
+    addressModel.isDefault = true
     return addressModel
 }
 
@@ -162,12 +177,14 @@ fun GetDraftOrdersByCustomerQuery.DraftOrders.toFavoriteItemsDTO() : List<Favori
 
 fun GetCustomerByEmailQuery.Address.toAddressModel(): AddressModel {
     return AddressModel(
+        addressId = id ?: Constants.UNKNOWN,
         city = city ?: Constants.UNKNOWN,
         country = country ?: Constants.UNKNOWN,
         firstName = firstName ?: Constants.UNKNOWN,
         lastName = lastName ?: Constants.UNKNOWN,
         phone = phone ?: Constants.UNKNOWN,
-        street = address1 ?: Constants.UNKNOWN
+        street = address1 ?: Constants.UNKNOWN,
+        isDefault = false
     )
 }
 

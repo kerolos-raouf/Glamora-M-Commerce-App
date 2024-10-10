@@ -245,6 +245,7 @@ class RepositoryImpl @Inject constructor(
             address.forEach {
                 mailingAddressInputList.add(
                     MailingAddressInput(
+                        id = Optional.Present(it.addressId),
                         firstName = Optional.Present(it.firstName),
                         lastName = Optional.Present(it.lastName),
                         phone = Optional.Present(it.phone),
@@ -254,6 +255,7 @@ class RepositoryImpl @Inject constructor(
                     )
                 )
             }
+
 
             val customerInput = CustomerInput(
                 id = Optional.Present(customerId),
@@ -607,13 +609,22 @@ class RepositoryImpl @Inject constructor(
 
                 if (!customerEdges.isNullOrEmpty()) {
                     val customer = customerEdges[0].node
+                    val addresses = customer.addresses.map { it.toAddressModel() }
+                    val defaultAddress = customer.defaultAddress?.toAddressModel()
+                    if (defaultAddress != null) {
+                        addresses.forEach {
+                            if (it.addressId == defaultAddress.addressId){
+                                it.isDefault = true
+                            }
+                        }
+                    }
 
                     val customerInfo = CustomerInfo(
                         displayName = "${customer.firstName} ${customer.lastName}",
                         email = customer.email.toString(),
                         userId = customer.id,
                         userIdAsNumber = customer.id.split("/")[customer.id.split("/").size-1],
-                        addresses = customer.addresses.map { it.toAddressModel() }
+                        addresses = addresses
                     )
                     emit(State.Success(customerInfo))
                 } else {

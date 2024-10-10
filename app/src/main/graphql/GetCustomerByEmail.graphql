@@ -7,6 +7,16 @@ query GetCustomerByEmail($email: String!) {
                 lastName
                 email
                 addresses {
+                    id
+                    firstName
+                    lastName
+                    city
+                    country
+                    address1
+                    phone
+                }
+                defaultAddress {
+                    id
                     firstName
                     lastName
                     city

@@ -358,7 +358,6 @@ class SharedViewModel @Inject constructor(
 
                     }
                     is State.Success -> {
-                        Log.d("Kerolos", "convertCurrency: ${it.data}")
                         setSharedPrefString(Constants.CURRENCY_MULTIPLIER_KEY,it.data.toString())
                     }
                 }

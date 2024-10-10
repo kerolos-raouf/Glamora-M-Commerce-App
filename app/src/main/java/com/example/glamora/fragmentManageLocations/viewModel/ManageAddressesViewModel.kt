@@ -1,5 +1,6 @@
 package com.example.glamora.fragmentManageLocations.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
@@ -41,6 +42,7 @@ class ManageAddressesViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
+                        Log.d("Kerolos", "deleteCustomerAddresses: ${state.data}")
                         _customerAddresses.value = addresses
                         _loading.value = false
                     }

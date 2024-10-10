@@ -62,6 +62,7 @@ class ManageLocationsFragment : Fragment() {
                 "Delete"
             ){
                 val newAddresses = sharedViewModel.currentCustomerInfo.value.addresses.filter { it != address}
+                Log.d("Kerolos", "initViews: ${newAddresses.size}")
                 manageAddressesViewModel.deleteCustomerAddresses(sharedViewModel.currentCustomerInfo.value.userId,newAddresses)
             }
         }
