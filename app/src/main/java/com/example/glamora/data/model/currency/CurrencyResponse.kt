@@ -1,10 +1,25 @@
 package com.example.glamora.data.model.currency
 
+
+import com.google.gson.annotations.SerializedName
+
 data class CurrencyResponse(
-    val date: String,
-    val historical: String,
-    val info: Info,
-    val query: Query,
-    val result: Double,
-    val success: Boolean
+    @SerializedName("base_code")
+    val baseCode: String?,
+    @SerializedName("conversion_rates")
+    val conversionRates: ConversionRates,
+    @SerializedName("documentation")
+    val documentation: String?,
+    @SerializedName("result")
+    val result: String?,
+    @SerializedName("terms_of_use")
+    val termsOfUse: String?,
+    @SerializedName("time_last_update_unix")
+    val timeLastUpdateUnix: Int?,
+    @SerializedName("time_last_update_utc")
+    val timeLastUpdateUtc: String?,
+    @SerializedName("time_next_update_unix")
+    val timeNextUpdateUnix: Int?,
+    @SerializedName("time_next_update_utc")
+    val timeNextUpdateUtc: String?
 )
