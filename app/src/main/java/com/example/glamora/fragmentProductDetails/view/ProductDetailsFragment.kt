@@ -25,6 +25,7 @@ import com.example.glamora.fragmentProductDetails.view.adapters.ViewPagerAdapter
 import com.example.glamora.fragmentProductDetails.viewModel.ProductDetailsViewModel
 import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
+import com.example.glamora.util.Constants
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -48,6 +49,7 @@ class ProductDetailsFragment : Fragment() {
     private var productDTO: ProductDTO? = null
     private var isFavorite = false
     private lateinit var variante: AvailableProductsModel
+    private var isGuestUser = true
 
 
     private val communicator: Communicator by lazy {
@@ -57,7 +59,16 @@ class ProductDetailsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         communicator.hideBottomNav()
-        productDetailsViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userId.split("/")[4])
+        isGuestUser = if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) == Constants.UNKNOWN){
+            true
+        }else{
+            false
+        }
+
+        if(!isGuestUser){
+            productDetailsViewModel.fetchCartItems(sharedViewModel.currentCustomerInfo.value.userId.split("/")[4])
+        }
+
     }
 
     override fun onCreateView(
@@ -97,35 +108,42 @@ class ProductDetailsFragment : Fragment() {
             }
         }
 
+        productDetailsBinding.productDetailsBackArrow.setOnClickListener{
+            findNavController().popBackStack()
+        }
 
         productDetailsBinding.favBtn.setOnClickListener{
-            if(isFavorite){
-                productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite_border)
+            if(isGuestUser){
+                Toast.makeText(context, "Please Login To Can Add To Favorites", Toast.LENGTH_SHORT).show()
+            }else{
+                if(isFavorite){
+                    productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite_border)
 
-                if(productDTO != null){
-                    sharedViewModel.deleteFromFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
-                        productDTO!!.title,
-                        variante.price,
-                        productDTO!!.mainImage))
+                    if(productDTO != null){
+                        sharedViewModel.deleteFromFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
+                            productDTO!!.title,
+                            variante.price,
+                            productDTO!!.mainImage))
+                    }
+
+                    isFavorite = false
+
+                    Toast.makeText(context, "Delete From Favorite successful", Toast.LENGTH_SHORT).show()
                 }
+                else{
+                    productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
 
-                isFavorite = false
+                    if (productDTO != null){
+                        sharedViewModel.addToFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
+                            productDTO!!.title,
+                            variante.price,
+                            productDTO!!.mainImage))
+                    }
 
-                Toast.makeText(context, "Delete From Favorite successful", Toast.LENGTH_SHORT).show()
-            }
-            else{
-                productDetailsBinding.favBtn.setImageResource(R.drawable.ic_favorite)
+                    isFavorite = true
 
-                if (productDTO != null){
-                    sharedViewModel.addToFavorites(FavoriteItemDTO(variante.id,productDTO!!.id,"",
-                        productDTO!!.title,
-                        variante.price,
-                        productDTO!!.mainImage))
+                    Toast.makeText(context, "Add To Favorite successful", Toast.LENGTH_SHORT).show()
                 }
-
-                isFavorite = true
-
-                Toast.makeText(context, "Add To Favorite successful", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -136,18 +154,22 @@ class ProductDetailsFragment : Fragment() {
 
         productDetailsBinding.addCardBtn.setOnClickListener{
 
-            productDetailsViewModel.addToCard(CartItemDTO(
-                id = variante.id,
-                productDTO!!.id,
-                draftOrderId = "",
-                title = "",
-                quantity = 1,
-                inventoryQuantity = 0,
-                price = variante.price,
-                image = "",
-                isFavorite = isFavorite
-            ), sharedViewModel.currentCustomerInfo.value.userId.split("/")[4] ,sharedViewModel.currentCustomerInfo.value.email)
-            Toast.makeText(context, "Add To Card successful", Toast.LENGTH_SHORT).show()
+            if(isGuestUser){
+                Toast.makeText(context, "Please Login To Can Add To Card", Toast.LENGTH_SHORT).show()
+            }else{
+                productDetailsViewModel.addToCard(CartItemDTO(
+                    id = variante.id,
+                    productDTO!!.id,
+                    draftOrderId = "",
+                    title = "",
+                    quantity = 1,
+                    inventoryQuantity = 0,
+                    price = variante.price,
+                    image = "",
+                    isFavorite = isFavorite
+                ), sharedViewModel.currentCustomerInfo.value.userId.split("/")[4] ,sharedViewModel.currentCustomerInfo.value.email)
+                Toast.makeText(context, "Add To Card successful", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }

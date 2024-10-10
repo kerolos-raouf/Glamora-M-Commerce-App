@@ -20,7 +20,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.glamora.R
-import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
@@ -98,7 +97,6 @@ class HomeFragment : Fragment() {
         observeRandomProducts()
         observeBrands()
         observeFavoriteItemsCount()
-        observeOnInternet()
     }
 
     private fun setUpRecyclerViews(){
@@ -108,44 +106,11 @@ class HomeFragment : Fragment() {
         setupCardViews()
     }
 
-    private fun actionOnInternetAvailable() {
-        sharedViewModel.fetchProducts()
-        sharedViewModel.fetchDiscountCodes()
-        homeViewModel.getALlBrands()
-        sharedViewModel.fetchFavoriteItems()
-    }
-
-
-    private fun observeOnInternet(){
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED)
-            {
-                sharedViewModel.internetState.collect{
-                    if(it == ConnectivityObserver.InternetState.AVAILABLE)
-                    {
-                        actionOnInternetAvailable()
-                        binding.homeContentLayout.visibility = View.VISIBLE
-                        binding.homeNoInternet.visibility = View.GONE
-                    }else
-                    {
-                        binding.homeContentLayout.visibility = View.GONE
-                        binding.homeNoInternet.visibility = View.VISIBLE
-                    }
-                }
-            }
-        }
-    }
-
     private fun initHome() {
         val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
         if (userEmail != Constants.UNKNOWN) {
             sharedViewModel.getCustomerInfo(userEmail)
             sharedViewModel.fetchFavoriteItems()
-        }
-
-        binding.homeSwiperefreshlayout.setOnRefreshListener {
-            actionOnInternetAvailable()
-            binding.homeSwiperefreshlayout.isRefreshing = false
         }
     }
 
@@ -156,7 +121,7 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
             }else{
                 val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
-                navController.navigate(action)
+                findNavController().navigate(action)
                 Log.d("MAI","$action")
             }
         }
@@ -173,7 +138,7 @@ class HomeFragment : Fragment() {
             val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
                 selectedBrand.title
             )
-            navController.navigate(action)
+            findNavController().navigate(action)
         }
         binding.homeRvBrand.apply {
             layoutManager = CarouselLayoutManager()
@@ -213,7 +178,7 @@ class HomeFragment : Fragment() {
                 }else
                 {
                     val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
-                    navController.navigate(action)
+                    findNavController().navigate(action)
                 }
 
             }
@@ -223,7 +188,7 @@ class HomeFragment : Fragment() {
                     Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
                 }else{
                     val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
-                    navController.navigate(action)
+                    findNavController().navigate(action)
                 }
 
             }
@@ -234,7 +199,7 @@ class HomeFragment : Fragment() {
                     Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
                 }else {
                     val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
-                    navController.navigate(action)
+                    findNavController().navigate(action)
                 }
             }
 
