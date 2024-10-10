@@ -27,7 +27,7 @@ import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
-import com.example.glamora.util.showGurstDialog
+import com.example.glamora.util.showGuestDialog
 import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -79,7 +79,7 @@ class HomeFragment : Fragment() {
             if (sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN) {
                 findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
             }else {
-                showGurstDialog(requireContext())
+                showGuestDialog(requireContext())
             }
         }
 
@@ -202,7 +202,7 @@ class HomeFragment : Fragment() {
                         clipboardManager.setPrimaryClip(clipData)
                         Toast.makeText(context, "Promotion Code Copied ${discountCode.code}", Toast.LENGTH_SHORT).show()
                     }else{
-                        showGurstDialog(requireContext())
+                        showGuestDialog(requireContext())
                     }
 
                 }

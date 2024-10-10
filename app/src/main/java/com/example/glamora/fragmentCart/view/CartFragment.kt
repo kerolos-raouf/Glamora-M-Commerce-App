@@ -28,7 +28,7 @@ import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.customAlertDialog.CustomAlertDialog
-import com.example.glamora.util.showGurstDialog
+import com.example.glamora.util.showGuestDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -126,7 +126,7 @@ class CartFragment : Fragment(),CartItemInterface {
                     Toast.makeText(requireContext(), "Invalid code", Toast.LENGTH_SHORT).show()
                 }
             }else{
-                showGurstDialog(requireContext())
+                showGuestDialog(requireContext())
             }
 
         }
@@ -139,7 +139,7 @@ class CartFragment : Fragment(),CartItemInterface {
             if(sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN){
                 showBottomSheet()
             }else{
-                showGurstDialog(requireContext())
+                showGuestDialog(requireContext())
             }
         }
     }
