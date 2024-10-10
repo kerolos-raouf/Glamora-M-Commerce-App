@@ -75,6 +75,9 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        navController = findNavController()
+
+
         binding.homeFavoriteButton.setOnClickListener{
             if (sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN) {
                 findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
