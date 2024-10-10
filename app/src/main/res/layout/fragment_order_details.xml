@@ -274,7 +274,6 @@
                                 android:layout_marginStart="8dp"
                                 android:layout_marginTop="8dp"
                                 app:setTotalPrice="@{order.totalPrice}"
-                                app:setCurrencyCode="@{order.currencyCode}"
                                 android:maxLines="2"
                                 android:ellipsize="end"
                                 android:textColor="@color/light_blue"

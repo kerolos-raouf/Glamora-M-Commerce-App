@@ -70,21 +70,22 @@ fun loadImage(view: ImageView, url: String?) {
     }
 }
 
-@BindingAdapter("app:setItemPrice")
-fun setItemPrice(view: TextView, price: Double?) {
-    price?.let {
-        view.text = String.format("Item Price: $%.2f", it)
+
+
+
+@BindingAdapter("app:setTotalPrice")
+fun setTotalPrice(view: TextView, totalPrice: String?) {
+    totalPrice?.let {
+        val sharedPreferences = view.context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val code = sharedPreferences.getString(Constants.CURRENCY_KEY, Constants.EGP) ?: Constants.EGP
+        val valueToMultiply = sharedPreferences.getString(Constants.CURRENCY_MULTIPLIER_KEY, "1") ?: "1"
+        val priceValue = String.format("%.2f", it.toDoubleOrNull()?.times(valueToMultiply.toDoubleOrNull() ?: 1.0) ?: 0.0)
+        view.text = "Total Price:       $priceValue $code"
+    } ?: run {
+        view.text = "Total Price:       "
     }
 }
 
-@BindingAdapter("app:setTotalPrice", "app:setCurrencyCode")
-fun setTotalPrice(view: TextView, totalPrice: String?, currencyCode: String?) {
-    if (totalPrice.isNullOrEmpty()) {
-        view.text = "Total Price: N/A"
-    } else {
-        view.text = "Total Price:       $totalPrice$currencyCode"
-    }
-}
 
 @BindingAdapter("app:setCreatedAt")
 fun setCreatedAt(view: TextView, createdAt: String?) {
