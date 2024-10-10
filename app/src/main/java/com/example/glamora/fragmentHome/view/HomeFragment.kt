@@ -43,7 +43,6 @@ class HomeFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var productsAdapter: ProductsAdapter
-    private lateinit var navController: NavController
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
 
@@ -106,12 +105,28 @@ class HomeFragment : Fragment() {
         setupCardViews()
     }
 
+    private fun actionOnInternetAvailable() {
+        sharedViewModel.fetchProducts()
+        homeViewModel.getALlBrands()
+        sharedViewModel.fetchDiscountCodes()
+    }
+
     private fun initHome() {
         val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
         if (userEmail != Constants.UNKNOWN) {
             sharedViewModel.getCustomerInfo(userEmail)
             sharedViewModel.fetchFavoriteItems()
         }
+
+        binding.homeSwiperefreshlayout.setOnRefreshListener {
+            if(communicator.isInternetAvailable()) {
+                actionOnInternetAvailable()
+            }else {
+                Toast.makeText(requireContext(), "No Internet Connection", Toast.LENGTH_SHORT).show()
+            }
+            binding.homeSwiperefreshlayout.isRefreshing = false
+        }
+
     }
 
     private fun setupRandomItemsRecyclerView() {

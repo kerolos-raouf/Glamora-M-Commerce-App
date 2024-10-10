@@ -284,15 +284,15 @@ class CartFragment : Fragment(),CartItemInterface {
                 bottomSheetBinding.bottomSheetPayNowButton.visibility = View.VISIBLE
             }
         }
-        if(sharedViewModel.currentCustomerInfo.value.displayName != Constants.UNKNOWN)
-        {
-            bottomSheetBinding.bottomSheetUserName.text = "Name : ${sharedViewModel.currentCustomerInfo.value.displayName}"
-        }
 
+        //set default address
         if(sharedViewModel.currentCustomerInfo.value.addresses.isNotEmpty())
         {
             bottomSheetBinding.bottomSheetUserAddress.text =
                 "Address : ${sharedViewModel.currentCustomerInfo.value.addresses[0].country}, ${sharedViewModel.currentCustomerInfo.value.addresses[0].city}, ${sharedViewModel.currentCustomerInfo.value.addresses[0].street}"
+
+            bottomSheetBinding.bottomSheetUserName.text = "Name : ${sharedViewModel.currentCustomerInfo.value.addresses[0].firstName}"
+            address = sharedViewModel.currentCustomerInfo.value.addresses[0]
         }
 
 
