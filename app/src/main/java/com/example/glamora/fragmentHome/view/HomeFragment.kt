@@ -43,6 +43,7 @@ class HomeFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var productsAdapter: ProductsAdapter
+    private lateinit var navController: NavController
     private lateinit var brandsAdapter: BrandsAdapter
     private lateinit var mAdapter: DiscountCodesAdapter
 
@@ -74,10 +75,12 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         binding.homeFavoriteButton.setOnClickListener{
-            if (sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN) {
+            if(!communicator.isInternetAvailable())
+            {
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }
+            else if (sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN) {
                 findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
             }else {
                 showGuestDialog(requireContext())
@@ -113,9 +116,14 @@ class HomeFragment : Fragment() {
 
     private fun setupRandomItemsRecyclerView() {
         productsAdapter = ProductsAdapter(emptyList()) { productId ->
-            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
-            findNavController().navigate(action)
-            Log.d("MAI","$action")
+            if(!communicator.isInternetAvailable())
+            {
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }else{
+                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
+                findNavController().navigate(action)
+                Log.d("MAI","$action")
+            }
         }
 
         binding.homeRvItem.apply {
@@ -164,20 +172,35 @@ class HomeFragment : Fragment() {
         binding.apply {
 
             homeShoescv.setOnClickListener{
-                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
-                findNavController().navigate(action)
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                }else
+                {
+                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
+                    findNavController().navigate(action)
+                }
 
             }
             homeTshirtcv.setOnClickListener{
-                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
-                findNavController().navigate(action)
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                }else{
+                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
+                    findNavController().navigate(action)
+                }
 
             }
 
             homeAccssCV.setOnClickListener{
-                val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
-                findNavController().navigate(action)
-
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+                }else {
+                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
+                    findNavController().navigate(action)
+                }
             }
 
         }

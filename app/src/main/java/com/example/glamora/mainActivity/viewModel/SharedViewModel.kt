@@ -49,7 +49,7 @@ class SharedViewModel @Inject constructor(
 
 
     ///internet state
-    private val _internetState = MutableStateFlow(ConnectivityObserver.InternetState.AVAILABLE)
+    private val _internetState = MutableStateFlow(ConnectivityObserver.InternetState.Lost)
     val internetState : StateFlow<ConnectivityObserver.InternetState> = _internetState
 
     ///operation Done with pay pal
