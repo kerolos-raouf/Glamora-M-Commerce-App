@@ -81,6 +81,7 @@ class OrderDetailsFragment : Fragment() {
         orderDetailsAdapter = OrderLineItemsAdapter(emptyList()) { productId ->
             val action = OrderDetailsFragmentDirections.actionOrderDetailsFragmentToProductDetailsFragment(productId)
             navController.navigate(action)
+            Log.d("MAI","$action")
         }
 
         orderDetailsBinding.orderDetailsProductRV.apply {
