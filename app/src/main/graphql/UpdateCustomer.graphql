@@ -2,7 +2,8 @@ mutation updateCustomerAddress($input: CustomerInput!) {
     customerUpdate(input: $input) {
         customer {
             id
-            addresses(first: 10) {
+            addresses(first: 100) {
+                id
                 address1
                 city
                 country

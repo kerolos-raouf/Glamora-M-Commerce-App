@@ -59,7 +59,15 @@ class AddressDetailsFragment : Fragment() {
     }
 
     private fun initView() {
+
+
+
         currentAddress = AddressDetailsFragmentArgs.fromBundle(requireArguments()).addressModel
+
+        binding.addressDetailsCountry.text = "Country : ${currentAddress.country}"
+        binding.addressDetailsCity.text = "Locality : ${currentAddress.city}"
+
+
 
         if(sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN)
         {

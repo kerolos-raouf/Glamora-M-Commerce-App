@@ -51,6 +51,8 @@ interface Repository {
 
     fun getCustomerAddressesByEmail(email: String): Flow<State<List<AddressModel>>>
 
+    fun updateCustomerDefaultAddress(customerId: String, addressId: String) : Flow<State<String>>
+
     fun createShopifyUser(
         email: String,
         firstName: String,
