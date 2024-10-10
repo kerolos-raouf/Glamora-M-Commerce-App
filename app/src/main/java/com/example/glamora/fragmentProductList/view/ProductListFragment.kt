@@ -95,6 +95,7 @@ class ProductListFragment : Fragment() {
             val action = ProductListFragmentDirections
                 .actionProductListFragmentToProductDetailsFragment(product.id)
             navController.navigate(action)
+            Log.d("MAI","$action")
         }
         binding.listOfProductRecyclerview.apply {
             layoutManager = GridLayoutManager(context, 2)

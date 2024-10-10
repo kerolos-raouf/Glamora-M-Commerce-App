@@ -645,7 +645,7 @@ class RepositoryImpl @Inject constructor(
                             currencyCode = edge.node.totalPriceSet.shopMoney.currencyCode.name,
                             lineItems = edge.node.lineItems.edges.map { itemEdge ->
                                 LineItemDTO(
-                                    id = itemEdge.node.id,
+                                    productId = itemEdge.node.variant!!.product.id,
                                     name = itemEdge.node.name,
                                     quantity = itemEdge.node.quantity,
                                     unitPrice = itemEdge.node.originalUnitPriceSet.shopMoney.amount.toString(),

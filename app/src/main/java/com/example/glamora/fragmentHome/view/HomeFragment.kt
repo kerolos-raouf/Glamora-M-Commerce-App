@@ -120,6 +120,7 @@ class HomeFragment : Fragment() {
         productsAdapter = ProductsAdapter(emptyList()) { productId ->
             val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
             navController.navigate(action)
+            Log.d("MAI","$action")
         }
 
         binding.homeRvItem.apply {
