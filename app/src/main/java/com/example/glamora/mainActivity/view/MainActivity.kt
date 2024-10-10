@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.glamora.R
@@ -143,6 +144,5 @@ class MainActivity : AppCompatActivity(), Communicator {
             Log.e("Kerolos", "Intent data is null.")
         }
     }
-
 
 }

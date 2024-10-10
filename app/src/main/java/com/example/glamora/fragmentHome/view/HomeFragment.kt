@@ -272,6 +272,7 @@ class HomeFragment : Fragment() {
         super.onStart()
         scrollJob?.start()
         communicator.showBottomNav()
+        findNavController().graph.setStartDestination(R.id.homeFragment)
     }
     override fun onStop() {
         super.onStop()

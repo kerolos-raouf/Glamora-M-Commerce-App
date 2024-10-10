@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.glamora.R
 import com.example.glamora.databinding.FragmentProfileBinding
@@ -67,7 +68,6 @@ class ProfileFragment : Fragment() {
             customAlertDialog.showAlertDialog("Are you sure you want to log out?", "Log Out"){
                 sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN)
                 profileViewModel.signOut()
-                findNavController().popBackStack(R.id.action_profileFragment_to_loginFragment,true)
                 findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
             }
         }
