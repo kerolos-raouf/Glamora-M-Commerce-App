@@ -53,8 +53,8 @@ class ProductDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             _state.value = State.Loading
-
             val currentState = _cartItems.value
+
             if (currentState.isEmpty()) {
                 repository.createFinalDraftOrder(
                     userId,
@@ -65,10 +65,13 @@ class ProductDetailsViewModel @Inject constructor(
                     Constants.CART_DRAFT_ORDER_KEY
                 ).collect {
                     when (it) {
-                        is State.Error -> {}
+                        is State.Error -> {
+                            Log.d("Abanob", "addToCard: ${it.message}")
+                        }
                         State.Loading -> {}
                         is State.Success -> {
                             val cardItem = variant.copy(draftOrderId = it.data)
+
                             repository.updateCartDraftOrder(cardItem.draftOrderId, listOf(cardItem))
                                 .collect {
                                     when (it) {
@@ -82,7 +85,6 @@ class ProductDetailsViewModel @Inject constructor(
                                         }
 
                                         else -> {
-                                            Log.d("Abanob", "Load")
                                         }
                                     }
                                 }
@@ -106,7 +108,7 @@ class ProductDetailsViewModel @Inject constructor(
                                 }
 
                                 else -> {
-                                    Log.d("Abanob", "Loading")
+
                                 }
                             }
                         }

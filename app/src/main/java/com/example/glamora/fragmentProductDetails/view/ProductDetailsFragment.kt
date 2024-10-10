@@ -196,7 +196,10 @@ class ProductDetailsFragment : Fragment() {
                     price = variante.price,
                     image = "",
                     isFavorite = isFavorite
-                ), sharedViewModel.currentCustomerInfo.value.userId.split("/")[4] ,sharedViewModel.currentCustomerInfo.value.email)
+                )
+                    ,sharedViewModel.currentCustomerInfo.value.userId
+                    ,sharedViewModel.currentCustomerInfo.value.email
+                )
 
                 productDetailsViewModel._state.value = State.Success(true)
                 Toast.makeText(context, "Add To Card successful", Toast.LENGTH_SHORT).show()
