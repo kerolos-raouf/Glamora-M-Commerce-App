@@ -17,8 +17,6 @@ fun setImageFromUrl(imageView: ImageView, url: String?) {
         Glide.with(imageView.context)
             .load(url)
             .into(imageView)
-    } else {
-        imageView.setImageResource(R.drawable.product)
     }
 }
 

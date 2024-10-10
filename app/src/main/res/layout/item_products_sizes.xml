@@ -13,26 +13,16 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_view"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            app:cardCornerRadius="50dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:backgroundTint="@color/light_blue">
-
             <TextView
+                android:id="@+id/item"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@{size}"
                 android:textColor="@color/white"
                 android:textSize="16sp"
+                android:background="@drawable/circle_background_sizes"
                 android:textStyle="bold" />
-        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
