@@ -2,6 +2,7 @@ package com.example.glamora.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.glamora.data.contracts.SettingsHandler
 import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.util.Constants
 import dagger.Module
@@ -24,7 +25,7 @@ object SharedPrefModule {
 
     @Provides
     @Singleton
-    fun provideSharedPrefHandler(sharedPreferences: SharedPreferences) : SharedPrefHandler {
+    fun provideSharedPrefHandler(sharedPreferences: SharedPreferences) : SettingsHandler {
         return SharedPrefHandler(sharedPreferences)
     }
 
