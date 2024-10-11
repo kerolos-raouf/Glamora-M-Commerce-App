@@ -51,6 +51,8 @@ class OrderDetailsFragment : Fragment() {
     ): View? {
         orderDetailsBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_order_details, container, false)
+        orderDetailsBinding.lifecycleOwner = viewLifecycleOwner
+        orderDetailsBinding.viewModel = orderDetailsViewModel
         return orderDetailsBinding.root
     }
 
