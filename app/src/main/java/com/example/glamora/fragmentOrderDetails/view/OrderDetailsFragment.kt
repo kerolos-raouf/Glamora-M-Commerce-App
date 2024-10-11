@@ -51,6 +51,8 @@ class OrderDetailsFragment : Fragment() {
     ): View? {
         orderDetailsBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_order_details, container, false)
+        orderDetailsBinding.lifecycleOwner = viewLifecycleOwner
+        orderDetailsBinding.viewModel = orderDetailsViewModel
         return orderDetailsBinding.root
     }
 
@@ -92,6 +94,26 @@ class OrderDetailsFragment : Fragment() {
 
     private fun observeOrderDetails() {
         viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                orderDetailsViewModel.loading.collect { isLoading ->
+                    if (isLoading) {
+                        orderDetailsBinding.orderDetailsProductRV.visibility = View.GONE
+                        orderDetailsBinding.ordersDetailsProductContainer.visibility= View.GONE
+                        orderDetailsBinding.ordersDetailsShippingContainer.visibility= View.GONE
+                        orderDetailsBinding.ordersDetailsPaymentContainer.visibility= View.GONE
+                        orderDetailsBinding.addressLoadingAnimation.visibility = View.VISIBLE
+                    } else {
+                        orderDetailsBinding.orderDetailsProductRV.visibility = View.VISIBLE
+                        orderDetailsBinding.ordersDetailsProductContainer.visibility= View.VISIBLE
+                        orderDetailsBinding.ordersDetailsShippingContainer.visibility= View.VISIBLE
+                        orderDetailsBinding.ordersDetailsPaymentContainer.visibility= View.VISIBLE
+                        orderDetailsBinding.addressLoadingAnimation.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
             orderDetailsViewModel.orderDetailsList.collect { orderDTOs ->
                 order = orderDTOs.firstOrNull()
                 orderDetailsBinding.order = order
@@ -102,9 +124,9 @@ class OrderDetailsFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                orderDetailsViewModel.message.collect{
-                    if (it.isNotEmpty()){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                orderDetailsViewModel.message.collect {
+                    if (it.isNotEmpty()) {
                         Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                     }
                 }
