@@ -22,6 +22,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/nointertnet_animation"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:translationZ="30dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/no_internet_2" />
+
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/home_toolbar"
                     android:layout_width="match_parent"
@@ -127,9 +142,6 @@
                         app:lottie_loop="true"
                         app:lottie_rawRes="@raw/loading" />
 
-
-
-
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/home_rv_offers"
                         android:layout_width="match_parent"
@@ -141,73 +153,10 @@
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/home_toolbar"
-                        tools:listitem="@layout/offers_item" />
+                        tools:listitem="@layout/offers_item"
+                        tools:ignore="NotSibling" />
 
 
-                    <!--            <androidx.cardview.widget.CardView-->
-                    <!--                android:id="@+id/home_cardview_image"-->
-                    <!--                android:layout_width="match_parent"-->
-                    <!--                android:layout_height="wrap_content"-->
-                    <!--                android:layout_marginStart="10dp"-->
-                    <!--                android:layout_marginTop="12dp"-->
-                    <!--                android:layout_marginEnd="10dp"-->
-                    <!--                app:cardCornerRadius="5dp"-->
-                    <!--                app:cardElevation="4dp"-->
-                    <!--                app:layout_constraintEnd_toEndOf="parent"-->
-                    <!--                app:layout_constraintStart_toStartOf="parent"-->
-                    <!--                app:layout_constraintTop_toBottomOf="@id/home_rv_offers">-->
-
-                    <!--                <androidx.constraintlayout.widget.ConstraintLayout-->
-                    <!--                    android:id="@+id/home_img_container"-->
-                    <!--                    android:layout_width="match_parent"-->
-                    <!--                    android:layout_height="wrap_content"-->
-                    <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                    <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                    <!--                    app:layout_constraintTop_toBottomOf="@id/home_rv_offers">-->
-
-
-                    <!--                    <ImageView-->
-                    <!--                        android:id="@+id/image_item"-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="match_parent"-->
-                    <!--                        android:foreground="@drawable/background"-->
-                    <!--                        android:scaleType="fitXY"-->
-                    <!--                        android:src="@drawable/recommended"-->
-                    <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-                    <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                    <!--                        app:layout_constraintStart_toStartOf="parent"-->
-                    <!--                        app:layout_constraintTop_toTopOf="parent"-->
-                    <!--                    />-->
-
-                    <!--                    <TextView-->
-                    <!--                        android:id="@+id/home_textview_recomm1"-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="wrap_content"-->
-                    <!--                        android:padding="25dp"-->
-                    <!--                        android:text="@string/recomtext2"-->
-                    <!--                        android:textColor="@color/white"-->
-                    <!--                        android:textSize="30sp"-->
-                    <!--                        android:textStyle="bold"-->
-                    <!--                        app:layout_constraintEnd_toEndOf="@id/image_item"-->
-                    <!--                        app:layout_constraintStart_toStartOf="@id/image_item"-->
-                    <!--                        app:layout_constraintTop_toTopOf="@id/image_item" />-->
-
-                    <!--                    <TextView-->
-                    <!--                        android:id="@+id/home_textview_recomm2"-->
-                    <!--                        android:layout_width="wrap_content"-->
-                    <!--                        android:layout_height="wrap_content"-->
-                    <!--                        android:padding="25dp"-->
-                    <!--                        android:text="@string/recomtext"-->
-                    <!--                        android:textColor="@android:color/white"-->
-                    <!--                        android:textSize="16sp"-->
-                    <!--                        android:textStyle="bold"-->
-                    <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-                    <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                    <!--                        app:layout_constraintStart_toStartOf="@id/image_item"-->
-                    <!--                         />-->
-
-                    <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
-                    <!--            </androidx.cardview.widget.CardView>-->
 
 
                     <androidx.recyclerview.widget.RecyclerView

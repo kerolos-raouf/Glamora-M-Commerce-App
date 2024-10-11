@@ -27,26 +27,30 @@ class OrderDetailsViewModel@Inject constructor(
     val message : StateFlow<String> = _message
 
     fun fetchOrderDetailsById(email: String, orderId: String) {
+        _loading.value = true // Start loading
 
         viewModelScope.launch {
             repository.getOrdersByCustomer(email).collect { state ->
-
                 when (state) {
                     is State.Success -> {
                         val orders = state.data
                         val orderList = orders.filterIsInstance<OrderDTO>()
                             .filter { order -> order.id == orderId }
+
                         _orderDetailsList.value = orderList
+
+                        if (orderList.isEmpty()) {
+                            _message.value = "No order found with ID: $orderId"
+                        }
+
                         _loading.value = false
-
-                    } is State.Loading->{
-                    _loading.value = true
                     }
-
+                    is State.Loading -> {
+                        _loading.value = true
+                    }
                     is State.Error -> {
                         _message.value = state.message
                         _loading.value = false
-
                     }
                 }
             }

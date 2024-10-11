@@ -92,6 +92,8 @@ class HomeFragment : Fragment() {
 
     }
 
+
+
     private fun callObservables(){
         observeRandomProducts()
         observeBrands()
