@@ -108,6 +108,17 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    //mockito for testing
+    testImplementation(libs.junit.v413)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+
+    // Coroutine Test Library
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    // Turbine for Flow testing
+    testImplementation(libs.turbine)
+
     //google play service
     implementation(libs.play.services.location)
 
