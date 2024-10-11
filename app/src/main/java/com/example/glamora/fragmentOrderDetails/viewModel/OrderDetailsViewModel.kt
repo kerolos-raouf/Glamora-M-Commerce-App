@@ -27,7 +27,7 @@ class OrderDetailsViewModel@Inject constructor(
     val message : StateFlow<String> = _message
 
     fun fetchOrderDetailsById(email: String, orderId: String) {
-        _loading.value = true // Start loading
+        _loading.value = true
 
         viewModelScope.launch {
             repository.getOrdersByCustomer(email).collect { state ->

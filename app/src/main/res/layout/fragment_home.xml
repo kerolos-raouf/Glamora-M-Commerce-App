@@ -23,20 +23,6 @@
                 android:layout_height="match_parent">
 
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/nointertnet_animation"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:translationZ="30dp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true"
-                    app:lottie_rawRes="@raw/no_internet_2" />
-
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/home_toolbar"
                     android:layout_width="match_parent"
@@ -101,11 +87,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:layout_marginTop="50dp"
-
                     app:lottie_rawRes="@raw/no_internet_2"
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
-
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -116,7 +100,6 @@
                     android:id="@+id/homeContentLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
