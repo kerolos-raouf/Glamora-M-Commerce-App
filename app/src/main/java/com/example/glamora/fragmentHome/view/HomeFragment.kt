@@ -74,6 +74,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         binding.homeFavoriteButton.setOnClickListener{
             if(!communicator.isInternetAvailable())
             {
@@ -91,6 +92,8 @@ class HomeFragment : Fragment() {
         callObservables()
 
     }
+
+
 
     private fun callObservables(){
         observeRandomProducts()
@@ -185,6 +188,7 @@ class HomeFragment : Fragment() {
 
     private fun setupCardViews() {
         binding.apply {
+
 
             homeShoescv.setOnClickListener{
                 if(!communicator.isInternetAvailable())

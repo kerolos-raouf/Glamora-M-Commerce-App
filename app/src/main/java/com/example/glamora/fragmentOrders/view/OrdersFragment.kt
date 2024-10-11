@@ -42,6 +42,8 @@ class OrdersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         ordersFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_orders, container, false)
+        ordersFragmentBinding.lifecycleOwner = viewLifecycleOwner
+        ordersFragmentBinding.viewModel = orderViewModel
         return ordersFragmentBinding.root
     }
 
@@ -67,24 +69,36 @@ class OrdersFragment : Fragment() {
         }
     }
 
-    private fun observeOnOrder(){
+    private fun observeOnOrder() {
         lifecycleScope.launch {
-            val customerEmail= sharedViewModel.currentCustomerInfo.value.email
+            val customerEmail = sharedViewModel.currentCustomerInfo.value.email
+
+            //ordersFragmentBinding.ordersLoading.visibility = View.VISIBLE
+            ordersFragmentBinding.orderEmptyImageView.visibility = View.GONE
+
             orderViewModel.getOrdersByCustomer(customerEmail)
-            orderViewModel.ordersList.collectLatest { orders->
+
+            orderViewModel.ordersList.collectLatest { orders ->
+               // ordersFragmentBinding.ordersLoading.visibility = View.GONE
+                ordersFragmentBinding.orderEmptyImageView.visibility =
+                    if (orders.isEmpty()) View.VISIBLE else View.GONE
+
                 ordersAdapter.updateData(orders)
             }
         }
+
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                orderViewModel.message.collect{
-                    if (it.isNotEmpty()){
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                orderViewModel.message.collect { message ->
+                    if (message.isNotEmpty()) {
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
     }
+
+
 
     private fun navigateToOrderDetails(orderId: String) {
         val action = OrdersFragmentDirections.actionOrdersFragmentToOrderDetailsFragment(orderId)
