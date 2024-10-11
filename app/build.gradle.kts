@@ -193,4 +193,7 @@ dependencies {
     //swiperefreshlayout
     implementation(libs.androidx.swiperefreshlayout)
 
+
+    implementation(libs.taptargetview)
+
 }

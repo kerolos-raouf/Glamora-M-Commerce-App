@@ -22,6 +22,7 @@ import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.databinding.ActivityMainBinding
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -113,6 +114,10 @@ class MainActivity : AppCompatActivity(), Communicator {
         val locationManager : LocationManager = getSystemService(android.content.Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER)
+    }
+
+    override fun getBottomNavView(): BottomNavigationView {
+        return binding.bottomNavigationView
     }
 
 

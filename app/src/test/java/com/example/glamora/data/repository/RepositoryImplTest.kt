@@ -11,6 +11,8 @@ import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.sharedPref.SharedPrefHandler
 import com.example.glamora.util.State
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -51,6 +53,8 @@ class RepositoryImplTest {
 
         Mockito.`when`(apolloClient.query(Mockito.any<ProductQuery>()).execute())
             .thenReturn(mockApolloResponse)
+
+        Mockito.`when`(mockApolloResponse.data).thenReturn(null)
 
         repository.getProducts().test {
 

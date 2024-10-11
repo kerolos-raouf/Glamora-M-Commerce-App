@@ -20,27 +20,31 @@ import javax.inject.Inject
 class HomeViewModel  @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
+
+    private val _brandsList = MutableStateFlow<List<Brands>>(emptyList())
+    val brandsList: StateFlow<List<Brands>> = _brandsList
+
+
+    private val _loading = MutableStateFlow(false)
+    val loading : StateFlow<Boolean> = _loading
+
     init {
         getALlBrands()
     }
-    private val _brandsList = MutableStateFlow<List<Brands>>(emptyList())
-    val brandsList: StateFlow<List<Brands>> get() = _brandsList
-
-
-
     fun getALlBrands() {
         viewModelScope.launch {
             repository.getAllBrands().collect { state ->
                 when (state) {
                     is State.Error -> {
                         Log.e("HomeViewModel", "Error fetching brands: ${state.message}")
+                        _loading.value = false
                     }
                     State.Loading -> {
-                        Log.d("HomeViewModel", "Loading brands data...")
+                        _loading.value = true
                     }
                     is State.Success -> {
-                        Log.d("HomeViewModel", "Success: fetched ${state.data.size} brands")
                         _brandsList.value = state.data
+                        _loading.value = false
                     }
                 }
             }
