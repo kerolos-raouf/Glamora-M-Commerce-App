@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -52,9 +53,15 @@ class SearchFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                sharedViewModel.filterList(newText.orEmpty())
-                updateSearchViewAppearance(newText)
-                return true
+                if(communicator.isInternetAvailable())
+                {
+                    sharedViewModel.filterList(newText.orEmpty())
+                    updateSearchViewAppearance(newText)
+
+                    return true
+                }else{
+                    return false
+                }
             }
         })
     }
@@ -73,11 +80,16 @@ class SearchFragment : Fragment() {
     private fun setupRecyclerView() {
         searchAdapter = SearchAdapter(object : SearchClickListener {
             override fun onItemClick(product: ProductDTO) {
-                val bundle = Bundle().apply {
-                    putString("productId", product.id)
-                }
 
-                findNavController().navigate(R.id.action_searchFragment_to_productDetailsFragment, bundle)
+                if(!communicator.isInternetAvailable())
+                {
+                    Toast.makeText(requireContext(), "No Internet Connection", Toast.LENGTH_SHORT).show()
+                }else{
+                    val bundle = Bundle().apply {
+                        putString("productId", product.id)
+                    }
+                    findNavController().navigate(R.id.action_searchFragment_to_productDetailsFragment, bundle)
+                }
             }
         })
 

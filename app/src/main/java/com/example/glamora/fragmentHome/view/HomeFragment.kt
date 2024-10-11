@@ -160,10 +160,15 @@ class HomeFragment : Fragment() {
 
     private fun setupBrandsRecyclerView() {
         brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
-            val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
-                selectedBrand.title
-            )
-            findNavController().navigate(action)
+            if(!communicator.isInternetAvailable())
+            {
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }else{
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    selectedBrand.title
+                )
+                findNavController().navigate(action)
+            }
         }
         binding.homeRvBrand.apply {
             layoutManager = CarouselLayoutManager()
