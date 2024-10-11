@@ -27,7 +27,9 @@ import com.example.glamora.mainActivity.view.Communicator
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
+import com.example.glamora.util.getTapTargetView
 import com.example.glamora.util.showGuestDialog
+import com.example.glamora.util.startTapTargetSequence
 import com.google.android.material.carousel.CarouselLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +70,7 @@ class HomeFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = homeViewModel
         return binding.root
     }
 
@@ -128,6 +131,26 @@ class HomeFragment : Fragment() {
             binding.homeSwiperefreshlayout.isRefreshing = false
         }
 
+        startWalkThroughIfThisIsTheFirstTime()
+    }
+
+    private fun startWalkThroughIfThisIsTheFirstTime()
+    {
+        if(sharedViewModel.getSharedPrefBoolean(Constants.IS_FIRST_TIME_IN_APP,true))
+        {
+            val targetsList = listOf(
+                getTapTargetView(binding.homeFavoriteButton,"Favorites","Click here to get your favorite items"),
+                getTapTargetView(binding.homeRvOffers,"Discount Codes","Click here to get discount codes"),
+                getTapTargetView(binding.homeShoescv,"Categories","Click on any category to see the products in that category"),
+                getTapTargetView(communicator.getBottomNavView().findViewById(R.id.homeFragment),"Home","Home that holds all the products, categories and discounts"),
+                getTapTargetView(communicator.getBottomNavView().findViewById(R.id.searchFragment),"Search","Where you can search for products and brands"),
+                getTapTargetView(communicator.getBottomNavView().findViewById(R.id.cartFragment),"Cart","Where you can see your cart items, checkout and apply coupons"),
+                getTapTargetView(communicator.getBottomNavView().findViewById(R.id.profileFragment),"Profile","Where you can see your orders and settings."),
+            )
+
+            startTapTargetSequence(requireActivity(),targetsList)
+            sharedViewModel.setSharedPrefBoolean(Constants.IS_FIRST_TIME_IN_APP,false)
+        }
     }
 
     private fun checkAndGetCustomerInfo()

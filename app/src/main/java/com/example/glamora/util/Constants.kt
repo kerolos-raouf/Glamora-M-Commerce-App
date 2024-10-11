@@ -37,6 +37,8 @@ object Constants {
 
     // Customer Email
     const val  CUSTOMER_EMAIL = "CUSTOMER_EMAIL"
+    const val  IS_LOGGED_IN = "IS_LOGGED_IN"
+    const val  IS_FIRST_TIME_IN_APP = "IS_FIRST_TIME_IN_APP"
 
 
     //paypal

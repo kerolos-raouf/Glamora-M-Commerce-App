@@ -80,6 +80,7 @@ class ProfileFragment : Fragment() {
     private fun logOutActions()
     {
         sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN)
+        sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGGED_IN, false)
         sharedViewModel.setCustomerInfo(CustomerInfo())
         sharedViewModel.setFavoriteWithEmptyList()
         profileViewModel.signOut()

@@ -1,9 +1,12 @@
 [versions]
 agp = "8.5.1"
 checkoutSheetKit = "3.0.1"
+junitJunit = "4.13"
 kotlin = "1.9.0"
 circleimageview = "3.1.0"
 firebaseAuthKtx = "24.8.0"
+kotlinxCoroutinesTest = "1.8.1"
+mockitoCore = "5.2.1"
 playServicesAuth = "21.2.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -28,6 +31,8 @@ constraintlayout = "2.1.4"
 apolloRuntime = "4.0.1"
 dotsindicator = "4.3"
 swiperefreshlayout = "1.2.0-alpha01"
+taptargetview = "1.15.0"
+turbine = "1.0.0"
 viewpager2 = "1.1.0"
 okhttp = "4.12.0"
 googleGmsGoogleServices = "4.4.2"
@@ -44,6 +49,10 @@ androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefre
 checkout-sheet-kit = { module = "com.shopify:checkout-sheet-kit", version.ref = "checkoutSheetKit" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
+junit-v413 = { module = "junit:junit", version.ref = "junitJunit" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoCore" }
 payment-buttons = { module = "com.paypal.android:payment-buttons", version.ref = "cardPayments" }
 paypal-web-payments = { module = "com.paypal.android:paypal-web-payments", version.ref = "cardPayments" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
@@ -82,6 +91,8 @@ androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecy
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 card-payments = { module = "com.paypal.android:card-payments", version.ref = "cardPayments" }
+taptargetview = { module = "com.getkeepsafe.taptargetview:taptargetview", version.ref = "taptargetview" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 
 
