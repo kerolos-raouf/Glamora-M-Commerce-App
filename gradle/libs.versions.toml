@@ -31,6 +31,7 @@ constraintlayout = "2.1.4"
 apolloRuntime = "4.0.1"
 dotsindicator = "4.3"
 swiperefreshlayout = "1.2.0-alpha01"
+taptargetview = "1.15.0"
 turbine = "1.0.0"
 viewpager2 = "1.1.0"
 okhttp = "4.12.0"
@@ -90,6 +91,7 @@ androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecy
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 card-payments = { module = "com.paypal.android:card-payments", version.ref = "cardPayments" }
+taptargetview = { module = "com.getkeepsafe.taptargetview:taptargetview", version.ref = "taptargetview" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 

@@ -49,7 +49,7 @@ class LoginFragment : Fragment() {
         super.onStart()
         communicator.hideBottomNav()
 
-        if (sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN) != Constants.UNKNOWN) {
+        if (sharedViewModel.getSharedPrefBoolean(Constants.IS_LOGGED_IN,false)) {
             findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
         }
     }
@@ -97,9 +97,10 @@ class LoginFragment : Fragment() {
             builder.setMessage("Are you sure you want to proceed as a guest?")
 
             builder.setPositiveButton("OK") { dialog, _ ->
+                sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN)
+                sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGGED_IN,true)
                 findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 dialog.dismiss()
-
             }
 
             builder.setNegativeButton("Close") { dialog, _ ->
@@ -237,6 +238,7 @@ class LoginFragment : Fragment() {
 
                             if (email != null) {
                                 sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,email)
+                                sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGGED_IN,true)
                                 loginBinding.progressBar.visibility = View.GONE
 
                                 Toast.makeText(requireContext(),"Login successful!",Toast.LENGTH_SHORT).show()

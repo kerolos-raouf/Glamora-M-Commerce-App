@@ -1,5 +1,7 @@
 package com.example.glamora.mainActivity.view
 
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
 interface Communicator {
 
     fun hideBottomNav()
@@ -13,5 +15,7 @@ interface Communicator {
     fun requestLocationPermission()
 
     fun isGPSEnabled() : Boolean
+
+    fun getBottomNavView() : BottomNavigationView
 
 }
