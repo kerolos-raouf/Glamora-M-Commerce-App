@@ -16,10 +16,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.glamora.R
+import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.databinding.FragmentHomeBinding
 import com.example.glamora.fragmentHome.viewModel.HomeViewModel
@@ -99,6 +99,7 @@ class HomeFragment : Fragment() {
         observeRandomProducts()
         observeBrands()
         observeFavoriteItemsCount()
+        observeOnInternetState()
     }
 
     private fun setUpRecyclerViews(){
@@ -112,14 +113,11 @@ class HomeFragment : Fragment() {
         sharedViewModel.fetchProducts()
         homeViewModel.getALlBrands()
         sharedViewModel.fetchDiscountCodes()
+        checkAndGetCustomerInfo()
     }
 
     private fun initHome() {
-        val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
-        if (userEmail != Constants.UNKNOWN) {
-            sharedViewModel.getCustomerInfo(userEmail)
-            sharedViewModel.fetchFavoriteItems()
-        }
+        checkAndGetCustomerInfo()
 
         binding.homeSwiperefreshlayout.setOnRefreshListener {
             if(communicator.isInternetAvailable()) {
@@ -130,6 +128,15 @@ class HomeFragment : Fragment() {
             binding.homeSwiperefreshlayout.isRefreshing = false
         }
 
+    }
+
+    private fun checkAndGetCustomerInfo()
+    {
+        val userEmail = sharedViewModel.getSharedPrefString(Constants.CUSTOMER_EMAIL, Constants.UNKNOWN)
+        if (userEmail != Constants.UNKNOWN) {
+            sharedViewModel.getCustomerInfo(userEmail)
+            sharedViewModel.fetchFavoriteItems()
+        }
     }
 
     private fun setupRandomItemsRecyclerView() {
@@ -153,10 +160,15 @@ class HomeFragment : Fragment() {
 
     private fun setupBrandsRecyclerView() {
         brandsAdapter = BrandsAdapter(emptyList()) { selectedBrand ->
-            val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
-                selectedBrand.title
-            )
-            findNavController().navigate(action)
+            if(!communicator.isInternetAvailable())
+            {
+                Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
+            }else{
+                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
+                    selectedBrand.title
+                )
+                findNavController().navigate(action)
+            }
         }
         binding.homeRvBrand.apply {
             layoutManager = CarouselLayoutManager()
@@ -176,12 +188,25 @@ class HomeFragment : Fragment() {
     }
 
 
-
-
     private fun observeBrands() {
         lifecycleScope.launch {
             homeViewModel.brandsList.collect { brandsList ->
                 brandsAdapter.updateData(brandsList)
+            }
+        }
+    }
+
+    private fun observeOnInternetState() {
+        lifecycleScope.launch {
+            sharedViewModel.internetState.collect { state ->
+                if (state == ConnectivityObserver.InternetState.AVAILABLE) {
+                    binding.homeNoInternet.visibility = View.GONE
+                    binding.homeContentLayout.visibility = View.VISIBLE
+                    actionOnInternetAvailable()
+                }else {
+                    binding.homeNoInternet.visibility = View.VISIBLE
+                    binding.homeContentLayout.visibility = View.GONE
+                }
             }
         }
     }
