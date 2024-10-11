@@ -70,6 +70,7 @@ class HomeFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = homeViewModel
         return binding.root
     }
 
