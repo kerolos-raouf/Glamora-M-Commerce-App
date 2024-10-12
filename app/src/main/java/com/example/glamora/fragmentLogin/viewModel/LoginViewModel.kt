@@ -66,42 +66,9 @@ class LoginViewModel @Inject constructor(
             _loginState.value = State.Loading
             repository.loginWithGoogle(idToken).collect { result ->
                 result.fold(
-                    onSuccess = {
-                        _customerEmail.value = it.email
-                        repository.getShopifyUserByEmail(it.email).collect { result2 ->
-                            when (result2) {
-                                is State.Error -> {
-                                    if( result2.message == "User not found") {
-                                        val nameParts = extractNameFromEmail(it.email)
-                                        repository.createShopifyUser(
-                                            it.email,
-                                            nameParts.firstOrNull() ?: "",
-                                            nameParts.getOrNull(1) ?: "",
-                                            null
-                                        ).collect{ addResult ->
-                                            addResult.fold(
-                                                onSuccess = {
-                                                    _loginState.value = State.Success(it)
-                                                },
-                                                onFailure = {
-                                                    _loginState.value = State.Error(it.message ?: "Unknown error")
-                                                }
-                                            )
-                                        }
-                                    }
-                                    else{
-                                        _toastMessage.value = result2.message
-                                        _loginState.value = State.Error(result2.message)
-                                    }
-                                }
-                                State.Loading -> {
-                                    _loginState.value = State.Loading
-                                }
-                                is State.Success -> {
-                                    _loginState.value = State.Success(it)
-                                }
-                            }
-                        }
+                    onSuccess = { user ->
+                        _customerEmail.value = user.email
+                        handleShopifyUserLogin(user.email)
                     },
                     onFailure = {
                         _loginState.value = State.Error(it.message ?: "Unknown error")
@@ -110,6 +77,59 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun handleShopifyUserLogin(email: String) {
+        repository.getShopifyUserByEmail(email).collect { result ->
+            when (result) {
+                is State.Error -> handleShopifyUserError(email, result)
+                State.Loading -> _loginState.value = State.Loading
+                is State.Success -> _loginState.value = State.Success(result.data)
+            }
+        }
+    }
+
+    private suspend fun handleShopifyUserError(email: String, result: State.Error) {
+        if (result.message == "User not found") {
+            createShopifyUserFromEmail(email)
+        } else if (result.message == "Email has already been taken") {
+            _toastMessage.value = result.message
+        } else {
+            _toastMessage.value = result.message
+            _loginState.value = State.Error(result.message)
+        }
+    }
+
+    private suspend fun createShopifyUserFromEmail(email: String) {
+        val nameParts = extractNameFromEmail(email)
+        repository.createShopifyUser(
+            email,
+            nameParts.firstOrNull() ?: "",
+            nameParts.getOrNull(1) ?: "",
+            null
+        ).collect { addResult ->
+            addResult.fold(
+                onSuccess = { fetchNewShopifyUser(email) },
+                onFailure = {
+                    if (it.message == "Email has already been taken") {
+                        fetchNewShopifyUser(email)
+                    } else {
+                        _loginState.value = State.Error(it.message ?: "Unknown error")
+                    }
+                }
+            )
+        }
+    }
+
+    private suspend fun fetchNewShopifyUser(email: String) {
+        repository.getShopifyUserByEmail(email).collect { result ->
+            when (result) {
+                is State.Error -> handleShopifyUserLogin(email)
+                State.Loading -> _loginState.value = State.Loading
+                is State.Success -> _loginState.value = State.Success(result.data)
+            }
+        }
+    }
+
 
     fun clearToastMessage() {
         _toastMessage.value = null
