@@ -87,6 +87,8 @@ class MainActivity : AppCompatActivity(), Communicator {
 
         //binding.bottomNavigationView.setupWithNavController(navController)
         NavigationUI.setupWithNavController(binding.bottomNavigationView,navController)
+
+        sharedViewModel.observeOnInternetState()
     }
 
     override fun hideBottomNav() {
