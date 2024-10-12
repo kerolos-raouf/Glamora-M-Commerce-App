@@ -26,7 +26,6 @@ class LoginViewModel @Inject constructor(
     val customerEmail: StateFlow<String?> get() = _customerEmail
 
 
-
     fun loginWithEmail(email: String, password: String) {
         viewModelScope.launch {
             _loginState.value = State.Loading
@@ -35,7 +34,7 @@ class LoginViewModel @Inject constructor(
                     onSuccess = {
                         _customerEmail.value = it.email
                         _loginState.value = State.Success(it)
-                                },
+                    },
                     onFailure = { _loginState.value = State.Error(it.message ?: "Unknown error") }
                 )
             }
@@ -63,8 +62,36 @@ class LoginViewModel @Inject constructor(
                 result.fold(
                     onSuccess = {
                         _customerEmail.value = it.email
+                        repository.getShopifyUserByEmail(it.email).collect { result ->
+                            when (result) {
+                                is State.Error -> {
+                                    _toastMessage.value = result.message
+                                }
+
+                                State.Loading -> {
+                                    _loginState.value = State.Loading
+                                }
+
+                                is State.Success -> {
+                                    val email = result.data.email
+                                    if (email != it.email) {
+                                        val nameParts = extractNameFromEmail(it.email)
+                                        repository.createShopifyUser(
+                                            it.email,
+                                            nameParts.firstOrNull() ?: "",
+                                            nameParts.getOrNull(1) ?: "",
+                                            null
+                                        )
+                                        _loginState.value = State.Success(it)
+
+                                    } else {
+                                        _loginState.value = State.Success(it)
+                                    }
+                                }
+                            }
+                        }
                         _loginState.value = State.Success(it)
-                                },
+                    },
                     onFailure = { _loginState.value = State.Error(it.message ?: "Unknown error") }
                 )
             }
@@ -75,4 +102,7 @@ class LoginViewModel @Inject constructor(
         _toastMessage.value = null
     }
 
+    private fun extractNameFromEmail(email: String): List<String> {
+        return email.split("@")[0].split("[_.]".toRegex())
+    }
 }

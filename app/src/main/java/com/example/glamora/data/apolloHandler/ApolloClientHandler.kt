@@ -514,7 +514,7 @@ class ApolloClientHandler @Inject constructor(
             email = Optional.Present(email),
             firstName = Optional.Present(firstName),
             lastName = Optional.Present(lastName),
-            phone = Optional.Present(phone)
+            phone = phone?.let { Optional.Present(it) } ?: Optional.Absent
         )
 
         val mutation = CreateCustomerMutation(customerInput)
