@@ -23,7 +23,7 @@ class ProductDetailsViewModel @Inject constructor(
 
     private val _cartItems = MutableStateFlow<List<CartItemDTO>>(emptyList())
 
-    private val _state = MutableStateFlow<State<Boolean>>(State.Loading)
+    val _state = MutableStateFlow<State<Boolean>>(State.Loading)
     val state: StateFlow<State<Boolean>> = _state
 
 
