@@ -99,7 +99,7 @@ class SharedViewModel @Inject constructor(
 
     // Delete item from favorites
     fun deleteFromFavorites(product: FavoriteItemDTO) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val currentState = _favoriteItemsState.value
             if (currentState is State.Success) {
                 val currentList = currentState.data
@@ -133,7 +133,7 @@ class SharedViewModel @Inject constructor(
 
     // Add item to favorites
     fun addToFavorites(product: FavoriteItemDTO) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val currentState = _favoriteItemsState.value
 
             if (currentState is State.Success) {
@@ -246,7 +246,7 @@ class SharedViewModel @Inject constructor(
 
     fun fetchProducts()
     {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getProducts().collect{state->
                 when (state)
                 {
@@ -266,7 +266,7 @@ class SharedViewModel @Inject constructor(
 
     fun fetchPriceRules()
     {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getPriceRules().collect{state->
                 when (state)
                 {
@@ -305,7 +305,7 @@ class SharedViewModel @Inject constructor(
 
 
     fun fetchCurrentCustomer() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getCustomerUsingEmail("kerolos.raouf5600@gmail.com").collect { state ->
                 when (state) {
                     is State.Error -> {
@@ -346,7 +346,7 @@ class SharedViewModel @Inject constructor(
 
     fun convertCurrency()
     {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.convertCurrency().collect{
                 when(it)
                 {
@@ -365,7 +365,7 @@ class SharedViewModel @Inject constructor(
     }
 
     fun filterList(query: String) {
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val results = if (query.isEmpty()) {
                 //originalList
                 emptyList()
@@ -379,7 +379,7 @@ class SharedViewModel @Inject constructor(
 
     fun getCustomerInfo(userEmail : String)
     {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getShopifyUserByEmail(userEmail).collect{state->
                 when(state)
                 {

@@ -7,6 +7,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -31,7 +32,7 @@ class ManageAddressesViewModel @Inject constructor(
 
     fun fetchCustomerAddresses(email : String)
     {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getShopifyUserByEmail(email).collect { state ->
                 when (state) {
                     is State.Error -> {
@@ -54,7 +55,7 @@ class ManageAddressesViewModel @Inject constructor(
 
     fun deleteCustomerAddresses(customerID : String,email : String,addresses : List<AddressModel>)
     {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.updateCustomerAddress(customerID,addresses).collect { state ->
                 when(state)
                 {
@@ -75,7 +76,7 @@ class ManageAddressesViewModel @Inject constructor(
 
     fun updateCustomerDefaultAddress(customerID : String, addressId : String,email: String)
     {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.updateCustomerDefaultAddress(customerID, addressId).collect { state ->
                 when(state)
                 {
