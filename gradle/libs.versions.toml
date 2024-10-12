@@ -15,6 +15,7 @@ espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
 playServicesWallet = "19.4.0"
+robolectric = "4.8"
 roomRuntime = "2.6.1"
 hiltAndroid = "2.52"
 retrofit = "2.11.0"
@@ -31,6 +32,7 @@ constraintlayout = "2.1.4"
 apolloRuntime = "4.0.1"
 dotsindicator = "4.3"
 swiperefreshlayout = "1.2.0-alpha01"
+taptargetview = "1.15.0"
 turbine = "1.0.0"
 viewpager2 = "1.1.0"
 okhttp = "4.12.0"
@@ -41,6 +43,7 @@ lifecycleLivedataKtx = "2.8.6"
 lifecycleViewmodelKtx = "2.8.6"
 stripeAndroid = "20.51.1"
 cardPayments = "1.5.0"
+junitKtx = "1.2.1"
 
 
 [libraries]
@@ -88,9 +91,12 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 card-payments = { module = "com.paypal.android:card-payments", version.ref = "cardPayments" }
+taptargetview = { module = "com.getkeepsafe.taptargetview:taptargetview", version.ref = "taptargetview" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 
 
 
