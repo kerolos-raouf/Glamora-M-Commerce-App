@@ -1,5 +1,6 @@
 package com.example.glamora.fragmentLogin.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.glamora.data.contracts.Repository
@@ -35,7 +36,10 @@ class LoginViewModel @Inject constructor(
                         _customerEmail.value = it.email
                         _loginState.value = State.Success(it)
                     },
-                    onFailure = { _loginState.value = State.Error(it.message ?: "Unknown error") }
+                    onFailure = {
+                        _toastMessage.value = it.message
+                        _loginState.value = State.Error(it.message ?: "Unknown error")
+                    }
                 )
             }
         }
@@ -48,6 +52,7 @@ class LoginViewModel @Inject constructor(
                 result.fold(
                     onSuccess = { _toastMessage.value = "Check your email" },
                     onFailure = {
+                        _toastMessage.value = it.message
                         _loginState.value = State.Error(it.message ?: "Failed to send reset email")
                     }
                 )
@@ -62,37 +67,44 @@ class LoginViewModel @Inject constructor(
                 result.fold(
                     onSuccess = {
                         _customerEmail.value = it.email
-                        repository.getShopifyUserByEmail(it.email).collect { result ->
-                            when (result) {
+                        repository.getShopifyUserByEmail(it.email).collect { result2 ->
+                            when (result2) {
                                 is State.Error -> {
-                                    _toastMessage.value = result.message
-                                }
-
-                                State.Loading -> {
-                                    _loginState.value = State.Loading
-                                }
-
-                                is State.Success -> {
-                                    val email = result.data.email
-                                    if (email != it.email) {
+                                    if( result2.message == "User not found") {
                                         val nameParts = extractNameFromEmail(it.email)
                                         repository.createShopifyUser(
                                             it.email,
                                             nameParts.firstOrNull() ?: "",
                                             nameParts.getOrNull(1) ?: "",
                                             null
-                                        )
-                                        _loginState.value = State.Success(it)
-
-                                    } else {
-                                        _loginState.value = State.Success(it)
+                                        ).collect{ addResult ->
+                                            addResult.fold(
+                                                onSuccess = {
+                                                    _loginState.value = State.Success(it)
+                                                },
+                                                onFailure = {
+                                                    _loginState.value = State.Error(it.message ?: "Unknown error")
+                                                }
+                                            )
+                                        }
                                     }
+                                    else{
+                                        _toastMessage.value = result2.message
+                                        _loginState.value = State.Error(result2.message)
+                                    }
+                                }
+                                State.Loading -> {
+                                    _loginState.value = State.Loading
+                                }
+                                is State.Success -> {
+                                    _loginState.value = State.Success(it)
                                 }
                             }
                         }
-                        _loginState.value = State.Success(it)
                     },
-                    onFailure = { _loginState.value = State.Error(it.message ?: "Unknown error") }
+                    onFailure = {
+                        _loginState.value = State.Error(it.message ?: "Unknown error")
+                    }
                 )
             }
         }
