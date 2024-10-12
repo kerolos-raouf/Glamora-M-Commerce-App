@@ -10,6 +10,7 @@ import com.example.glamora.util.isNotShort
 import com.example.glamora.util.isPasswordEqualRePassword
 import com.example.glamora.util.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -41,7 +42,7 @@ class SignUpViewModel @Inject constructor(
 
             if (validName && validEmail && validPass && validRepass && validPhone) {
                 val (firstName, lastName) = getFirstAndLastName(name)
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.createShopifyUser(email, firstName, lastName, phone)
                         .collect { result ->
                             result.fold(

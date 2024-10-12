@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.log
@@ -54,7 +55,7 @@ class CartViewModel @Inject constructor(
 
 
     fun fetchCartItems(userId: String){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getCartItemsForCustomer(userId).collect{state ->
                 when(state){
                     is State.Error -> {
@@ -65,7 +66,9 @@ class CartViewModel @Inject constructor(
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _cartItems.value = state.data
+                        withContext(Dispatchers.Main){
+                            _cartItems.value = state.data
+                        }
                         _loading.value = false
                     }
                 }
@@ -85,7 +88,7 @@ class CartViewModel @Inject constructor(
     }
 
     private fun deleteDraftOrder(draftOrderId: String, userId: String){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.deleteDraftOrder(draftOrderId).collect{
                 when(it){
                     is State.Error -> {
@@ -109,7 +112,7 @@ class CartViewModel @Inject constructor(
         userId: String,
         fetchAgain : Boolean = true
         ){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.updateCartDraftOrder(draftOrderId,newCartItems).collect{state->
                 when(state){
                     is State.Error -> {
@@ -151,7 +154,7 @@ class CartViewModel @Inject constructor(
         tag: String = Constants.CART_DRAFT_ORDER_KEY
     ){
         if(!cartItems.value.isNullOrEmpty()){
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 if(!cartItems.value.isNullOrEmpty()){
                     repository.createFinalDraftOrder(
                         customerId,customerEmail,
@@ -177,7 +180,7 @@ class CartViewModel @Inject constructor(
             }
         }else
         {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 _message.emit("Your cart is empty")
             }
         }
@@ -186,7 +189,7 @@ class CartViewModel @Inject constructor(
 
     //2 - create order from draft order
     private fun createOrderFromDraftOrder(finalDraftOrderId: String,oldDraftOrderId: String,userId : String){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.createOrderFromDraftOrder(finalDraftOrderId).collect{ state ->
                 when(state){
                     is State.Error -> {
