@@ -58,8 +58,7 @@ class SharedViewModel @Inject constructor(
 
 
     init {
-        observeOnInternetState()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _currentCustomerInfo.collect { customerInfo ->
                 if (customerInfo.userId != Constants.UNKNOWN) {
                     fetchFavoriteItems()
@@ -72,7 +71,7 @@ class SharedViewModel @Inject constructor(
         _currentCustomerInfo.value = customerInfo
     }
 
-    private fun observeOnInternetState()
+    fun observeOnInternetState()
     {
         viewModelScope.launch(Dispatchers.IO) {
             repository.observeOnInternetState().collect{
@@ -286,7 +285,7 @@ class SharedViewModel @Inject constructor(
 
     fun fetchDiscountCodes()
     {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getDiscountCodes().collect{state->
                 when (state)
                 {
