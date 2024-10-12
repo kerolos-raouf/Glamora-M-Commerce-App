@@ -246,7 +246,7 @@ class SharedViewModel @Inject constructor(
 
     fun fetchProducts()
     {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getProducts().collect{state->
                 when (state)
                 {
