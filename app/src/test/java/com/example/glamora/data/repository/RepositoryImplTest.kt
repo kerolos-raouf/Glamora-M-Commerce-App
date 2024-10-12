@@ -17,6 +17,7 @@ import com.example.glamora.data.firebase.IFirebaseHandler
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.internetStateObserver.InternetStateObserver
 import com.example.glamora.data.model.DiscountCodeDTO
+import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.network.FakeRemoteDataSource
 import com.example.glamora.data.sharedPref.FakeSharedPrefHandler
 import com.example.glamora.data.sharedPref.SharedPrefHandler
@@ -43,16 +44,16 @@ class RepositoryImplTest {
     private lateinit var connectivityObserver : ConnectivityObserver
     private lateinit var firebaseHandler : IFirebaseHandler
 
-    lateinit var repository: RepositoryImpl
+    private lateinit var repository: RepositoryImpl
 
     @Before
     fun setUp()
     {
-        apolloClientHandler = FakeApolloClientHandler()
-        remoteDataSource = FakeRemoteDataSource()
-        sharedPrefHandler = FakeSharedPrefHandler()
-        connectivityObserver = InternetStateObserver(ApplicationProvider.getApplicationContext())
-        firebaseHandler = FakeFirebaseHandler()
+        apolloClientHandler = mock()
+        remoteDataSource = mock()
+        sharedPrefHandler = mock()
+        connectivityObserver = mock()
+        firebaseHandler = mock()
 
         repository = RepositoryImpl(apolloClientHandler, remoteDataSource, sharedPrefHandler, connectivityObserver, firebaseHandler)
     }
@@ -67,14 +68,34 @@ class RepositoryImplTest {
             DiscountCodeDTO("5","Summer Sale",25.0),
         )
 
+        `when`(apolloClientHandler.getDiscountCodes()).thenReturn(flowOf(State.Success(expectedDiscountCodes)))
+
         repository.getDiscountCodes().test {
-            val result = awaitItem() as State.Loading
-            assertEquals(result, State.Loading)
             val data = awaitItem() as State.Success
             assertEquals(data.data, expectedDiscountCodes)
             awaitComplete()
         }
     }
+
+    @Test
+    fun `getPriceRules returns list of price rules`() = runTest {
+        val expectedPriceRules = listOf(
+            PriceRulesDTO("1",5.0),
+            PriceRulesDTO("2",10.0),
+            PriceRulesDTO("3",15.0),
+            PriceRulesDTO("4",20.0),
+            PriceRulesDTO("5",25.0),
+        )
+
+        `when`(apolloClientHandler.getPriceRules()).thenReturn(flowOf(State.Success(expectedPriceRules)))
+
+        repository.getPriceRules().test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, expectedPriceRules)
+            awaitComplete()
+        }
+    }
+
 
 
 
