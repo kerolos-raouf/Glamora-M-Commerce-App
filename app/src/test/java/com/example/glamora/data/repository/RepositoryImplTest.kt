@@ -19,6 +19,7 @@ import com.example.glamora.data.internetStateObserver.InternetStateObserver
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.DiscountCodeDTO
+import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.data.model.brandModel.Image
@@ -33,7 +34,6 @@ import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -105,17 +105,14 @@ class RepositoryImplTest {
     }
 
 
-
-
-
     @Test
     fun `getAllBrands returns list of brands`() = runTest {
         val expectedBrands = listOf(
-            Brands("1",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/300"),
-            Brands("2",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/301"),
-            Brands("3",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/302"),
-            Brands("4",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/303"),
-            Brands("5",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/304"),
+            Brands("1", Image("https://picsum.photos/200/300"), "https://picsum.photos/200/300"),
+            Brands("2", Image("https://picsum.photos/200/300"), "https://picsum.photos/200/301"),
+            Brands("3", Image("https://picsum.photos/200/300"), "https://picsum.photos/200/302"),
+            Brands("4", Image("https://picsum.photos/200/300"), "https://picsum.photos/200/303"),
+            Brands("5", Image("https://picsum.photos/200/300"), "https://picsum.photos/200/304"),
         )
 
         `when`(apolloClientHandler.getAllBrands()).thenReturn(flowOf(State.Success(expectedBrands)))
@@ -147,58 +144,207 @@ class RepositoryImplTest {
         }
     }
 
+    @Test
+    fun `getFavoriteItemsForCustomer returns list of favorite items`() = runTest {
+        val expectedFavoriteItems = listOf(
+            FavoriteItemDTO("1", "Product 1", "1", "title1", "100.0" , "https://example.com/image1.jpg"),
+            FavoriteItemDTO("2", "Product 2", "2", "title2" , "200.0" , "https://example.com/image2.jpg"),
+            FavoriteItemDTO("3", "Product 3", "3", "title3", "300.0" , "https://example.com/image3.jpg"),
+            FavoriteItemDTO("4", "Product 4", "4", "title4", "400.0" , "https://example.com/image4.jpg"),
+            FavoriteItemDTO("5", "Product 5", "5", "title5", "500.0" , "https://example.com/image5.jpg"),
+        )
 
+        `when`(apolloClientHandler.getFavoriteItemsForCustomer("1")).thenReturn(flowOf(State.Success(expectedFavoriteItems)))
 
+        repository.getFavoriteItemsForCustomer("1").test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, expectedFavoriteItems)
+            awaitComplete()
+        }
+    }
+    @Test
+    fun `updateCustomerAddress updates customer address`() = runTest {
+        val customerId = "1"
+        val expectedCustomerAddress = listOf(
+            AddressModel("1", "Home", "123 test st", "12345", "New York", "NY", "USA"),
+            AddressModel("2", "Work", "456 test st", "67890", "San Francisco", "CA", "USA"),
+        )
 
-    fun getFavoriteItemsForCustomer() {
+        `when`(apolloClientHandler.updateCustomerAddress(customerId, expectedCustomerAddress)).thenReturn(flowOf(State.Success(expectedCustomerAddress[0])))
+
+        repository.updateCustomerAddress(customerId, expectedCustomerAddress).test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, expectedCustomerAddress[0])
+            awaitComplete()
+        }
     }
 
-    fun updateCustomerAddress() {
+    @Test
+    fun `deleteDraftOrder deletes draft order`() = runTest {
+        val expectedDeletedId = "1"
+
+        `when`(apolloClientHandler.deleteDraftOrder(expectedDeletedId)).thenReturn(flowOf(State.Success(expectedDeletedId)))
+
+        repository.deleteDraftOrder(expectedDeletedId).test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, expectedDeletedId)
+            awaitComplete()
+        }
     }
 
-    fun deleteDraftOrder() {
+    @Test
+    fun `updateCartDraftOrder updates cart draft order`() = runTest {
+        val draftOrderId = "1"
+        val expectedUpdatedCartItems = listOf(
+            CartItemDTO("1", "Product 1", "1", "title1",1 , 3, "100.0" , "https://example.com/image1.jpg",false),
+            CartItemDTO("2", "Product 2", "2", "title2",2 , 5, "200.0" , "https://example.com/image1.jpg",true),
+        )
+
+        `when`(apolloClientHandler.updateCartDraftOrder(draftOrderId, expectedUpdatedCartItems)).thenReturn(flowOf(State.Success("Success")))
+
+        repository.updateCartDraftOrder(draftOrderId, expectedUpdatedCartItems).test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, "Success")
+            awaitComplete()
+        }
     }
 
-    fun updateCartDraftOrder() {
+    @Test
+    fun `updateFavoritesDraftOrder updates favorites draft order`() = runTest {
+        val draftOrderId = "1"
+        val expectedUpdatedFavoritesItems = listOf(
+            FavoriteItemDTO("1", "Product 1", "1", "title1" , "100.0" , "https://example.com/image1.jpg"),
+            FavoriteItemDTO("2", "Product 2", "2", "title2" , "200.0" , "https://example.com/image1.jpg"),
+        )
+
+        `when`(apolloClientHandler.updateFavoritesDraftOrder(draftOrderId, expectedUpdatedFavoritesItems)).thenReturn(flowOf(State.Success("Success")))
+
+        repository.updateFavoritesDraftOrder(draftOrderId, expectedUpdatedFavoritesItems).test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, "Success")
+            awaitComplete()
+        }
     }
 
-    fun updateFavoritesDraftOrder() {
+    @Test
+    fun `createFinalDraftOrder creates final draft order`() = runTest {
+        val customerId = "1"
+        val customerEmail = "test@example.com"
+        val expectedCartItems = listOf(
+            CartItemDTO("1", "Product 1", "1", "title1",1 , 3, "100.0" , "https://example.com/image1.jpg",false),
+            CartItemDTO("2", "Product 2", "2", "title2",2 , 5, "200.0" , "https://example.com/image1.jpg",true),
+        )
+        val address = AddressModel("1", "Home", "123 test st", "12345", "New York", "NY", "USA")
+        val tag = "ORDER_FROM_FAVORITES"
+
+        `when`(apolloClientHandler.createFinalDraftOrder(customerId, customerEmail, expectedCartItems, 10.0, address, tag)).thenReturn(flowOf(State.Success("Success")))
+
+        repository.createFinalDraftOrder(customerId, customerEmail, expectedCartItems, 10.0, address, tag).test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, "Success")
+            awaitComplete()
+        }
     }
 
-    fun createFinalDraftOrder() {
+    @Test
+    fun `createOrderFromDraftOrder creates order from draft order`() = runTest {
+        val draftOrderId = "1"
+
+        `when`(apolloClientHandler.createOrderFromDraftOrder(draftOrderId)).thenReturn(flowOf(State.Success("Success")))
+
+        repository.createOrderFromDraftOrder(draftOrderId).test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, "Success")
+            awaitComplete()
+        }
     }
 
-    fun createOrderFromDraftOrder() {
+    @Test
+    fun `getCustomerAddressesByEmail returns list of customer addresses`() = runTest {
+        val email = "test@example.com"
+        val expectedCustomerAddresses = listOf(
+            AddressModel("1", "Home", "123 test st", "12345", "New York", "NY", "USA"),
+            AddressModel("2", "Work", "456 test st", "67890", "San Francisco", "CA", "USA"),
+        )
+
+        `when`(apolloClientHandler.getCustomerAddressesByEmail(email)).thenReturn(flowOf(State.Success(expectedCustomerAddresses)))
+
+        repository.getCustomerAddressesByEmail(email).test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, expectedCustomerAddresses)
+            awaitComplete()
+        }
     }
 
-    fun getCustomerAddressesByEmail() {
+    @Test
+    fun `getCustomerAddressesByEmail returns empty list if email is wrong`() = runTest {
+        val email = "wrong@example.com"
+        val expectedCustomerAddresses = emptyList<AddressModel>()
+
+        `when`(apolloClientHandler.getCustomerAddressesByEmail(email)).thenReturn(flowOf(State.Success(expectedCustomerAddresses)))
+
+        repository.getCustomerAddressesByEmail(email).test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, expectedCustomerAddresses)
+            awaitComplete()
+        }
     }
 
-    fun updateCustomerDefaultAddress() {
+    @Test
+    fun `updateCustomerDefaultAddress updates customer default address`() = runTest {
+        val customerId = "1"
+        val addressId = "1"
+
+        `when`(apolloClientHandler.updateCustomerDefaultAddress(customerId, addressId)).thenReturn(flowOf(State.Success("Success")))
+
+        repository.updateCustomerDefaultAddress(customerId, addressId).test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, "Success")
+            awaitComplete()
+        }
     }
 
-    fun getCustomerUsingEmail() {
+
+    @Test
+    fun `setSharedPrefString sets shared preference string`() = runTest {
+        val key = "test_key"
+        val value = "test_value"
+
+        `when`(repository.getSharedPrefString(key, value)).thenReturn(value)
+
+        assertEquals(repository.getSharedPrefString(key, value), value)
     }
 
-    fun getCitiesForSearch() {
+    @Test
+    fun `getSharedPrefString gets shared preference string`() = runTest {
+        val key = "test_key"
+        val defaultValue = "default_value"
+        val expectedValue = "test_value"
+
+        `when`(sharedPrefHandler.getSharedPrefString(key, defaultValue)).thenReturn(expectedValue)
+
+        assertEquals(repository.getSharedPrefString(key, defaultValue), expectedValue)
     }
 
-    fun convertCurrency() {
+    @Test
+    fun `setSharedPrefBoolean sets shared preference boolean`() = runTest {
+        val key = "test_key"
+        val value = true
+
+        `when`(sharedPrefHandler.setSharedPrefBoolean(key, value)).then {
+            assertEquals(sharedPrefHandler.getSharedPrefBoolean(key, false), value)
+        }
     }
 
-    fun observeOnInternetState() {
-    }
+    @Test
+    fun `getSharedPrefBoolean gets shared preference boolean`() = runTest {
+        val key = "test_key"
+        val defaultValue = false
+        val expectedValue = true
 
-    fun setSharedPrefString() {
-    }
+        `when`(sharedPrefHandler.getSharedPrefBoolean(key, defaultValue)).thenReturn(expectedValue)
 
-    fun getSharedPrefString() {
-    }
-
-    fun setSharedPrefBoolean() {
-    }
-
-    fun getSharedPrefBoolean() {
+        assertEquals(repository.getSharedPrefBoolean(key, defaultValue), expectedValue)
     }
 
 
@@ -288,4 +434,52 @@ class RepositoryImplTest {
 
 
 
+
+    fun getCustomerUsingEmail() {
+    }
+
+    fun getCitiesForSearch() {
+    }
+
+    fun convertCurrency() {
+    }
+
+    fun observeOnInternetState() {
+    }
+
+    fun setSharedPrefString() {
+    }
+
+    fun getSharedPrefString() {
+    }
+
+    fun setSharedPrefBoolean() {
+    }
+
+    fun getSharedPrefBoolean() {
+    }
+
+    fun createShopifyUser() {
+    }
+
+    fun getShopifyUserByEmail() {
+    }
+
+    fun getOrdersByCustomer() {
+    }
+
+    fun loginWithEmail() {
+    }
+
+    fun loginWithGoogle() {
+    }
+
+    fun resetUserPassword() {
+    }
+
+    fun signUp() {
+    }
+
+    fun signOut() {
+    }
 }
