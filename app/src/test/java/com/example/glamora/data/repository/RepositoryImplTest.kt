@@ -18,6 +18,8 @@ import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.internetStateObserver.InternetStateObserver
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
+import com.example.glamora.data.model.brandModel.Brands
+import com.example.glamora.data.model.brandModel.Image
 import com.example.glamora.data.network.FakeRemoteDataSource
 import com.example.glamora.data.sharedPref.FakeSharedPrefHandler
 import com.example.glamora.data.sharedPref.SharedPrefHandler
@@ -100,18 +102,30 @@ class RepositoryImplTest {
 
 
 
+    @Test
+    fun `getAllBrands returns list of brands`() = runTest {
+        val expectedBrands = listOf(
+            Brands("1",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/300"),
+            Brands("2",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/301"),
+            Brands("3",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/302"),
+            Brands("4",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/303"),
+            Brands("5",Image("https://picsum.photos/200/300"), "https://picsum.photos/200/304"),
+        )
 
+        `when`(apolloClientHandler.getAllBrands()).thenReturn(flowOf(State.Success(expectedBrands)))
 
-
-
-    fun getPriceRules() {
+        repository.getAllBrands().test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, expectedBrands)
+            awaitComplete()
+        }
     }
 
-    fun getDiscountCodes() {
-    }
 
-    fun getAllBrands() {
-    }
+
+
+
+
 
     fun getCartItemsForCustomer() {
     }
