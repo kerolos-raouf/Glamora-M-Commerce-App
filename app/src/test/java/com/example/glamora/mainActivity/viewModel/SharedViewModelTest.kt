@@ -165,13 +165,7 @@ class SharedViewModelTest {
     fun getCurrentCustomerInfo() {
     }
 
-    fun getInternetState() {
-    }
-
     fun getOperationDoneWithPayPal() {
-    }
-
-    fun setCustomerInfo() {
     }
 
     fun getFavoriteItemsState() {
@@ -201,11 +195,6 @@ class SharedViewModelTest {
     fun fetchPriceRules() {
     }
 
-    fun fetchDiscountCodes() {
-    }
-
-    fun fetchCurrentCustomer() {
-    }
 
 
     @Test
@@ -235,18 +224,6 @@ class SharedViewModelTest {
 
         assertEquals(expectedInternetState, result)
     }
-
-
-//    @Test
-//    fun `convertCurrency returns change rate`() = runTest {
-//        val expectedChangeRate = "0.8"
-//        `when`(repository.convertCurrency()).thenReturn(flowOf(State.Success(expectedChangeRate.toDouble())))
-//        sharedViewModel.convertCurrency()
-//        val result = sharedViewModel.getSharedPrefString(Constants.CURRENCY_MULTIPLIER_KEY, "0.8")
-//
-//        assertEquals(expectedChangeRate, result)
-//    }
-
 
 
     @Test
