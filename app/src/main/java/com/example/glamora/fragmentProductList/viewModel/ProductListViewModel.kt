@@ -9,6 +9,7 @@ import com.example.glamora.data.model.ProductDTO
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ class ProductListViewModel @Inject constructor(
 
 
     fun filterProductsByBrand(products: List<ProductDTO>, title: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val filtered = products.filter { product ->
                     product.brand == title
@@ -42,7 +43,7 @@ class ProductListViewModel @Inject constructor(
 
 
     fun filterProductsByCategory(products: List<ProductDTO>,category: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val filtered = products.filter { product ->
                     product.category == category

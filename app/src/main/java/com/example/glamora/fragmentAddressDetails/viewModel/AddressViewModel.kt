@@ -8,6 +8,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.AddressModel
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -38,7 +39,7 @@ AddressViewModel @Inject constructor(
         val newAddressList = _address.value.toMutableList()
         newAddressList.add(address)
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.updateCustomerAddress(customerId,newAddressList).collect{state->
                 when(state)
                 {
@@ -60,7 +61,7 @@ AddressViewModel @Inject constructor(
 
 
     fun getCustomerAddressesByEmail(email : String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getCustomerAddressesByEmail(email).collect{state->
                 when(state)
                 {

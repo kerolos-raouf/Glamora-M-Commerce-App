@@ -54,8 +54,7 @@ class SharedViewModelTest {
 
     }
 
-    fun getDiscountCodes() {
-    }
+
 
     fun getProductList() {
     }

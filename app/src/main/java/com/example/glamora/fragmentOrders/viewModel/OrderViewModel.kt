@@ -7,6 +7,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.ordersModel.OrderDTO
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ class OrderViewModel @Inject constructor(
     val loading : StateFlow<Boolean> = _loading
 
     fun getOrdersByCustomer(email: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getOrdersByCustomer(email).collect { state ->
                 when (state) {
                     is State.Error -> {

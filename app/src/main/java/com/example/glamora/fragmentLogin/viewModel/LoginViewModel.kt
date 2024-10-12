@@ -7,6 +7,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.data.model.customerModels.CustomerInfo
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -28,7 +29,7 @@ class LoginViewModel @Inject constructor(
 
 
     fun loginWithEmail(email: String, password: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _loginState.value = State.Loading
             repository.loginWithEmail(email, password).collect { result ->
                 result.fold(
@@ -46,7 +47,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun resetUserPass(email: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _loginState.value = State.Loading
             repository.resetUserPassword(email).collect { result ->
                 result.fold(
@@ -61,7 +62,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun loginWithGoogle(idToken: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _loginState.value = State.Loading
             repository.loginWithGoogle(idToken).collect { result ->
                 result.fold(
