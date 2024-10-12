@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -78,6 +79,16 @@ class MainActivity : AppCompatActivity(), Communicator {
                 }
             }
         }
+
+        sharedViewModel.observeOnInternetState()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            sharedViewModel.currentCustomerInfo.collect { customerInfo ->
+                if (customerInfo.userId != Constants.UNKNOWN) {
+                    sharedViewModel.fetchFavoriteItems()
+                }
+            }
+        }
     }
 
     private fun initView()
@@ -88,7 +99,7 @@ class MainActivity : AppCompatActivity(), Communicator {
         //binding.bottomNavigationView.setupWithNavController(navController)
         NavigationUI.setupWithNavController(binding.bottomNavigationView,navController)
 
-        sharedViewModel.observeOnInternetState()
+
     }
 
     override fun hideBottomNav() {
