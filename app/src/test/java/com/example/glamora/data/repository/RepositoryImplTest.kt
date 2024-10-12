@@ -16,10 +16,15 @@ import com.example.glamora.data.firebase.FakeFirebaseHandler
 import com.example.glamora.data.firebase.IFirebaseHandler
 import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.internetStateObserver.InternetStateObserver
+import com.example.glamora.data.model.AddressModel
+import com.example.glamora.data.model.CartItemDTO
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.PriceRulesDTO
 import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.data.model.brandModel.Image
+import com.example.glamora.data.model.customerModels.CustomerInfo
+import com.example.glamora.data.model.ordersModel.LineItemDTO
+import com.example.glamora.data.model.ordersModel.OrderDTO
 import com.example.glamora.data.network.FakeRemoteDataSource
 import com.example.glamora.data.sharedPref.FakeSharedPrefHandler
 import com.example.glamora.data.sharedPref.SharedPrefHandler
@@ -28,6 +33,7 @@ import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -122,13 +128,27 @@ class RepositoryImplTest {
     }
 
 
+    @Test
+    fun `getCartItemsForCustomer returns list of cart items`() = runTest {
+        val expectedCartItems = listOf(
+            CartItemDTO("1","1","1","Product 1",1,1,"1","1"),
+            CartItemDTO("2","2","2","Product 2",2,2,"2","2"),
+            CartItemDTO("3","3","3","Product 3",3,3,"3","3"),
+            CartItemDTO("4","4","4","Product 4",4,4,"4","4"),
+            CartItemDTO("5","5","5","Product 5",5,5,"5","5"),
+        )
 
+        `when`(apolloClientHandler.getCartItemsForCustomer("1")).thenReturn(flowOf(State.Success(expectedCartItems)))
 
-
-
-
-    fun getCartItemsForCustomer() {
+        repository.getCartItemsForCustomer("1").test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, expectedCartItems)
+            awaitComplete()
+        }
     }
+
+
+
 
     fun getFavoriteItemsForCustomer() {
     }
@@ -181,27 +201,91 @@ class RepositoryImplTest {
     fun getSharedPrefBoolean() {
     }
 
-    fun createShopifyUser() {
+
+    @Test
+    fun `createShopifyUser creates a user and returns it`() = runTest {
+        val expectedUser = CustomerInfo("test@test.com","Test","Test","", listOf(AddressModel("1","Test","Test","Test","Test","Test","Test",false)))
+        `when`(repository.createShopifyUser(expectedUser.email,"Kerolos","Raouf","123456789")).thenReturn(flowOf(Result.success(expectedUser)))
+
+        repository.createShopifyUser(expectedUser.email,"Kerolos","Raouf","123456789").test {
+            val result = awaitItem()
+            assertEquals(result, Result.success(expectedUser))
+            awaitComplete()
+        }
     }
 
-    fun getShopifyUserByEmail() {
+
+    @Test
+    fun `getShopifyUserByEmail returns customer info model`() = runTest {
+        val expectedUser = CustomerInfo("test@test.com","Test","Test","", listOf(AddressModel("1","Test","Test","Test","Test","Test","Test",false)))
+        `when`(apolloClientHandler.getShopifyUserByEmail(expectedUser.email)).thenReturn(flowOf(State.Success(expectedUser)))
+
+        repository.getShopifyUserByEmail(expectedUser.email).test {
+            val result = awaitItem() as State.Success
+            assertEquals(result.data, expectedUser)
+            awaitComplete()
+        }
     }
 
-    fun getOrdersByCustomer() {
+
+
+    @Test
+    fun `getOrdersByCustomer returns list of orders`() = runTest {
+        val expectedOrders = listOf(
+            OrderDTO("1","1","1","1","1","1","1","1", listOf(LineItemDTO("1","1",1,"Product 1","example.com","EGP"))),
+            OrderDTO("1","1","1","1","1","1","1","1", listOf(LineItemDTO("1","1",1,"Product 1","example.com","EGP"))),
+            OrderDTO("1","1","1","1","1","1","1","1", listOf(LineItemDTO("1","1",1,"Product 1","example.com","EGP"))),
+        )
+
+        `when`(apolloClientHandler.getOrdersByCustomer("1")).thenReturn(flowOf(State.Success(expectedOrders)))
+
+        repository.getOrdersByCustomer("1").test {
+            val data = awaitItem() as State.Success
+            assertEquals(data.data, expectedOrders)
+            awaitComplete()
+        }
+
     }
 
-    fun loginWithEmail() {
+
+    @Test
+    fun `loginWithEmail returns customer info model`() = runTest {
+        val expectedUser = CustomerInfo(displayName="Unknown", email="Unknown", userId="Unknown", userIdAsNumber="Unknown", addresses= listOf())
+        `when`(firebaseHandler.signInWithEmail("kerolos@gmail.com", "123456")).thenReturn(Result.success(Unit))
+
+        repository.loginWithEmail("kerolos@gmail.com", "123456").test {
+            val result = awaitItem()
+            assertEquals(result, Result.success(expectedUser))
+            awaitComplete()
+        }
     }
 
-    fun loginWithGoogle() {
+
+    @Test
+    fun `loginWithGoogle returns customer info model`() = runTest {
+        val expectedUser = CustomerInfo(displayName="Unknown", email="Unknown", userId="Unknown", userIdAsNumber="Unknown", addresses= listOf())
+        `when`(firebaseHandler.signInWithGoogle("idToken")).thenReturn(Result.success(Unit))
+
+        repository.loginWithGoogle("idToken").test {
+            val result = awaitItem()
+            assertEquals(result, Result.success(expectedUser))
+            awaitComplete()
+        }
     }
 
-    fun resetUserPassword() {
+
+    @Test
+    fun `signUp returns customer info model`() = runTest {
+        val expectedUser = CustomerInfo(displayName="Unknown", email="Unknown", userId="Unknown", userIdAsNumber="Unknown", addresses= listOf())
+        `when`(firebaseHandler.signUp("kerolos@gmail.com", "123456")).thenReturn(Result.success(Unit))
+
+        repository.signUp("kerolos@gmail.com", "123456").test {
+            val result = awaitItem()
+            assertEquals(result, Result.success(expectedUser))
+            awaitComplete()
+        }
     }
 
-    fun signUp() {
-    }
 
-    fun signOut() {
-    }
+
 }
