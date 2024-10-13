@@ -14,23 +14,7 @@
         android:layout_height="match_parent"
         tools:context=".fragmentCart.view.CartFragment">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/addressLoadingAnimation"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:translationZ="30dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/cartCuponCodeLinearLayout"
 
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-
-            app:layout_constraintTop_toTopOf="parent"
-
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/loading_blue"
-            app:showProgressBar="@{viewModel.loading}" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/cartToolbar"
@@ -51,6 +35,23 @@
                 android:layout_gravity="center" />
 
         </androidx.appcompat.widget.Toolbar>
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/cartLoadingAnimation"
+            android:layout_width="@dimen/loading_animation_size"
+            android:layout_height="@dimen/loading_animation_size"
+            android:translationZ="30dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/cartSwipeRefreshLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cartToolbar"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_blue"
+            app:showProgressBar="@{viewModel.loading}" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/cartEmptyImageView"
@@ -285,11 +286,11 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cartDropDownIcon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginBottom="10dp"
 
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/light_blue"
             android:elevation="15sp"
             app:cardCornerRadius="100dp"
             app:layout_constraintBottom_toTopOf="@+id/cartCheckOutButton"

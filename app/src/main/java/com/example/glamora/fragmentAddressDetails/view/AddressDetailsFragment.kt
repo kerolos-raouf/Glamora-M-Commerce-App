@@ -104,9 +104,11 @@ class AddressDetailsFragment : Fragment() {
     }
 
     private fun initObservers() {
-        addressViewModel.message.observe(viewLifecycleOwner) {
-            if(it.isNotEmpty()){
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addressViewModel.message.collect {
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
