@@ -62,8 +62,8 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/manageLocationsLoading"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="@dimen/loading_animation_size"
+            android:layout_height="@dimen/loading_animation_size"
             app:lottie_rawRes="@raw/loading_blue"
             app:lottie_loop="true"
             app:lottie_autoPlay="true"

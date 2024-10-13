@@ -22,12 +22,13 @@
                 android:layout_height="match_parent"
                 tools:context=".fragmentSignup.view.SignUpFragment">
 
-                <ProgressBar
+                <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/progressBar"
-                    style="?android:attr/progressBarStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:indeterminateTint="@color/light_blue"
+                    android:layout_width="@dimen/loading_animation_size"
+                    android:layout_height="@dimen/loading_animation_size"
+                    app:lottie_rawRes="@raw/loading_blue"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
                     android:layout_marginTop="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

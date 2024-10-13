@@ -59,7 +59,7 @@
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="cart">Cart</string>
-    <string name="delivery_location">Delivery Location</string>
+    <string name="delivery_location">Delivery Address</string>
     <string name="cateory">Category</string>
     <string name="filter">Filter</string>
     <string name="back_button">Back</string>
@@ -101,8 +101,8 @@
     <string name="date">Order Date</string>
     <string name="payment_details">Payment Details</string>
     <string name="itemPrice">Item price</string>
-    <string name="manage_locations">Manage Locations</string>
-    <string name="my_locations">My Locations</string>
+    <string name="manage_locations">Manage Addresses</string>
+    <string name="my_locations">My Addresses</string>
     <string name="title_activity_test_bottom_nav">testBottomNav</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>

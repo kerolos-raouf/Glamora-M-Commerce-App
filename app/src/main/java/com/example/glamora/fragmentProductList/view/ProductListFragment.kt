@@ -48,12 +48,6 @@ class ProductListFragment : Fragment() {
         (requireContext() as Communicator)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-
     override fun onStart() {
         super.onStart()
         communicator.hideBottomNav()
