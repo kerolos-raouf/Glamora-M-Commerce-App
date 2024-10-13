@@ -107,6 +107,9 @@ class ManageLocationsFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED)
             {
                 manageAddressesViewModel.customerAddresses.collect{addresses->
+
+                    binding.manageLocationsEmptyAnimation.visibility = if(addresses.isEmpty()) View.VISIBLE else View.GONE
+
                     adapter.submitList(addresses)
                     sharedViewModel.currentCustomerInfo.value.addresses = addresses
                 }
