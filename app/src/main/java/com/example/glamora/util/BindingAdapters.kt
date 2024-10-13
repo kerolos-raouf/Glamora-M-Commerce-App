@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.example.glamora.R
+import com.facebook.shimmer.ShimmerFrameLayout
 
 @BindingAdapter("app:srcCompat")
 fun setImageFromUrl(imageView: ImageView, url: String?) {
@@ -44,6 +45,20 @@ fun showProgressBar(view: View, show : Boolean)
     }else
     {
         view.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("app:showShimmer")
+fun showShimmer(view: ShimmerFrameLayout, show : Boolean)
+{
+    if(show)
+    {
+        view.startShimmer()
+        view.visibility = View.VISIBLE
+    }else
+    {
+        view.visibility = View.GONE
+        view.stopShimmer()
     }
 }
 
