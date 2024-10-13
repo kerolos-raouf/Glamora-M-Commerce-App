@@ -1,5 +1,6 @@
 package com.example.glamora.fragmentCart.view
 
+import android.animation.LayoutTransition
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -59,6 +60,8 @@ class CartFragment : Fragment(),CartItemInterface {
     private var address : AddressModel = AddressModel()
 
 
+    //if view visible
+    private var isItemsAndDiscountVisible = true
 
     private val communicator: Communicator by lazy {
         requireActivity() as Communicator
@@ -144,6 +147,45 @@ class CartFragment : Fragment(),CartItemInterface {
             }else{
                 showGuestDialog(requireContext())
             }
+        }
+
+
+        //animate total price
+        binding.cartDropDownIcon.setOnClickListener {
+            val layoutTransition = LayoutTransition()
+            layoutTransition.setDuration(1000)
+            binding.apply {
+                cartDetailsLinearLayout.layoutTransition = layoutTransition
+                if(isItemsAndDiscountVisible)
+                {
+                    animationHideItemsAndDiscount()
+                    isItemsAndDiscountVisible = false
+                    cartDropDownIconImage.setImageResource(R.drawable.icon_arrow_up)
+                }else
+                {
+                    animationShowItemsAndDiscount()
+                    isItemsAndDiscountVisible = true
+                    cartDropDownIconImage.setImageResource(R.drawable.icon_arrow_down)
+                }
+            }
+        }
+    }
+
+    private fun animationShowItemsAndDiscount()
+    {
+        binding.apply {
+            cartDividerView.visibility = View.VISIBLE
+            cartItemsLinearLayout.visibility = View.VISIBLE
+            cartDiscountLinearLayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun animationHideItemsAndDiscount()
+    {
+        binding.apply {
+            cartDividerView.visibility = View.GONE
+            cartItemsLinearLayout.visibility = View.GONE
+            cartDiscountLinearLayout.visibility = View.GONE
         }
     }
 
