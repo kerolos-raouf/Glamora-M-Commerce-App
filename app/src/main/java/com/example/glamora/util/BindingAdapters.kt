@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.example.glamora.R
+import com.facebook.shimmer.ShimmerFrameLayout
 
 @BindingAdapter("app:srcCompat")
 fun setImageFromUrl(imageView: ImageView, url: String?) {
@@ -47,6 +48,20 @@ fun showProgressBar(view: View, show : Boolean)
     }
 }
 
+@BindingAdapter("app:showShimmer")
+fun showShimmer(view: ShimmerFrameLayout, show : Boolean)
+{
+    if(show)
+    {
+        view.startShimmer()
+        view.visibility = View.VISIBLE
+    }else
+    {
+        view.visibility = View.GONE
+        view.stopShimmer()
+    }
+}
+
 @BindingAdapter("cardBackgroundColor")
 fun setCardBackgroundColor(cardView: CardView, colorString: String?) {
     try {
@@ -64,7 +79,6 @@ fun loadImage(view: ImageView, url: String?) {
     if (!url.isNullOrEmpty()) {
         Glide.with(view.context)
             .load(url)
-            .placeholder(R.drawable.product)
             .error(R.drawable.brand)
             .into(view)
     }

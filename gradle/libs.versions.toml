@@ -44,6 +44,7 @@ lifecycleViewmodelKtx = "2.8.6"
 stripeAndroid = "20.51.1"
 cardPayments = "1.5.0"
 junitKtx = "1.2.1"
+shimmer = "0.5.0"
 
 
 [libraries]
@@ -97,6 +98,7 @@ card-payments = { module = "com.paypal.android:card-payments", version.ref = "ca
 taptargetview = { module = "com.getkeepsafe.taptargetview:taptargetview", version.ref = "taptargetview" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 
 
 

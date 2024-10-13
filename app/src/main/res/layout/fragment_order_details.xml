@@ -25,24 +25,26 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/addressLoadingAnimation"
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:translationZ="30dp"
                     android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ordersDetails_toolbar"
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
                     app:lottie_rawRes="@raw/loading_blue"
@@ -141,8 +143,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:layout_marginTop="8dp"
-                        android:backgroundTint="@color/white"
                         android:background="@drawable/card_border"
+                        android:backgroundTint="@color/white"
                         app:cardCornerRadius="18dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -161,17 +163,17 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
                                 android:layout_marginTop="5dp"
-                                app:setCreatedAt="@{order.createdAt}"
-                                android:maxLines="2"
                                 android:ellipsize="end"
+                                android:maxLines="2"
                                 android:textColor="@color/dark_blue"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:setCreatedAt="@{order.createdAt}" />
 
-<!--                            orderItem.unitPrice + ' ' + orderItem.currencyCode-->
+                            <!--                            orderItem.unitPrice + ' ' + orderItem.currencyCode-->
 
                             <TextView
                                 android:id="@+id/orderDetails_addressDetals_tv"
@@ -180,15 +182,15 @@
                                 android:layout_marginStart="8dp"
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
-                                app:setOrderLocation="@{order.address + ' ' + order.city + ' '+ order.country}"
-                                android:maxLines="2"
                                 android:ellipsize="end"
+                                android:maxLines="2"
                                 android:textColor="@color/dark_blue"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/orderDetails_Date_tv" />
+                                app:layout_constraintTop_toBottomOf="@id/orderDetails_Date_tv"
+                                app:setOrderLocation="@{order.address + ' ' + order.city + ' '+ order.country}" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
@@ -221,8 +223,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:layout_marginTop="8dp"
-                        android:backgroundTint="@color/white"
                         android:background="@drawable/card_border"
+                        android:backgroundTint="@color/white"
                         app:cardCornerRadius="18dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -235,37 +237,37 @@
                             android:background="@drawable/card_border"
                             android:padding="8dp">
 
-<!--                            <TextView-->
-<!--                                android:id="@+id/orderDetails_itemPrice_tv"-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:layout_marginStart="8dp"-->
-<!--                                android:layout_marginTop="8dp"-->
-<!--                                android:text="@{orderItem.unitPrice + ' ' + orderItem.currencyCode}"-->
-<!--                                android:maxLines="2"-->
-<!--                                android:ellipsize="end"-->
-<!--                                android:textColor="@color/dark_blue"-->
-<!--                                android:textSize="14sp"-->
-<!--                                android:textStyle="bold"-->
-<!--                                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                                app:layout_constraintStart_toStartOf="parent"-->
-<!--                                app:layout_constraintTop_toTopOf="parent" />-->
+                            <!--                            <TextView-->
+                            <!--                                android:id="@+id/orderDetails_itemPrice_tv"-->
+                            <!--                                android:layout_width="match_parent"-->
+                            <!--                                android:layout_height="wrap_content"-->
+                            <!--                                android:layout_marginStart="8dp"-->
+                            <!--                                android:layout_marginTop="8dp"-->
+                            <!--                                android:text="@{orderItem.unitPrice + ' ' + orderItem.currencyCode}"-->
+                            <!--                                android:maxLines="2"-->
+                            <!--                                android:ellipsize="end"-->
+                            <!--                                android:textColor="@color/dark_blue"-->
+                            <!--                                android:textSize="14sp"-->
+                            <!--                                android:textStyle="bold"-->
+                            <!--                                app:layout_constraintEnd_toEndOf="parent"-->
+                            <!--                                app:layout_constraintStart_toStartOf="parent"-->
+                            <!--                                app:layout_constraintTop_toTopOf="parent" />-->
 
-<!--                            <TextView-->
-<!--                                android:id="@+id/orderDetails_shippingfees_tv"-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:layout_marginStart="8dp"-->
-<!--                                android:layout_marginTop="8dp"-->
-<!--                                android:text="@string/shipping"-->
-<!--                                android:maxLines="2"-->
-<!--                                android:ellipsize="end"-->
-<!--                                android:textColor="@color/dark_blue"-->
-<!--                                android:textSize="14sp"-->
-<!--                                android:textStyle="bold"-->
-<!--                                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                                app:layout_constraintStart_toStartOf="parent"-->
-<!--                                app:layout_constraintTop_toTopOf="parent" />-->
+                            <!--                            <TextView-->
+                            <!--                                android:id="@+id/orderDetails_shippingfees_tv"-->
+                            <!--                                android:layout_width="match_parent"-->
+                            <!--                                android:layout_height="wrap_content"-->
+                            <!--                                android:layout_marginStart="8dp"-->
+                            <!--                                android:layout_marginTop="8dp"-->
+                            <!--                                android:text="@string/shipping"-->
+                            <!--                                android:maxLines="2"-->
+                            <!--                                android:ellipsize="end"-->
+                            <!--                                android:textColor="@color/dark_blue"-->
+                            <!--                                android:textSize="14sp"-->
+                            <!--                                android:textStyle="bold"-->
+                            <!--                                app:layout_constraintEnd_toEndOf="parent"-->
+                            <!--                                app:layout_constraintStart_toStartOf="parent"-->
+                            <!--                                app:layout_constraintTop_toTopOf="parent" />-->
 
                             <TextView
                                 android:id="@+id/orderDetails_totalPrice_tv"
@@ -273,18 +275,17 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
                                 android:layout_marginTop="8dp"
-                                app:setTotalPrice="@{order.totalPrice}"
-                                android:maxLines="2"
                                 android:ellipsize="end"
+                                android:fontFamily="@font/poppines_extra_bold"
+                                android:maxLines="2"
                                 android:textColor="@color/light_blue"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
-                                android:fontFamily="@font/poppines_extra_bold"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"/>
-
+                                app:setTotalPrice="@{order.totalPrice}" />
 
 
                         </androidx.constraintlayout.widget.ConstraintLayout>

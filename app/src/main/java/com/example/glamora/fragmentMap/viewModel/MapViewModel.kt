@@ -6,6 +6,7 @@ import com.example.glamora.data.contracts.Repository
 import com.example.glamora.util.State
 import com.example.glamora.data.model.citiesModel.CityForSearchItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,7 +22,7 @@ class MapViewModel @Inject constructor(
 
 
     fun getCitiesForSearch(name: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getCitiesForSearch(name).collect {
                 when(it)
                 {

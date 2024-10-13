@@ -10,6 +10,7 @@ import com.example.glamora.data.model.FavoriteItemDTO
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ class ProductDetailsViewModel @Inject constructor(
 
 
     fun fetchCartItems(userId: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _state.value = State.Loading
             repository.getCartItemsForCustomer(userId).collect { state ->
                 when (state) {
@@ -51,7 +52,7 @@ class ProductDetailsViewModel @Inject constructor(
 
     fun addToCard(variant: CartItemDTO, userId: String, userEmail: String) {
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _state.value = State.Loading
             val currentState = _cartItems.value
 

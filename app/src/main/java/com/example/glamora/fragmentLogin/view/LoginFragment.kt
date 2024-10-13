@@ -203,6 +203,8 @@ class LoginFragment : Fragment() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+
+        googleSignInClient.signOut()
     }
 
     private fun signInWithGoogle() {
