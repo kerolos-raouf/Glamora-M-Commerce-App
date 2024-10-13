@@ -88,6 +88,9 @@ class CartFragment : Fragment(),CartItemInterface {
 
     private fun initViews() {
 
+        //fetch access token
+        cartViewModel.fetchAccessToken()
+
         //fetch cart items
         if(sharedViewModel.currentCustomerInfo.value.userId != Constants.UNKNOWN)
         {

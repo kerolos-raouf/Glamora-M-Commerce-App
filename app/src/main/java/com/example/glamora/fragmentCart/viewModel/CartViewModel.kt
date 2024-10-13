@@ -262,12 +262,10 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    init {
-        fetchAccessToken()
-    }
+
 
     //Fetch Access Token
-    private fun fetchAccessToken() {
+    fun fetchAccessToken() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val accessToken = payPalRepository.fetchAccessToken()
