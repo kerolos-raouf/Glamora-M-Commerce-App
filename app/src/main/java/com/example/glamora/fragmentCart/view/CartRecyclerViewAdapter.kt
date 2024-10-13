@@ -26,6 +26,8 @@ class CartRecyclerViewAdapter (
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.binding.apply {
+
+
             Glide.with(cartItemImage).load(item.image).into(cartItemImage)
             cartItem = item
             cartItemPlusButton.setOnClickListener {

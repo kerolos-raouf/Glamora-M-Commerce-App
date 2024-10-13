@@ -106,6 +106,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
+    testImplementation(libs.testng)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
@@ -116,6 +117,11 @@ dependencies {
     testImplementation(libs.junit.v413)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
+
+    //Dispatcher for testing
+    testImplementation(libs.androidx.core.testing)
+    //Coroutines for testing
+    testImplementation(libs.kotlinx.coroutines.test.v190)
 
     // Coroutine Test Library
     testImplementation(libs.kotlinx.coroutines.test)

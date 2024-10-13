@@ -238,6 +238,16 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             homeViewModel.loading.collect { state ->
                 if (state) {
+                    binding.homeContentLayout.visibility = View.GONE
+                }else if(communicator.isInternetAvailable()) {
+                    binding.homeContentLayout.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            homeViewModel.loading.collect { state ->
+                if (state) {
                     startWalkThroughIfThisIsTheFirstTime()
                 }
             }

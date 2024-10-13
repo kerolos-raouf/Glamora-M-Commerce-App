@@ -1,11 +1,13 @@
 [versions]
 agp = "8.5.1"
 checkoutSheetKit = "3.0.1"
+coreTesting = "2.2.0"
 junitJunit = "4.13"
 kotlin = "1.9.0"
 circleimageview = "3.1.0"
 firebaseAuthKtx = "24.8.0"
 kotlinxCoroutinesTest = "1.8.1"
+kotlinxCoroutinesTestVersion = "1.9.0"
 mockitoCore = "5.2.1"
 playServicesAuth = "21.2.0"
 coreKtx = "1.13.1"
@@ -45,15 +47,18 @@ stripeAndroid = "20.51.1"
 cardPayments = "1.5.0"
 junitKtx = "1.2.1"
 shimmer = "0.5.0"
+testng = "6.9.6"
 
 
 [libraries]
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 checkout-sheet-kit = { module = "com.shopify:checkout-sheet-kit", version.ref = "checkoutSheetKit" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 junit-v413 = { module = "junit:junit", version.ref = "junitJunit" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+kotlinx-coroutines-test-v190 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoCore" }
 payment-buttons = { module = "com.paypal.android:payment-buttons", version.ref = "cardPayments" }
@@ -99,6 +104,7 @@ taptargetview = { module = "com.getkeepsafe.taptargetview:taptargetview", versio
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
+testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 
 
 

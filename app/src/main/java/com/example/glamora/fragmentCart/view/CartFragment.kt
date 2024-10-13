@@ -88,6 +88,9 @@ class CartFragment : Fragment(),CartItemInterface {
 
     private fun initViews() {
 
+        //fetch access token
+        cartViewModel.fetchAccessToken()
+
         //fetch cart items
         if(sharedViewModel.currentCustomerInfo.value.userId != Constants.UNKNOWN)
         {
@@ -311,6 +314,18 @@ class CartFragment : Fragment(),CartItemInterface {
         bottomSheet.setCancelable(true)
         bottomSheet.setContentView(bottomSheetBinding.root)
 
+
+        initPaymentMethodBottomSheetViews()
+
+
+        bottomSheet.show()
+    }
+
+    private fun initPaymentMethodBottomSheetViews() {
+
+        bottomSheetBinding.bottomSheetUserName.isSelected = true
+        bottomSheetBinding.bottomSheetUserAddress.isSelected = true
+
         bottomSheetBinding.bottomSheetPaymentMethodsPayWithCardRadio.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked)
             {
@@ -330,7 +345,6 @@ class CartFragment : Fragment(),CartItemInterface {
         //set default address
         if(sharedViewModel.currentCustomerInfo.value.addresses.isNotEmpty())
         {
-
             sharedViewModel.currentCustomerInfo.value.addresses.forEach { currentAddress->
                 if(currentAddress.isDefault)
                 {
@@ -339,7 +353,6 @@ class CartFragment : Fragment(),CartItemInterface {
                     bottomSheetBinding.bottomSheetUserAddress.text = "Address : ${currentAddress.country}, ${currentAddress.city}, ${currentAddress.street}"
                 }
             }
-
         }
 
 
@@ -378,8 +391,6 @@ class CartFragment : Fragment(),CartItemInterface {
                 Toast.makeText(requireContext(), "Please add your address", Toast.LENGTH_SHORT).show()
             }
         }
-
-        bottomSheet.show()
     }
 
 
