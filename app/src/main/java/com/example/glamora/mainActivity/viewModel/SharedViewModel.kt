@@ -57,15 +57,15 @@ class SharedViewModel @Inject constructor(
     val operationDoneWithPayPal = MutableStateFlow(false)
 
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            _currentCustomerInfo.collect { customerInfo ->
-                if (customerInfo.userId != Constants.UNKNOWN) {
-                    fetchFavoriteItems()
-                }
-            }
-        }
-    }
+//    init {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            _currentCustomerInfo.collect { customerInfo ->
+//                if (customerInfo.userId != Constants.UNKNOWN) {
+//                    fetchFavoriteItems()
+//                }
+//            }
+//        }
+//    }
 
     fun setCustomerInfo(customerInfo: CustomerInfo){
         _currentCustomerInfo.value = customerInfo
@@ -88,7 +88,7 @@ class SharedViewModel @Inject constructor(
         if(_currentCustomerInfo.value.userId != Constants.UNKNOWN)
         {
             val userID = _currentCustomerInfo.value.userId.split("/")[4]
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 repository.getFavoriteItemsForCustomer(userID)
                     .collect { state ->
                         _favoriteItemsState.value = state

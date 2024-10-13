@@ -9,7 +9,9 @@ import com.example.glamora.data.internetStateObserver.ConnectivityObserver
 import com.example.glamora.data.model.AvailableProductsModel
 import com.example.glamora.data.model.DiscountCodeDTO
 import com.example.glamora.data.model.ProductDTO
+import com.example.glamora.data.model.customerModels.CustomerInfo
 import com.example.glamora.data.repository.RepositoryImpl
+import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +21,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.stubbing.Answer
 
 
 class SharedViewModelTest {
@@ -162,13 +165,7 @@ class SharedViewModelTest {
     fun getCurrentCustomerInfo() {
     }
 
-    fun getInternetState() {
-    }
-
     fun getOperationDoneWithPayPal() {
-    }
-
-    fun setCustomerInfo() {
     }
 
     fun getFavoriteItemsState() {
@@ -198,30 +195,46 @@ class SharedViewModelTest {
     fun fetchPriceRules() {
     }
 
-    fun fetchDiscountCodes() {
+
+
+    @Test
+    fun `getSharedPrefBoolean returns true`() = runTest {
+        val expectedValue = true
+        `when`(repository.getSharedPrefBoolean("testKey", true)).thenReturn(expectedValue)
+        val result = sharedViewModel.getSharedPrefBoolean("testKey", true)
+        assertEquals(expectedValue, result)
     }
 
-    fun fetchCurrentCustomer() {
+    @Test
+    fun `getSharedPrefString returns string value`() = runTest {
+        val expectedValue = "0.8"
+        `when`(repository.getSharedPrefString("testKey", "0.8")).thenReturn(expectedValue)
+        val result = sharedViewModel.getSharedPrefString("testKey", "0.8")
+        assertEquals(expectedValue, result)
     }
 
-    fun setSharedPrefString() {
+    @Test
+    fun `observeOnInternetState returns internet state`() = runTest {
+        val expectedInternetState = ConnectivityObserver.InternetState.Lost
+        `when`(repository.observeOnInternetState()).thenReturn(flowOf(expectedInternetState))
+
+        sharedViewModel.observeOnInternetState()
+
+        val result = sharedViewModel.internetState.value
+
+        assertEquals(expectedInternetState, result)
     }
 
-    fun getSharedPrefString() {
-    }
 
-    fun setSharedPrefBoolean() {
-    }
+    @Test
+    fun `getCustomerInfo returns customer info`() = runTest {
+        val expectedCustomerInfo = CustomerInfo("Kerolos Raouf","kerolos.raouf5600@gmail.com","gid/customers/test/test/123456789","123456789")
+        `when`(repository.getShopifyUserByEmail("kerolos.raouf5600@gmail.com")).thenReturn(flowOf(State.Success(expectedCustomerInfo)))
 
-    fun getSharedPrefBoolean() {
-    }
-
-    fun convertCurrency() {
-    }
-
-    fun filterList() {
-    }
-
-    fun getCustomerInfo() {
+        sharedViewModel.currentCustomerInfo.test {
+            assertEquals(awaitItem(), CustomerInfo())
+            sharedViewModel.getCustomerInfo("kerolos.raouf5600@gmail.com")
+            assertEquals(awaitItem(), expectedCustomerInfo)
+        }
     }
 }
