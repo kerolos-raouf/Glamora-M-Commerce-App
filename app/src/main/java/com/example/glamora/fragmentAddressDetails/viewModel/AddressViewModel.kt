@@ -9,7 +9,9 @@ import com.example.glamora.data.model.AddressModel
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,8 +28,8 @@ AddressViewModel @Inject constructor(
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
-    private val _message = MutableLiveData("")
-    val message: LiveData<String> = _message
+    private val _message = MutableSharedFlow<String>()
+    val message: SharedFlow<String> = _message
 
 
 
@@ -44,14 +46,14 @@ AddressViewModel @Inject constructor(
                 when(state)
                 {
                     is State.Error -> {
-                        _message.value = state.message
+                        _message.emit(state.message)
                         _loading.value = false
                     }
                     State.Loading -> {
                         _loading.value = true
                     }
                     is State.Success -> {
-                        _message.value = "Address updated successfully"
+                        _message.emit("Address updated successfully")
                         getCustomerAddressesByEmail(email)
                     }
                 }
@@ -66,7 +68,7 @@ AddressViewModel @Inject constructor(
                 when(state)
                 {
                     is State.Error -> {
-                        _message.value = state.message
+                        _message.emit(state.message)
                         _loading.value = false
                     }
                     State.Loading -> {
