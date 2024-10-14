@@ -215,7 +215,7 @@ class CartViewModel @Inject constructor(
     private var orderId = ""
 
     // Function to start creating an order
-    fun startOrder() {
+    fun startOrder(price : String = "5.00") {
         val uniqueId = UUID.randomUUID().toString()
 
         // Construct the order request payload
@@ -223,7 +223,7 @@ class CartViewModel @Inject constructor(
             purchase_units = listOf(
                 PurchaseUnit(
                     reference_id = uniqueId,
-                    amount = Amount(currency_code = "USD", value = "5.00")
+                    amount = Amount(currency_code = "USD", value = price)
                 )
             ),
             payment_source = PaymentSource(
