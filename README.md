@@ -32,7 +32,9 @@ Glamora is your go-to mobile commerce app, crafted to elevate your shopping expe
 
 ![57d32df1-8dd5-44aa-bf04-47975f48caf0-imageonline co-merged](https://github.com/user-attachments/assets/29ba8886-54bb-4b69-b1cb-4bcfa05a59b2)
 
-![f7d3d408-ba73-416a-a460-2ab65b3cd05b-imageonline co-merged](https://github.com/user-attachments/assets/7a575ef7-f2c0-489f-b0e0-a77bfa922864)
+![46291d49-5d1f-46fc-af48-4d552a5377c8-imageonline co-merged (2)](https://github.com/user-attachments/assets/f73b40b8-177a-4955-9c25-38e937a4f0fe)
+
+![f7d3d408-ba73-416a-a460-2ab65b3cd05b-imageonline co-merged (2)](https://github.com/user-attachments/assets/ed558623-54e8-4119-8f48-3e935f389bba)
 
 ![ce5e489e-2da2-4ffc-9519-58529c7ec9b9-imageonline co-merged](https://github.com/user-attachments/assets/774e2823-b641-4503-a2fc-332b4e73a439)
 
