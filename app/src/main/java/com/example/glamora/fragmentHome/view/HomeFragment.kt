@@ -102,7 +102,7 @@ class HomeFragment : Fragment() {
         observeRandomProducts()
         observeBrands()
         observeFavoriteItemsCount()
-        observeOnInternetState()
+        observers()
     }
 
     private fun setUpRecyclerViews(){
@@ -131,12 +131,14 @@ class HomeFragment : Fragment() {
             binding.homeSwiperefreshlayout.isRefreshing = false
         }
 
-        startWalkThroughIfThisIsTheFirstTime()
+
     }
 
     private fun startWalkThroughIfThisIsTheFirstTime()
     {
-        if(sharedViewModel.getSharedPrefBoolean(Constants.IS_FIRST_TIME_IN_APP,true))
+        if(
+            sharedViewModel.getSharedPrefBoolean(Constants.IS_FIRST_TIME_IN_APP,true)
+            && communicator.isInternetAvailable())
         {
             val targetsList = listOf(
                 getTapTargetView(binding.homeFavoriteButton,"Favorites","Click here to get your favorite items"),
@@ -219,7 +221,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun observeOnInternetState() {
+    private fun observers() {
         lifecycleScope.launch {
             sharedViewModel.internetState.collect { state ->
                 if (state == ConnectivityObserver.InternetState.AVAILABLE) {
@@ -229,6 +231,24 @@ class HomeFragment : Fragment() {
                 }else {
                     binding.homeNoInternet.visibility = View.VISIBLE
                     binding.homeContentLayout.visibility = View.GONE
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            homeViewModel.loading.collect { state ->
+                if (state) {
+                    binding.homeContentLayout.visibility = View.GONE
+                }else if(communicator.isInternetAvailable()) {
+                    binding.homeContentLayout.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            homeViewModel.loading.collect { state ->
+                if (state) {
+                    startWalkThroughIfThisIsTheFirstTime()
                 }
             }
         }

@@ -16,8 +16,8 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/addressLoadingAnimation"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="@dimen/loading_animation_size"
+            android:layout_height="@dimen/loading_animation_size"
             app:lottie_rawRes="@raw/loading_blue"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
@@ -64,35 +64,51 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-        <TextView
-            android:id="@+id/addressDetailsCountry"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/addressCountryAndCityLinearLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/settingsToolbar"
+            android:orientation="vertical"
+            android:background="@drawable/card_border"
             android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:fontFamily="@font/poppines_extra_bold"
-            android:text="Country : Egypt"
-            android:textColor="@color/dark_blue"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/settingsToolbar" />
+            >
+
+            <TextView
+                android:id="@+id/addressDetailsCountry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:fontFamily="@font/poppines_extra_bold"
+                android:text="Country : Egypt"
+                android:textColor="@color/dark_blue"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="start"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/settingsToolbar" />
 
 
-        <TextView
-            android:id="@+id/addressDetailsCity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="20dp"
-            android:fontFamily="@font/poppines_extra_bold"
-            android:text="City : Cairo"
-            android:textColor="@color/dark_blue"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addressDetailsCountry" />
+            <TextView
+                android:id="@+id/addressDetailsCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/poppines_extra_bold"
+                android:text="City : Cairo"
+                android:textColor="@color/dark_blue"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/addressDetailsCountry" />
+        </LinearLayout>
+
+
 
 
         <EditText
@@ -107,7 +123,7 @@
             android:background="@drawable/button_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addressDetailsCity" />
+            app:layout_constraintTop_toBottomOf="@+id/addressCountryAndCityLinearLayout" />
 
         <EditText
             android:id="@+id/addressLastName"

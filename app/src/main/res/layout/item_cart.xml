@@ -41,7 +41,6 @@
             app:setText="@{cartItem.title}"
             android:maxLines="2"
             android:ellipsize="end"
-
             android:textColor="@color/dark_blue"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/cartItemFavoriteButton"

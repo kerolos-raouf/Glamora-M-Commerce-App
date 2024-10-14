@@ -73,13 +73,12 @@ class OrdersFragment : Fragment() {
         lifecycleScope.launch {
             val customerEmail = sharedViewModel.currentCustomerInfo.value.email
 
-            //ordersFragmentBinding.ordersLoading.visibility = View.VISIBLE
             ordersFragmentBinding.orderEmptyImageView.visibility = View.GONE
 
             orderViewModel.getOrdersByCustomer(customerEmail)
 
             orderViewModel.ordersList.collectLatest { orders ->
-               // ordersFragmentBinding.ordersLoading.visibility = View.GONE
+
                 ordersFragmentBinding.orderEmptyImageView.visibility =
                     if (orders.isEmpty()) View.VISIBLE else View.GONE
 

@@ -198,6 +198,10 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
 
 
+    //target view
     implementation(libs.taptargetview)
+
+    //shimmer layout
+    implementation(libs.shimmer)
 
 }

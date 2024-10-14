@@ -7,6 +7,10 @@
         <variable
             name="viewModel"
             type="com.example.glamora.fragmentHome.viewModel.HomeViewModel" />
+
+        <variable
+            name="sharedViewModel"
+            type="com.example.glamora.mainActivity.viewModel.SharedViewModel" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -22,7 +26,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/home_toolbar"
@@ -94,45 +98,126 @@
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
 
+                    android:translationZ="30dp"
+
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/home_toolbar" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/homeContentLayout"
-                    android:layout_width="match_parent"
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/home_shimmer"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
-                    android:visibility="visible"
+                    app:showShimmer="@{viewModel.loading}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/home_toolbar"
                     >
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:id="@+id/home_loading"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="32dp"
-                        android:layout_marginBottom="16dp"
-                        android:visibility="gone"
-                        app:showProgressBar="@{viewModel.loading}"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:lottie_autoPlay="true"
-                        app:lottie_loop="true"
-                        app:lottie_rawRes="@raw/loading_blue" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_margin="16dp"
+                            android:background="@android:color/darker_gray"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_margin="16dp"
+                            android:background="@android:color/darker_gray"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_margin="16dp"
+                            android:background="@android:color/darker_gray"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="150dp"
+                                android:layout_margin="16dp"
+                                android:layout_weight="1"
+                                android:background="@android:color/darker_gray"/>
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="150dp"
+                                android:layout_margin="16dp"
+                                android:layout_weight="1"
+                                android:background="@android:color/darker_gray"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="150dp"
+                                android:layout_margin="16dp"
+                                android:layout_weight="1"
+                                android:background="@android:color/darker_gray"/>
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="150dp"
+                                android:layout_margin="16dp"
+                                android:layout_weight="1"
+                                android:background="@android:color/darker_gray"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            >
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="150dp"
+                                android:layout_margin="16dp"
+                                android:layout_weight="1"
+                                android:background="@android:color/darker_gray"/>
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="150dp"
+                                android:layout_margin="16dp"
+                                android:layout_weight="1"
+                                android:background="@android:color/darker_gray"/>
+
+                        </LinearLayout>
+                    </LinearLayout>
 
 
+                </com.facebook.shimmer.ShimmerFrameLayout>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/homeContentLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/home_toolbar"
+                    >
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/home_rv_offers"
@@ -146,19 +231,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:listitem="@layout/offers_item" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/home_rv_item"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="16dp"
-                        android:clipToPadding="false"
-                        android:padding="10dp"
-                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                        app:layout_constraintTop_toBottomOf="@id/home_brand_container"
-                        app:spanCount="2"
-                        tools:layout_editor_absoluteX="-122dp"
-                        tools:listitem="@layout/item_list" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/home_category_container"
@@ -291,6 +363,21 @@
                         </HorizontalScrollView>
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/home_rv_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:clipToPadding="false"
+                        android:padding="10dp"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:layout_constraintTop_toBottomOf="@id/home_brand_container"
+                        app:spanCount="2"
+                        tools:layout_editor_absoluteX="-122dp"
+                        tools:listitem="@layout/item_list" />
+
+
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/home_brand_container"
                         android:layout_width="wrap_content"
@@ -326,6 +413,8 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

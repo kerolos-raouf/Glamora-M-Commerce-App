@@ -9,6 +9,7 @@ import com.example.glamora.data.model.brandModel.Brands
 import com.example.glamora.util.Constants
 import com.example.glamora.util.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ class HomeViewModel  @Inject constructor(
         getALlBrands()
     }
     fun getALlBrands() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getAllBrands().collect { state ->
                 when (state) {
                     is State.Error -> {
