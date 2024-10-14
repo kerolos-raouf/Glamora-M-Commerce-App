@@ -88,6 +88,9 @@ class CartFragment : Fragment(),CartItemInterface {
 
     private fun initViews() {
 
+        //fetch access token
+        cartViewModel.fetchAccessToken()
+
         //fetch cart items
         if(sharedViewModel.currentCustomerInfo.value.userId != Constants.UNKNOWN)
         {
@@ -435,7 +438,8 @@ class CartFragment : Fragment(),CartItemInterface {
 
 
     private fun payWithCard(){
-        cartViewModel.startOrder()
+        val totalPrice = String.format("%.2f",binding.cartTotalPriceNumber.text.toString().split(" ")[0].toDouble() * 0.021).toDouble()
+        cartViewModel.startOrder(totalPrice.toString())
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {
