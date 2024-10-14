@@ -87,7 +87,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun deleteDraftOrder(draftOrderId: String, userId: String){
+    fun deleteDraftOrder(draftOrderId: String, userId: String){
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteDraftOrder(draftOrderId).collect{
                 when(it){
@@ -106,7 +106,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun updateDraftOrder(
+    fun updateDraftOrder(
         draftOrderId: String,
         newCartItems: List<CartItemDTO>,
         userId: String,
