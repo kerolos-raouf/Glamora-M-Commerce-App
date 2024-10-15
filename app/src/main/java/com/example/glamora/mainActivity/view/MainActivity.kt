@@ -1,5 +1,6 @@
 package com.example.glamora.mainActivity.view
 
+import android.animation.LayoutTransition
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
@@ -28,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Communicator {
@@ -71,10 +73,17 @@ class MainActivity : AppCompatActivity(), Communicator {
             repeatOnLifecycle(Lifecycle.State.STARTED)
             {
                 sharedViewModel.internetState.collect {
-                    if(it == ConnectivityObserver.InternetState.AVAILABLE){
-                        Snackbar.make(binding.root, "Back online", Snackbar.LENGTH_SHORT).show()
-                    }else {
-                        Snackbar.make(binding.root, "Connection Lost", Snackbar.LENGTH_SHORT).show()
+                    withContext(Dispatchers.Main) {
+                        val layoutTransition = LayoutTransition()
+                        layoutTransition.setDuration(1000)
+                        binding.mainNoInternetConnectionLayout.layoutTransition = layoutTransition
+                        if(it == ConnectivityObserver.InternetState.AVAILABLE){
+                            Snackbar.make(binding.root, "Back online", Snackbar.LENGTH_SHORT).show()
+                            //binding.mainNoInternetConnectionLayout.visibility = View.GONE
+                        }else {
+                            Snackbar.make(binding.root, "Connection Lost", Snackbar.LENGTH_SHORT).show()
+                            //binding.mainNoInternetConnectionLayout.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
