@@ -60,7 +60,7 @@ class ManageLocationsFragment : Fragment() {
         adapter = ManageLocationsRecyclerAdapter(
             {address->
 
-                customAlertDialog.showAlertDialog("Set as default address?", "Set Default"){
+                customAlertDialog.showAlertDialog("Set as default address?", "Set as Default",R.color.light_blue){
                     manageAddressesViewModel.updateCustomerDefaultAddress(
                         sharedViewModel.currentCustomerInfo.value.userId,
                         address.addressId,
