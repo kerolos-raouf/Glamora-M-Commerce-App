@@ -224,7 +224,6 @@ class LoginFragment : Fragment() {
                 val account = task.getResult(ApiException::class.java)!!
                 loginViewModel.loginWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
-                //Toast.makeText(requireContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show()
                 Log.d("Abanob", "onActivityResult: ${e.message}")
             }
         }
@@ -248,8 +247,11 @@ class LoginFragment : Fragment() {
                                 loginBinding.progressBar.visibility = View.GONE
 
                                 Toast.makeText(requireContext(),"Login successful!",Toast.LENGTH_SHORT).show()
-                                withContext(Dispatchers.Main) {
+
+                                try{
                                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                                }catch (e: Exception){
+                                    Log.d("Abanob", "observeLoginState: ${e.message}")
                                 }
                             }
                         }
@@ -280,8 +282,6 @@ class LoginFragment : Fragment() {
                                 Log.d("Abanob", "observeLoginState: ${state.message}")
                             }
                         }
-
-                        //Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                     }
 
                     null -> {}
