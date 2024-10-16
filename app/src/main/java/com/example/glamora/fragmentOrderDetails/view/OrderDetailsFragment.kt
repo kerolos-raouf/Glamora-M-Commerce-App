@@ -2,29 +2,23 @@ package com.example.glamora.fragmentOrderDetails.view
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.glamora.R
-import com.example.glamora.data.model.ordersModel.LineItemDTO
 import com.example.glamora.data.model.ordersModel.OrderDTO
 import com.example.glamora.databinding.FragmentOrderDetailsBinding
-import com.example.glamora.databinding.FragmentOrdersBinding
 import com.example.glamora.fragmentOrderDetails.viewModel.OrderDetailsViewModel
-import com.example.glamora.fragmentOrders.view.OrdersAdapter
-import com.example.glamora.fragmentOrders.viewModel.OrderViewModel
 import com.example.glamora.mainActivity.viewModel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -79,9 +73,12 @@ class OrderDetailsFragment : Fragment() {
 
     private fun setupRecyclerView() {
         orderDetailsAdapter = OrderLineItemsAdapter(emptyList()) { productId ->
-            val action = OrderDetailsFragmentDirections.actionOrderDetailsFragmentToProductDetailsFragment(productId)
-            findNavController().navigate(action)
-            Log.d("MAI","$action")
+            try {
+                val action = OrderDetailsFragmentDirections.actionOrderDetailsFragmentToProductDetailsFragment(productId)
+                findNavController().navigate(action)
+            }catch (e : Exception) {
+                Log.d("Kerolos", "setupCardViews: $e")
+            }
         }
 
         orderDetailsBinding.orderDetailsProductRV.apply {

@@ -89,7 +89,11 @@ class ManageLocationsFragment : Fragment() {
 
 
         binding.manageLocationsAddButton.setOnClickListener {
-            findNavController().navigate(R.id.action_manageLocationsFragment_to_mapFragment)
+            try {
+                findNavController().navigate(R.id.action_manageLocationsFragment_to_mapFragment)
+            }catch (e : Exception) {
+                Log.d("Kerolos", "setupCardViews: $e")
+            }
         }
 
 

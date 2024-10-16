@@ -100,7 +100,11 @@ class OrdersFragment : Fragment() {
 
 
     private fun navigateToOrderDetails(orderId: String) {
-        val action = OrdersFragmentDirections.actionOrdersFragmentToOrderDetailsFragment(orderId)
-        findNavController().navigate(action)
+        try {
+            val action = OrdersFragmentDirections.actionOrdersFragmentToOrderDetailsFragment(orderId)
+            findNavController().navigate(action)
+        }catch (e : Exception) {
+            Log.d("Kerolos", "setupCardViews: $e")
+        }
     }
 }

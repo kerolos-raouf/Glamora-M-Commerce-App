@@ -58,8 +58,12 @@ class FavoritesFragment : Fragment() {
             }
 
             override fun onItemClick(product: FavoriteItemDTO) {
-                val action = FavoritesFragmentDirections.actionFavoritesFragmentToProductDetailsFragment(product.productId)
-                findNavController().navigate(action)
+                try {
+                    val action = FavoritesFragmentDirections.actionFavoritesFragmentToProductDetailsFragment(product.productId)
+                    findNavController().navigate(action)
+                }catch (e : Exception) {
+                    Log.d("Kerolos", "setupCardViews: $e")
+                }
             }
 
         })
