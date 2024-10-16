@@ -2,6 +2,7 @@ package com.example.glamora.fragmentLogin.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,7 +51,11 @@ class LoginFragment : Fragment() {
         communicator.hideBottomNav()
 
         if (sharedViewModel.getSharedPrefBoolean(Constants.IS_LOGGED_IN,false)) {
-            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+            try {
+                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+            }catch (e : Exception){
+                Log.d("Kerolos", "onStart: $e")
+            }
         }
     }
 
@@ -82,7 +87,11 @@ class LoginFragment : Fragment() {
         }
 
         loginBinding.signUp.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
+            try {
+                findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
+            }catch (e : Exception){
+                Log.d("Kerolos", "onStart: $e")
+            }
         }
 
         loginBinding.signInGoogleBtn.setOnClickListener {
@@ -99,7 +108,11 @@ class LoginFragment : Fragment() {
             builder.setPositiveButton("OK") { dialog, _ ->
                 sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN)
                 sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGGED_IN,true)
-                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                try {
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                }catch (e : Exception){
+                    Log.d("Kerolos", "onStart: $e")
+                }
                 dialog.dismiss()
             }
 
@@ -221,7 +234,8 @@ class LoginFragment : Fragment() {
                 val account = task.getResult(ApiException::class.java)!!
                 loginViewModel.loginWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
-                Toast.makeText(requireContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show()
+                Log.d("Abanob", "onActivityResult: ${e.message}")
             }
         }
     }
@@ -243,10 +257,12 @@ class LoginFragment : Fragment() {
                                 sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGGED_IN,true)
                                 loginBinding.progressBar.visibility = View.GONE
 
+                                try {
+                                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                                }catch (e : Exception){
+                                    Log.d("Kerolos", "onStart: $e")
+                                }
                                 Toast.makeText(requireContext(),"Login successful!",Toast.LENGTH_SHORT).show()
-
-                                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-
                             }
                         }
                     }
@@ -273,10 +289,11 @@ class LoginFragment : Fragment() {
                                 showErrorEmail()
                                 showErrorPassword()
                                 "Login failed: ${state.message}"
+                                Log.d("Abanob", "observeLoginState: ${state.message}")
                             }
                         }
 
-                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        //Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                     }
 
                     null -> {}

@@ -253,7 +253,6 @@ class CartFragment : Fragment(),CartItemInterface {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                         startActivity(intent)
                         cartViewModel.openApprovalUrlState.value = ""
-                        bottomSheet.dismiss()
                     }
                 }
             }

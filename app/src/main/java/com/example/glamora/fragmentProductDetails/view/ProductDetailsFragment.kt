@@ -176,7 +176,11 @@ class ProductDetailsFragment : Fragment() {
         }
 
         productDetailsBinding.reviewsBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_productDetailsFragment_to_reviewsFragment)
+            try {
+                findNavController().navigate(R.id.action_productDetailsFragment_to_reviewsFragment)
+            }catch (e : Exception) {
+                Log.d("Kerolos", "setupCardViews: $e")
+            }
         }
 
 

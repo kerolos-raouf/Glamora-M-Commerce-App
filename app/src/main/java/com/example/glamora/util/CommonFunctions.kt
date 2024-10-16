@@ -14,9 +14,6 @@ fun showGuestDialog(context: Context) {
         .setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
         }
-        .setNegativeButton("Cancel") { dialog, _ ->
-            dialog.dismiss()
-        }
     builder.create().show()
 }
 

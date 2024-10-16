@@ -1,6 +1,7 @@
 package com.example.glamora.fragmentSettings.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -58,14 +59,22 @@ class SettingsFragment : Fragment() {
             if(!communicator.isInternetAvailable()){
                 Toast.makeText(requireContext(),"No Internet Connection", Toast.LENGTH_SHORT).show()
             }else{
-                findNavController().navigate(R.id.action_settingsFragment_to_mapFragment)
+                try {
+                    findNavController().navigate(R.id.action_settingsFragment_to_mapFragment)
+                }catch (e : Exception) {
+                    Log.d("Kerolos", "setupCardViews: $e")
+                }
             }
         }
         binding.settingsManageLocationLayout.setOnClickListener {
             if(!communicator.isInternetAvailable()){
                 Toast.makeText(requireContext(),"No Internet Connection", Toast.LENGTH_SHORT).show()
             }else{
-                findNavController().navigate(R.id.action_settingsFragment_to_manageLocationsFragment)
+                try {
+                    findNavController().navigate(R.id.action_settingsFragment_to_manageLocationsFragment)
+                }catch (e : Exception) {
+                    Log.d("Kerolos", "setupCardViews: $e")
+                }
             }
         }
 

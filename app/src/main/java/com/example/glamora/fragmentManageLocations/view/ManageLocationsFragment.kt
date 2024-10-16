@@ -60,7 +60,7 @@ class ManageLocationsFragment : Fragment() {
         adapter = ManageLocationsRecyclerAdapter(
             {address->
 
-                customAlertDialog.showAlertDialog("Set as default address?", "Set Default"){
+                customAlertDialog.showAlertDialog("Set as default address?", "Set as Default",R.color.light_blue){
                     manageAddressesViewModel.updateCustomerDefaultAddress(
                         sharedViewModel.currentCustomerInfo.value.userId,
                         address.addressId,
@@ -89,7 +89,11 @@ class ManageLocationsFragment : Fragment() {
 
 
         binding.manageLocationsAddButton.setOnClickListener {
-            findNavController().navigate(R.id.action_manageLocationsFragment_to_mapFragment)
+            try {
+                findNavController().navigate(R.id.action_manageLocationsFragment_to_mapFragment)
+            }catch (e : Exception) {
+                Log.d("Kerolos", "setupCardViews: $e")
+            }
         }
 
 

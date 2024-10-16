@@ -87,7 +87,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun deleteDraftOrder(draftOrderId: String, userId: String){
+    fun deleteDraftOrder(draftOrderId: String, userId: String, showDoneDialog : Boolean = false){
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteDraftOrder(draftOrderId).collect{
                 when(it){
@@ -100,13 +100,17 @@ class CartViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         fetchCartItems(userId)
+
+                        if(showDoneDialog){
+                            showDoneBottomSheet.emit(true)
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun updateDraftOrder(
+    fun updateDraftOrder(
         draftOrderId: String,
         newCartItems: List<CartItemDTO>,
         userId: String,
@@ -200,8 +204,7 @@ class CartViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         deleteDraftOrder(oldDraftOrderId,userId)
-                        deleteDraftOrder(finalDraftOrderId,userId)
-                        showDoneBottomSheet.emit(true)
+                        deleteDraftOrder(finalDraftOrderId,userId,true)
                     }
                 }
             }
@@ -215,7 +218,7 @@ class CartViewModel @Inject constructor(
     private var orderId = ""
 
     // Function to start creating an order
-    fun startOrder() {
+    fun startOrder(price : String = "5.00") {
         val uniqueId = UUID.randomUUID().toString()
 
         // Construct the order request payload
@@ -223,7 +226,7 @@ class CartViewModel @Inject constructor(
             purchase_units = listOf(
                 PurchaseUnit(
                     reference_id = uniqueId,
-                    amount = Amount(currency_code = "USD", value = "5.00")
+                    amount = Amount(currency_code = "USD", value = price)
                 )
             ),
             payment_source = PaymentSource(
@@ -262,12 +265,10 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    init {
-        fetchAccessToken()
-    }
+
 
     //Fetch Access Token
-    private fun fetchAccessToken() {
+    fun fetchAccessToken() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val accessToken = payPalRepository.fetchAccessToken()

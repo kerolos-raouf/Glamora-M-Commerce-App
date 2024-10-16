@@ -83,10 +83,12 @@ class ProductListFragment : Fragment() {
 
     private fun setupProduct() {
         productRecycleAdapter = ProductListAdapter(emptyList()) { product ->
-            val action = ProductListFragmentDirections
-                .actionProductListFragmentToProductDetailsFragment(product.id)
-            findNavController().navigate(action)
-            Log.d("MAI","$action")
+            try {
+                val action = ProductListFragmentDirections.actionProductListFragmentToProductDetailsFragment(product.id)
+                findNavController().navigate(action)
+            }catch (e : Exception) {
+                Log.d("Kerolos", "setupCardViews: $e")
+            }
         }
         binding.listOfProductRecyclerview.apply {
             layoutManager = GridLayoutManager(context, 2)

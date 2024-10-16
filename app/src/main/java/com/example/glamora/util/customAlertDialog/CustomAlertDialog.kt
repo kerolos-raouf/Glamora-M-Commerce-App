@@ -13,12 +13,13 @@ class CustomAlertDialog(
 
     private lateinit var alertDialog : AlertDialog
 
-    fun showAlertDialog(message : String, actionText : String, action : () -> Unit)
+    fun showAlertDialog(message : String, actionText : String, positiveButtonColor : Int = R.color.red, action : () -> Unit)
     {
         val builder = AlertDialog.Builder(activity)
         val binding = CustomAlertDialogBinding.bind(activity.layoutInflater.inflate(R.layout.custom_alert_dialog, null))
         builder.setView(binding.root)
 
+        binding.alertActionButton.backgroundTintList = activity.resources.getColorStateList(positiveButtonColor)
         binding.alertMessage.text = message
         binding.alertActionButton.text = actionText
 

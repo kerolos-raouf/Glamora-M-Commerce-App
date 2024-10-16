@@ -112,8 +112,12 @@ class MapFragment : Fragment() {
         binding.mapSubmitAddress.setOnClickListener {
             if(coordinates != null){
                 fillCountryAndCityNames(coordinates!!)
-                val action = MapFragmentDirections.actionMapFragmentToAddressDetailsFragment(currentAddress)
-                findNavController().navigate(action)
+                try {
+                    val action = MapFragmentDirections.actionMapFragmentToAddressDetailsFragment(currentAddress)
+                    findNavController().navigate(action)
+                }catch (e : Exception) {
+                    Log.d("Kerolos", "setupCardViews: $e")
+                }
             }else {
                 Toast.makeText(requireContext(), "Please select location", Toast.LENGTH_SHORT).show()
             }

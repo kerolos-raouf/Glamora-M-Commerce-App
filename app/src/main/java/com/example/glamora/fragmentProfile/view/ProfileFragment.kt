@@ -53,7 +53,11 @@ class ProfileFragment : Fragment() {
         customAlertDialog = CustomAlertDialog(requireActivity())
         binding.profileSettingsLayout.setOnClickListener {
             communicator.hideBottomNav()
-            findNavController().navigate(R.id.action_profileFragment_to_settingsFragment)
+            try {
+                findNavController().navigate(R.id.action_profileFragment_to_settingsFragment)
+            }catch (e : Exception) {
+                Log.d("Kerolos", "setupCardViews: $e")
+            }
         }
         binding.profileOrdersLayout.setOnClickListener {
             if(!communicator.isInternetAvailable()){
@@ -63,7 +67,11 @@ class ProfileFragment : Fragment() {
                 showGuestDialog(requireContext())
             } else {
                 communicator.hideBottomNav()
-                findNavController().navigate(R.id.action_profileFragment_to_ordersFragment)
+                try {
+                    findNavController().navigate(R.id.action_profileFragment_to_ordersFragment)
+                }catch (e : Exception) {
+                    Log.d("Kerolos", "setupCardViews: $e")
+                }
             }
         }
         if(sharedViewModel.currentCustomerInfo.value.displayName != Constants.UNKNOWN)
@@ -84,7 +92,11 @@ class ProfileFragment : Fragment() {
         sharedViewModel.setCustomerInfo(CustomerInfo())
         sharedViewModel.setFavoriteWithEmptyList()
         profileViewModel.signOut()
-        findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+        try {
+            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+        }catch (e : Exception) {
+            Log.d("Kerolos", "setupCardViews: $e")
+        }
     }
 
     override fun onStart() {
