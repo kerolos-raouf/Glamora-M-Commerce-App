@@ -92,7 +92,7 @@ class LoginViewModel @Inject constructor(
         if (result.message == "User not found") {
             createShopifyUserFromEmail(email)
         } else if (result.message == "Email has already been taken") {
-           _loginState.value = State.Success(CustomerInfo( email = email))
+            _loginState.value = State.Success(CustomerInfo( email = email))
         } else {
             _toastMessage.value = result.message
             _loginState.value = State.Error(result.message)
