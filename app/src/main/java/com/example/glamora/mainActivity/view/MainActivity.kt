@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
@@ -74,15 +75,13 @@ class MainActivity : AppCompatActivity(), Communicator {
             {
                 sharedViewModel.internetState.collect {
                     withContext(Dispatchers.Main) {
-                        val layoutTransition = LayoutTransition()
-                        layoutTransition.setDuration(1000)
-                        binding.mainNoInternetConnectionLayout.layoutTransition = layoutTransition
+//                        val layoutTransition = LayoutTransition()
+//                        layoutTransition.setDuration(1000)
+//                        binding.mainNoInternetConnectionLayout.layoutTransition = layoutTransition
                         if(it == ConnectivityObserver.InternetState.AVAILABLE){
-                            Snackbar.make(binding.root, "Back online", Snackbar.LENGTH_SHORT).show()
-                            //binding.mainNoInternetConnectionLayout.visibility = View.GONE
+                            doActionOnInternetAvailable()
                         }else {
-                            Snackbar.make(binding.root, "Connection Lost", Snackbar.LENGTH_SHORT).show()
-                            //binding.mainNoInternetConnectionLayout.visibility = View.VISIBLE
+                            doActionOnInternetLost()
                         }
                     }
                 }
@@ -100,6 +99,24 @@ class MainActivity : AppCompatActivity(), Communicator {
         }
     }
 
+
+    private fun doActionOnInternetAvailable()
+    {
+        Snackbar.make(binding.root, "Back online", Snackbar.LENGTH_SHORT).show()
+        binding.mainNoInternetLottie.visibility = View.GONE
+        binding.bottomNavigationView.visibility = View.VISIBLE
+        binding.mainFragmentContainer.visibility = View.VISIBLE
+
+    }
+
+    private fun doActionOnInternetLost()
+    {
+        Snackbar.make(binding.root, "Connection Lost", Snackbar.LENGTH_SHORT).show()
+        binding.mainNoInternetLottie.visibility = View.VISIBLE
+        binding.bottomNavigationView.visibility = View.GONE
+        binding.mainFragmentContainer.visibility = View.GONE
+    }
+
     private fun initView()
     {
         binding.lifecycleOwner = this
@@ -107,8 +124,8 @@ class MainActivity : AppCompatActivity(), Communicator {
 
         //binding.bottomNavigationView.setupWithNavController(navController)
         NavigationUI.setupWithNavController(binding.bottomNavigationView,navController)
-
-
+        binding.mainNoInternetLottie.visibility = View.VISIBLE
+        binding.bottomNavigationView.visibility = View.GONE
     }
 
     override fun hideBottomNav() {

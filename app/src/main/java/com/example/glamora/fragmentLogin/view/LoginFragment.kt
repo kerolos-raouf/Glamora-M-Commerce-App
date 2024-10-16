@@ -2,6 +2,7 @@ package com.example.glamora.fragmentLogin.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,7 +78,7 @@ class LoginFragment : Fragment() {
         setupGoogleSignIn()
 
         loginBinding.loginBtn.setOnClickListener {
-            resetErrors()
+            //resetErrors()
             validateAndLogin()
         }
 
@@ -204,7 +205,7 @@ class LoginFragment : Fragment() {
             .build()
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
 
-        googleSignInClient.signOut()
+        //googleSignInClient.signOut()
     }
 
     private fun signInWithGoogle() {
@@ -221,7 +222,8 @@ class LoginFragment : Fragment() {
                 val account = task.getResult(ApiException::class.java)!!
                 loginViewModel.loginWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
-                Toast.makeText(requireContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show()
+                Log.d("Abanob", "onActivityResult: ${e.message}")
             }
         }
     }
@@ -242,8 +244,6 @@ class LoginFragment : Fragment() {
                                 sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,email)
                                 sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGGED_IN,true)
                                 loginBinding.progressBar.visibility = View.GONE
-
-                                Toast.makeText(requireContext(),"Login successful!",Toast.LENGTH_SHORT).show()
 
                                 findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
 
@@ -275,8 +275,6 @@ class LoginFragment : Fragment() {
                                 "Login failed: ${state.message}"
                             }
                         }
-
-                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                     }
 
                     null -> {}

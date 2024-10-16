@@ -385,7 +385,7 @@ class CartFragment : Fragment(),CartItemInterface {
             else if(address.city != Constants.UNKNOWN)
             {
                 payWithCard()
-                bottomSheet.dismiss()
+                //bottomSheet.dismiss()
             }else
             {
                 Toast.makeText(requireContext(), "Please add your address", Toast.LENGTH_SHORT).show()
@@ -440,6 +440,8 @@ class CartFragment : Fragment(),CartItemInterface {
     private fun payWithCard(){
         val totalPrice = String.format("%.2f",binding.cartTotalPriceNumber.text.toString().split(" ")[0].toDouble() * 0.021).toDouble()
         cartViewModel.startOrder(totalPrice.toString())
+        bottomSheetBinding.bottomSheetPaypalButton.visibility = View.INVISIBLE
+        bottomSheetBinding.bottomSheetProgressBar.visibility = View.VISIBLE
     }
 
     override fun onItemPlusClicked(item: CartItemDTO) {
@@ -505,6 +507,8 @@ class CartFragment : Fragment(),CartItemInterface {
     override fun onStart() {
         super.onStart()
         communicator.showBottomNav()
+        bottomSheetBinding.bottomSheetPaypalButton.visibility = View.VISIBLE
+        bottomSheetBinding.bottomSheetProgressBar.visibility = View.GONE
     }
 
 }
