@@ -87,7 +87,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun deleteDraftOrder(draftOrderId: String, userId: String){
+    fun deleteDraftOrder(draftOrderId: String, userId: String, showDoneDialog : Boolean = false){
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteDraftOrder(draftOrderId).collect{
                 when(it){
@@ -100,6 +100,10 @@ class CartViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         fetchCartItems(userId)
+
+                        if(showDoneDialog){
+                            showDoneBottomSheet.emit(true)
+                        }
                     }
                 }
             }
@@ -200,8 +204,7 @@ class CartViewModel @Inject constructor(
                     }
                     is State.Success -> {
                         deleteDraftOrder(oldDraftOrderId,userId)
-                        deleteDraftOrder(finalDraftOrderId,userId)
-                        showDoneBottomSheet.emit(true)
+                        deleteDraftOrder(finalDraftOrderId,userId,true)
                     }
                 }
             }
