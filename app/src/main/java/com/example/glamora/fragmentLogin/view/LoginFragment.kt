@@ -29,8 +29,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -246,9 +248,9 @@ class LoginFragment : Fragment() {
                                 loginBinding.progressBar.visibility = View.GONE
 
                                 Toast.makeText(requireContext(),"Login successful!",Toast.LENGTH_SHORT).show()
-
-                                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-
+                                withContext(Dispatchers.Main) {
+                                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                                }
                             }
                         }
                     }
