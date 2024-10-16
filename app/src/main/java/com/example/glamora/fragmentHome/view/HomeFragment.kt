@@ -84,7 +84,11 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
             }
             else if (sharedViewModel.currentCustomerInfo.value.email != Constants.UNKNOWN) {
-                findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
+                try {
+                    findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
+                }catch (e : Exception) {
+                    Log.d("Kerolos", "setupCardViews: $e")
+                }
             }else {
                 showGuestDialog(requireContext())
             }
@@ -170,9 +174,12 @@ class HomeFragment : Fragment() {
             {
                 Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
             }else{
-                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
-                findNavController().navigate(action)
-                Log.d("MAI","$action")
+                try {
+                    val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productId)
+                    findNavController().navigate(action)
+                }catch (e : Exception) {
+                    Log.d("Kerolos", "setupCardViews: $e")
+                }
             }
         }
 
@@ -189,10 +196,12 @@ class HomeFragment : Fragment() {
             {
                 Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
             }else{
-                val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(
-                    selectedBrand.title
-                )
-                findNavController().navigate(action)
+                try {
+                    val action = HomeFragmentDirections.actionHomeFragmentToProductListFragment(selectedBrand.title)
+                    findNavController().navigate(action)
+                }catch (e : Exception) {
+                    Log.d("Kerolos", "setupCardViews: $e")
+                }
             }
         }
         binding.homeRvBrand.apply {
@@ -225,12 +234,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             sharedViewModel.internetState.collect { state ->
                 if (state == ConnectivityObserver.InternetState.AVAILABLE) {
-                    binding.homeNoInternet.visibility = View.GONE
-                    binding.homeContentLayout.visibility = View.VISIBLE
                     actionOnInternetAvailable()
-                }else {
-                    binding.homeNoInternet.visibility = View.VISIBLE
-                    binding.homeContentLayout.visibility = View.GONE
                 }
             }
         }
@@ -264,8 +268,12 @@ class HomeFragment : Fragment() {
                     Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
                 }else
                 {
-                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
-                    findNavController().navigate(action)
+                    try {
+                        val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.SHOES)
+                        findNavController().navigate(action)
+                    }catch (e : Exception) {
+                        Log.d("Kerolos", "setupCardViews: $e")
+                    }
                 }
 
             }
@@ -274,8 +282,12 @@ class HomeFragment : Fragment() {
                 {
                     Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
                 }else{
-                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
-                    findNavController().navigate(action)
+                    try {
+                        val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.T_SHIRT)
+                        findNavController().navigate(action)
+                    }catch (e : Exception) {
+                        Log.d("Kerolos", "setupCardViews: $e")
+                    }
                 }
 
             }
@@ -285,8 +297,12 @@ class HomeFragment : Fragment() {
                 {
                     Toast.makeText(requireContext(),"No Internet Connection",Toast.LENGTH_SHORT).show()
                 }else {
-                    val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
-                    findNavController().navigate(action)
+                    try {
+                        val action= HomeFragmentDirections.actionHomeFragmentToProductListFragment(Constants.ACCESSEORIES)
+                        findNavController().navigate(action)
+                    }catch (e : Exception) {
+                        Log.d("Kerolos", "setupCardViews: $e")
+                    }
                 }
             }
 

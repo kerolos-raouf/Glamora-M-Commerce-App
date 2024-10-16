@@ -51,7 +51,11 @@ class LoginFragment : Fragment() {
         communicator.hideBottomNav()
 
         if (sharedViewModel.getSharedPrefBoolean(Constants.IS_LOGGED_IN,false)) {
-            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+            try {
+                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+            }catch (e : Exception) {
+                Log.d("Kerolos", "setupCardViews: $e")
+            }
         }
     }
 
@@ -83,7 +87,11 @@ class LoginFragment : Fragment() {
         }
 
         loginBinding.signUp.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
+            try {
+                findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
+            }catch (e : Exception) {
+                Log.d("Kerolos", "setupCardViews: $e")
+            }
         }
 
         loginBinding.signInGoogleBtn.setOnClickListener {
@@ -100,7 +108,11 @@ class LoginFragment : Fragment() {
             builder.setPositiveButton("OK") { dialog, _ ->
                 sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,Constants.UNKNOWN)
                 sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGGED_IN,true)
-                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                try {
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                }catch (e : Exception) {
+                    Log.d("Kerolos", "setupCardViews: $e")
+                }
                 dialog.dismiss()
             }
 
@@ -244,8 +256,12 @@ class LoginFragment : Fragment() {
                                 sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,email)
                                 sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGGED_IN,true)
                                 loginBinding.progressBar.visibility = View.GONE
+                                try {
+                                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                                }catch (e : Exception) {
+                                    Log.d("Kerolos", "setupCardViews: $e")
+                                }
 
-                                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
 
                             }
                         }

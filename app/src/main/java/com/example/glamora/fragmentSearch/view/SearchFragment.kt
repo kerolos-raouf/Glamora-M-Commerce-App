@@ -88,7 +88,11 @@ class SearchFragment : Fragment() {
                     val bundle = Bundle().apply {
                         putString("productId", product.id)
                     }
-                    findNavController().navigate(R.id.action_searchFragment_to_productDetailsFragment, bundle)
+                    try {
+                        findNavController().navigate(R.id.action_searchFragment_to_productDetailsFragment, bundle)
+                    }catch (e : Exception) {
+                        Log.d("Kerolos", "setupCardViews: $e")
+                    }
                 }
             }
         })

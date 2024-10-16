@@ -2,6 +2,7 @@ package com.example.glamora.fragmentSignup.view
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,9 +83,12 @@ class SignUpFragment : Fragment() {
                             putString("userPassword", userPassword)
                         }
 
-                        findNavController().navigate(R.id.action_signUpFragment_to_loginFragment , bundle)
+                        try {
+                            findNavController().navigate(R.id.action_signUpFragment_to_loginFragment , bundle)
+                        }catch (e : Exception) {
+                            Log.d("Kerolos", "setupCardViews: $e")
+                        }
 
-                        //findNavController().popBackStack()//action_signUpFragment_to_loginFragment
                     }
 
                     is State.Error -> {

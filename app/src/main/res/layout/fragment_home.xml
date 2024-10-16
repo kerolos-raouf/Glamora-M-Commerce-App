@@ -87,25 +87,6 @@
 
                 </androidx.appcompat.widget.Toolbar>
 
-
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/homeNoInternet"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginTop="50dp"
-
-                    app:lottie_rawRes="@raw/no_internet_2"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true"
-
-                    android:translationZ="30dp"
-
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/home_toolbar" />
-
                 <com.facebook.shimmer.ShimmerFrameLayout
                     android:id="@+id/home_shimmer"
                     android:layout_width="0dp"
@@ -212,7 +193,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

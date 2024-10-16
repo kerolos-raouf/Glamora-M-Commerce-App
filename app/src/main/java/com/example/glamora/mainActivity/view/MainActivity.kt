@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ReportFragment.Companion.reportFragment
@@ -75,9 +76,6 @@ class MainActivity : AppCompatActivity(), Communicator {
             {
                 sharedViewModel.internetState.collect {
                     withContext(Dispatchers.Main) {
-//                        val layoutTransition = LayoutTransition()
-//                        layoutTransition.setDuration(1000)
-//                        binding.mainNoInternetConnectionLayout.layoutTransition = layoutTransition
                         if(it == ConnectivityObserver.InternetState.AVAILABLE){
                             doActionOnInternetAvailable()
                         }else {
@@ -102,7 +100,9 @@ class MainActivity : AppCompatActivity(), Communicator {
 
     private fun doActionOnInternetAvailable()
     {
-        Snackbar.make(binding.root, "Back online", Snackbar.LENGTH_SHORT).show()
+        val snackBar = Snackbar.make(binding.root, "Back online", Snackbar.LENGTH_SHORT)
+        snackBar.view.setBackgroundColor(ContextCompat.getColor(this,R.color.green))
+        snackBar.show()
         binding.mainNoInternetLottie.visibility = View.GONE
         binding.bottomNavigationView.visibility = View.VISIBLE
         binding.mainFragmentContainer.visibility = View.VISIBLE
@@ -111,7 +111,9 @@ class MainActivity : AppCompatActivity(), Communicator {
 
     private fun doActionOnInternetLost()
     {
-        Snackbar.make(binding.root, "Connection Lost", Snackbar.LENGTH_SHORT).show()
+        val snackBar = Snackbar.make(binding.root, "Connection Lost", Snackbar.LENGTH_SHORT)
+        snackBar.view.setBackgroundColor(ContextCompat.getColor(this,R.color.red))
+        snackBar.show()
         binding.mainNoInternetLottie.visibility = View.VISIBLE
         binding.bottomNavigationView.visibility = View.GONE
         binding.mainFragmentContainer.visibility = View.GONE
