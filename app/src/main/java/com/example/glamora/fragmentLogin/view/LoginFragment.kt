@@ -2,6 +2,7 @@ package com.example.glamora.fragmentLogin.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -221,7 +222,8 @@ class LoginFragment : Fragment() {
                 val account = task.getResult(ApiException::class.java)!!
                 loginViewModel.loginWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
-                Toast.makeText(requireContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show()
+                Log.d("Abanob", "onActivityResult: ${e.message}")
             }
         }
     }
@@ -273,10 +275,11 @@ class LoginFragment : Fragment() {
                                 showErrorEmail()
                                 showErrorPassword()
                                 "Login failed: ${state.message}"
+                                Log.d("Abanob", "observeLoginState: ${state.message}")
                             }
                         }
 
-                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        //Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                     }
 
                     null -> {}
