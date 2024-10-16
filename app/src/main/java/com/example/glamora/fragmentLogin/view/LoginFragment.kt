@@ -82,7 +82,7 @@ class LoginFragment : Fragment() {
         setupGoogleSignIn()
 
         loginBinding.loginBtn.setOnClickListener {
-            //resetErrors()
+            resetErrors()
             validateAndLogin()
         }
 
@@ -217,7 +217,7 @@ class LoginFragment : Fragment() {
             .build()
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
 
-        //googleSignInClient.signOut()
+        googleSignInClient.signOut()
     }
 
     private fun signInWithGoogle() {
@@ -256,13 +256,12 @@ class LoginFragment : Fragment() {
                                 sharedViewModel.setSharedPrefString(Constants.CUSTOMER_EMAIL,email)
                                 sharedViewModel.setSharedPrefBoolean(Constants.IS_LOGGED_IN,true)
                                 loginBinding.progressBar.visibility = View.GONE
+
                                 try {
                                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                                 }catch (e : Exception) {
                                     Log.d("Kerolos", "setupCardViews: $e")
                                 }
-
-
                             }
                         }
                     }
